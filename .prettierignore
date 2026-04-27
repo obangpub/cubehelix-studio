@@ -1,0 +1,8 @@
+**/dist/**
+**/build/**
+**/coverage/**
+**/node_modules/**
+**/.vite/**
+**/.venv/**
+fixtures/parity.json
+pnpm-lock.yaml

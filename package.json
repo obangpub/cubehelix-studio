@@ -1,0 +1,30 @@
+{
+  "name": "lumenfast",
+  "private": true,
+  "version": "0.0.1",
+  "description": "Perceptually-honest color palettes from cubehelix.",
+  "license": "MIT",
+  "author": "Joseph Thiebes",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "packageManager": "pnpm@10.33.2+sha512.a90faf6feeab71ad6c6e57f94e0fe1a12f5dcc22cd754db40ae9593eb6a3e0b6b12e3540218bb37ae083404b1f2ce6db2a4121e979829b4aff94b99f49da1cf8",
+  "scripts": {
+    "build": "pnpm -r --filter \"./packages/*\" build && pnpm -r --filter \"./apps/*\" build",
+    "test": "pnpm -r test",
+    "typecheck": "pnpm -r typecheck",
+    "lint": "pnpm -r lint",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "fixture:gen": "tsx scripts/generate-parity-fixture.ts"
+  },
+  "devDependencies": {
+    "@eslint/js": "10.0.1",
+    "eslint": "10.2.1",
+    "prettier": "3.8.3",
+    "tsx": "4.21.0",
+    "typescript": "6.0.3",
+    "typescript-eslint": "8.59.1"
+  }
+}
