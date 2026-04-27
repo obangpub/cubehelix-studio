@@ -68,6 +68,23 @@ Formats an `RGB` as `rgb(R G B)` using modern space-separated syntax.
 
 The standard cubehelix parameters: `{ start: 0.5, rotations: -1.5, hue: 1.0, gamma: 1.0 }`.
 
+### `contrastRatio(a, b): number`
+
+WCAG 2.1 contrast ratio between two colors, in the range `[1, 21]`.
+
+### `pickTextColor(bg, candidates?): RGB`
+
+Returns whichever candidate has the highest contrast against `bg`. Defaults to `[white, black]`. Throws `RangeError` when given an empty candidate list.
+
+```ts
+import { pickTextColor, toCssRgb, cubehelix, DEFAULT_CUBEHELIX_PARAMS } from "@lumenfast/core";
+
+const swatch = cubehelix(0.3, DEFAULT_CUBEHELIX_PARAMS);
+const text = pickTextColor(swatch);
+element.style.backgroundColor = toCssRgb(swatch);
+element.style.color = toCssRgb(text);
+```
+
 ## License
 
 MIT
