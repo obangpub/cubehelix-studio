@@ -1,0 +1,69 @@
+[project]
+name = "lumenfast"
+version = "0.0.1"
+description = "Perceptually-honest color palettes from cubehelix."
+readme = "README.md"
+requires-python = ">=3.10"
+license = "MIT"
+license-files = ["LICENSE"]
+authors = [{ name = "Joseph Thiebes" }]
+keywords = ["cubehelix", "colormap", "palette", "matplotlib", "colors", "wcag"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Intended Audience :: Developers",
+  "Intended Audience :: Science/Research",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Multimedia :: Graphics",
+  "Topic :: Scientific/Engineering :: Visualization",
+  "Typing :: Typed",
+]
+dependencies = []
+
+[project.optional-dependencies]
+viz = ["matplotlib>=3.8"]
+
+[project.urls]
+Homepage = "https://github.com/obangpub/lumenfast"
+Repository = "https://github.com/obangpub/lumenfast"
+Issues = "https://github.com/obangpub/lumenfast/issues"
+
+[dependency-groups]
+dev = [
+  "pytest==9.0.3",
+  "ruff==0.15.12",
+  "mypy==1.20.2",
+]
+
+[build-system]
+requires = ["hatchling==1.29.0"]
+build-backend = "hatchling.build"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/lumenfast"]
+
+[tool.hatch.build.targets.sdist]
+include = ["src/lumenfast", "README.md", "LICENSE"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra"
+
+[tool.ruff]
+target-version = "py310"
+line-length = 100
+src = ["src", "tests"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "N", "B", "UP", "RUF", "SIM", "C4"]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = []
+
+[tool.mypy]
+strict = true
+files = ["src"]
+python_version = "3.10"
