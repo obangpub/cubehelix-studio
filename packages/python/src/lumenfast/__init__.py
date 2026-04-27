@@ -1,12 +1,15 @@
 """Perceptually-honest color palettes from cubehelix."""
 
+from .contrast import contrast_ratio, pick_text_color
 from .cubehelix import CubehelixParams, cubehelix
 from .format import to_hex, to_rgb_255
 from .sampling import sample_sequential
 
 __all__ = [
     "CubehelixParams",
+    "contrast_ratio",
     "cubehelix",
+    "pick_text_color",
     "sample_sequential",
     "to_hex",
     "to_rgb_255",
