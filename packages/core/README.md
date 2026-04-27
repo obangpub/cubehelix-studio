@@ -1,0 +1,73 @@
+# @lumenfast/core
+
+Cubehelix color palette generation, sampling, and WCAG contrast utilities. Zero runtime dependencies.
+
+## Install
+
+```bash
+npm install @lumenfast/core
+# or
+pnpm add @lumenfast/core
+```
+
+## Usage
+
+```ts
+import {
+  cubehelix,
+  sampleSequential,
+  toHex,
+  toCssRgb,
+  DEFAULT_CUBEHELIX_PARAMS,
+} from "@lumenfast/core";
+
+// Single point on the curve
+const mid = cubehelix(0.5, DEFAULT_CUBEHELIX_PARAMS);
+
+// 9 evenly-spaced samples (endpoints included)
+const palette = sampleSequential(DEFAULT_CUBEHELIX_PARAMS, 9);
+
+palette.map(toHex);
+// → ["#000000", "#1c1338", ..., "#ffffff"]
+```
+
+## API
+
+### `cubehelix(t, params): RGB`
+
+Evaluates the cubehelix curve at fraction `t` in `[0, 1]`.
+
+```ts
+interface CubehelixParams {
+  start: number; // starting hue position; default 0.5
+  rotations: number; // rotations through the color wheel; default -1.5
+  hue: number; // saturation amplitude; default 1.0
+  gamma: number; // gamma correction; default 1.0
+}
+
+interface RGB {
+  r: number; // [0, 1]
+  g: number; // [0, 1]
+  b: number; // [0, 1]
+}
+```
+
+### `sampleSequential(params, n): RGB[]`
+
+Returns `n` colors sampled at evenly-spaced positions `i / (n - 1)`. Requires `n >= 2`.
+
+### `toHex(rgb): string`
+
+Formats an `RGB` as `#rrggbb` (lowercase).
+
+### `toCssRgb(rgb): string`
+
+Formats an `RGB` as `rgb(R G B)` using modern space-separated syntax.
+
+### `DEFAULT_CUBEHELIX_PARAMS`
+
+The standard cubehelix parameters: `{ start: 0.5, rotations: -1.5, hue: 1.0, gamma: 1.0 }`.
+
+## License
+
+MIT

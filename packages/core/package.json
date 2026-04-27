@@ -1,0 +1,37 @@
+{
+  "name": "@lumenfast/core",
+  "version": "0.0.1",
+  "description": "Cubehelix color palette generation, sampling, and WCAG contrast utilities. Zero runtime dependencies.",
+  "license": "MIT",
+  "author": "Joseph Thiebes",
+  "type": "module",
+  "main": "./dist/index.cjs",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "sideEffects": false,
+  "publishConfig": {
+    "access": "public"
+  },
+  "scripts": {
+    "build": "tsup",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src tests"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
