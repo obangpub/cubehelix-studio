@@ -2,6 +2,8 @@
 
 Cubehelix color palettes that survive grayscale, colorblindness, and print. Generation, sampling, and WCAG contrast utilities. Zero runtime dependencies.
 
+**Interactive playground:** [obang.pub/cubehelix-studio](https://obang.pub/cubehelix-studio/) — adjust these parameters live in your browser.
+
 ## Install
 
 ```bash

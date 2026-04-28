@@ -2,6 +2,8 @@
 
 Cubehelix color palettes that survive grayscale, colorblindness, and print. Zero runtime dependencies; matplotlib integration available behind an optional extra.
 
+**Interactive playground:** [obang.pub/cubehelix-studio](https://obang.pub/cubehelix-studio/) — adjust the parameters live in your browser.
+
 ## Install
 
 ```bash

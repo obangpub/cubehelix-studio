@@ -27,9 +27,10 @@ dependencies = []
 viz = ["matplotlib>=3.8"]
 
 [project.urls]
-Homepage = "https://github.com/obangpub/cubehelix-studio"
+Homepage = "https://github.com/obangpub/cubehelix-studio/tree/main/packages/python#readme"
 Repository = "https://github.com/obangpub/cubehelix-studio"
 Issues = "https://github.com/obangpub/cubehelix-studio/issues"
+Playground = "https://obang.pub/cubehelix-studio/"
 
 [dependency-groups]
 dev = [

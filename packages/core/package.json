@@ -2,8 +2,29 @@
   "name": "@cubehelix-studio/core",
   "version": "0.0.1",
   "description": "Grayscale-safe color palettes from cubehelix. Generation, sampling, and WCAG contrast utilities. Zero runtime dependencies.",
+  "keywords": [
+    "cubehelix",
+    "color",
+    "palette",
+    "colormap",
+    "color-palette",
+    "accessibility",
+    "wcag",
+    "contrast",
+    "design-tokens",
+    "typescript"
+  ],
   "license": "MIT",
   "author": "Joseph Thiebes",
+  "homepage": "https://github.com/obangpub/cubehelix-studio/tree/main/packages/core#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/obangpub/cubehelix-studio.git",
+    "directory": "packages/core"
+  },
+  "bugs": {
+    "url": "https://github.com/obangpub/cubehelix-studio/issues"
+  },
   "type": "module",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
