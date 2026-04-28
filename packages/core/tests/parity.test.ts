@@ -22,7 +22,7 @@ const fixture: ParityFixture = JSON.parse(readFileSync(FIXTURE_PATH, "utf8"));
 const TOLERANCE = 1e-12;
 
 describe("parity fixture", () => {
-  test(`@lumenfast/core matches ${fixture.entries.length} entries within ${TOLERANCE} per channel`, () => {
+  test(`@cubehelix-studio/core matches ${fixture.entries.length} entries within ${TOLERANCE} per channel`, () => {
     for (const entry of fixture.entries) {
       for (const s of entry.samples) {
         const out = cubehelix(s.t, entry.params);

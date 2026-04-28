@@ -35,7 +35,7 @@ for (const start of STARTS) {
 
 const fixture = {
   version: 1,
-  generator: "lumenfast/scripts/generate-parity-fixture.ts",
+  generator: "cubehelix-studio/scripts/generate-parity-fixture.ts",
   parameterGrid: {
     start: STARTS,
     rotations: ROTATIONS,

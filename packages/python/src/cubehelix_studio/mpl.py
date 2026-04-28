@@ -12,15 +12,15 @@ if TYPE_CHECKING:
 
 
 def to_matplotlib_colormap(
-    params: CubehelixParams, n: int = 256, name: str = "lumenfast"
+    params: CubehelixParams, n: int = 256, name: str = "cubehelix_studio"
 ) -> LinearSegmentedColormap:
     try:
         from matplotlib.colors import LinearSegmentedColormap
     except ImportError as e:
         raise ImportError(
             "to_matplotlib_colormap requires matplotlib; "
-            "install with 'pip install lumenfast[viz]' "
-            "or 'uv add \"lumenfast[viz]\"'"
+            "install with 'pip install cubehelix-studio[viz]' "
+            "or 'uv add \"cubehelix-studio[viz]\"'"
         ) from e
     samples = sample_sequential(params, n)
     return LinearSegmentedColormap.from_list(name, samples, N=n)

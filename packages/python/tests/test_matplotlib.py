@@ -2,14 +2,14 @@ from __future__ import annotations
 
 import pytest
 
-from lumenfast import CubehelixParams
+from cubehelix_studio import CubehelixParams
 
 
 def test_returns_linear_segmented_colormap() -> None:
     pytest.importorskip("matplotlib")
     from matplotlib.colors import LinearSegmentedColormap
 
-    from lumenfast import to_matplotlib_colormap
+    from cubehelix_studio import to_matplotlib_colormap
 
     cmap = to_matplotlib_colormap(CubehelixParams(), n=64, name="test")
     assert isinstance(cmap, LinearSegmentedColormap)
@@ -19,16 +19,16 @@ def test_returns_linear_segmented_colormap() -> None:
 
 def test_default_args_produce_a_cmap() -> None:
     pytest.importorskip("matplotlib")
-    from lumenfast import to_matplotlib_colormap
+    from cubehelix_studio import to_matplotlib_colormap
 
     cmap = to_matplotlib_colormap(CubehelixParams())
     assert cmap.N == 256
-    assert cmap.name == "lumenfast"
+    assert cmap.name == "cubehelix_studio"
 
 
 def test_endpoint_colors_match_cubehelix_endpoints() -> None:
     pytest.importorskip("matplotlib")
-    from lumenfast import cubehelix, to_matplotlib_colormap
+    from cubehelix_studio import cubehelix, to_matplotlib_colormap
 
     params = CubehelixParams()
     cmap = to_matplotlib_colormap(params, n=256)

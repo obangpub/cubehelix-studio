@@ -1,5 +1,5 @@
 [project]
-name = "lumenfast"
+name = "cubehelix-studio"
 version = "0.0.1"
 description = "Grayscale-safe color palettes from cubehelix."
 readme = "README.md"
@@ -27,9 +27,9 @@ dependencies = []
 viz = ["matplotlib>=3.8"]
 
 [project.urls]
-Homepage = "https://github.com/obangpub/lumenfast"
-Repository = "https://github.com/obangpub/lumenfast"
-Issues = "https://github.com/obangpub/lumenfast/issues"
+Homepage = "https://github.com/obangpub/cubehelix-studio"
+Repository = "https://github.com/obangpub/cubehelix-studio"
+Issues = "https://github.com/obangpub/cubehelix-studio/issues"
 
 [dependency-groups]
 dev = [
@@ -43,10 +43,10 @@ requires = ["hatchling==1.29.0"]
 build-backend = "hatchling.build"
 
 [tool.hatch.build.targets.wheel]
-packages = ["src/lumenfast"]
+packages = ["src/cubehelix_studio"]
 
 [tool.hatch.build.targets.sdist]
-include = ["src/lumenfast", "README.md", "LICENSE"]
+include = ["src/cubehelix_studio", "README.md", "LICENSE"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

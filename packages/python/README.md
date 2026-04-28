@@ -1,21 +1,21 @@
-# lumenfast
+# cubehelix-studio
 
 Cubehelix color palettes that survive grayscale, colorblindness, and print. Zero runtime dependencies; matplotlib integration available behind an optional extra.
 
 ## Install
 
 ```bash
-pip install lumenfast            # core only
-pip install "lumenfast[viz]"     # with matplotlib adapter
+pip install cubehelix-studio            # core only
+pip install "cubehelix-studio[viz]"     # with matplotlib adapter
 # or with uv:
-uv add lumenfast
-uv add "lumenfast[viz]"
+uv add cubehelix-studio
+uv add "cubehelix-studio[viz]"
 ```
 
 ## Usage
 
 ```python
-from lumenfast import CubehelixParams, cubehelix, sample_sequential, to_hex
+from cubehelix_studio import CubehelixParams, cubehelix, sample_sequential, to_hex
 
 # Single point on the curve
 mid = cubehelix(0.5, CubehelixParams())
@@ -29,7 +29,7 @@ palette = sample_sequential(CubehelixParams(), 9)
 ### Matplotlib integration
 
 ```python
-from lumenfast import CubehelixParams, to_matplotlib_colormap
+from cubehelix_studio import CubehelixParams, to_matplotlib_colormap
 import matplotlib.pyplot as plt
 import numpy as np
 
@@ -76,11 +76,11 @@ WCAG 2.1 contrast ratio in `[1.0, 21.0]`.
 
 Returns whichever candidate has the highest contrast against `bg`. Defaults to `[white, black]`.
 
-### `to_matplotlib_colormap(params, n=256, name="lumenfast")`
+### `to_matplotlib_colormap(params, n=256, name="cubehelix_studio")`
 
 Returns a `matplotlib.colors.LinearSegmentedColormap`. Requires the `[viz]` extra.
 
-## Parity with `@lumenfast/core`
+## Parity with `@cubehelix-studio/core`
 
 This package's math is verified against the same JSON fixture that the TypeScript reference implementation generates (`fixtures/parity.json` at the repo root). Both implementations must agree to within `1e-12` per channel for every parameter combination in the fixture.
 

@@ -7,7 +7,7 @@ export default defineConfig({
   plugins: [react()],
   resolve: {
     alias: {
-      "@lumenfast/core": fileURLToPath(
+      "@cubehelix-studio/core": fileURLToPath(
         new URL("../../packages/core/src/index.ts", import.meta.url),
       ),
     },

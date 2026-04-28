@@ -1,5 +1,5 @@
 {
-  "name": "@lumenfast/core",
+  "name": "@cubehelix-studio/core",
   "version": "0.0.1",
   "description": "Grayscale-safe color palettes from cubehelix. Generation, sampling, and WCAG contrast utilities. Zero runtime dependencies.",
   "license": "MIT",

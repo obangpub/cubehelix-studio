@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from lumenfast import contrast_ratio, pick_text_color
+from cubehelix_studio import contrast_ratio, pick_text_color
 
 WHITE = (1.0, 1.0, 1.0)
 BLACK = (0.0, 0.0, 0.0)

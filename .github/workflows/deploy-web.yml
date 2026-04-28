@@ -47,7 +47,7 @@ jobs:
         uses: actions/configure-pages@983d7736d9b0ae728b81ab479565c72886d7745b # v5
 
       - name: Build web app
-        run: pnpm --filter @lumenfast/web build
+        run: pnpm --filter @cubehelix-studio/web build
         env:
           VITE_BASE_PATH: ${{ steps.pages.outputs.base_path }}
 

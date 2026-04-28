@@ -5,7 +5,7 @@ import {
   toCssRgb,
   toHex,
   type CubehelixParams,
-} from "@lumenfast/core";
+} from "@cubehelix-studio/core";
 
 interface SwatchRowProps {
   params: CubehelixParams;

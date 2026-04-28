@@ -44,13 +44,13 @@ jobs:
         run: pnpm install --frozen-lockfile
 
       - name: Test core
-        run: pnpm --filter @lumenfast/core test
+        run: pnpm --filter @cubehelix-studio/core test
 
       - name: Build core
-        run: pnpm --filter @lumenfast/core build
+        run: pnpm --filter @cubehelix-studio/core build
 
       - name: Publish to npm
-        run: pnpm --filter @lumenfast/core publish --no-git-checks --provenance --access public
+        run: pnpm --filter @cubehelix-studio/core publish --no-git-checks --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
@@ -60,7 +60,7 @@ jobs:
     timeout-minutes: 10
     environment:
       name: pypi
-      url: https://pypi.org/project/lumenfast/
+      url: https://pypi.org/project/cubehelix-studio/
     permissions:
       contents: read
       id-token: write

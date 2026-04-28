@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { DEFAULT_CUBEHELIX_PARAMS, type CubehelixParams } from "@lumenfast/core";
+import { DEFAULT_CUBEHELIX_PARAMS, type CubehelixParams } from "@cubehelix-studio/core";
 import { GradientStrip } from "./components/GradientStrip";
 import { ParamControls } from "./components/ParamControls";
 import { SwatchRow } from "./components/SwatchRow";
@@ -9,7 +9,7 @@ export default function App() {
   return (
     <main className="app">
       <header>
-        <h1>lumenfast</h1>
+        <h1>Cubehelix Studio</h1>
         <p>Build a cubehelix palette that holds up in grayscale, colorblindness, and print.</p>
       </header>
       <ParamControls params={params} onChange={setParams} />

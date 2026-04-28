@@ -1,13 +1,13 @@
-# @lumenfast/core
+# @cubehelix-studio/core
 
 Cubehelix color palettes that survive grayscale, colorblindness, and print. Generation, sampling, and WCAG contrast utilities. Zero runtime dependencies.
 
 ## Install
 
 ```bash
-npm install @lumenfast/core
+npm install @cubehelix-studio/core
 # or
-pnpm add @lumenfast/core
+pnpm add @cubehelix-studio/core
 ```
 
 ## Usage
@@ -19,7 +19,7 @@ import {
   toHex,
   toCssRgb,
   DEFAULT_CUBEHELIX_PARAMS,
-} from "@lumenfast/core";
+} from "@cubehelix-studio/core";
 
 // Single point on the curve
 const mid = cubehelix(0.5, DEFAULT_CUBEHELIX_PARAMS);
@@ -79,7 +79,12 @@ WCAG 2.1 contrast ratio between two colors, in the range `[1, 21]`.
 Returns whichever candidate has the highest contrast against `bg`. Defaults to `[white, black]`. Throws `RangeError` when given an empty candidate list.
 
 ```ts
-import { pickTextColor, toCssRgb, cubehelix, DEFAULT_CUBEHELIX_PARAMS } from "@lumenfast/core";
+import {
+  pickTextColor,
+  toCssRgb,
+  cubehelix,
+  DEFAULT_CUBEHELIX_PARAMS,
+} from "@cubehelix-studio/core";
 
 const swatch = cubehelix(0.3, DEFAULT_CUBEHELIX_PARAMS);
 const text = pickTextColor(swatch);

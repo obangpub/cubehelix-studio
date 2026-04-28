@@ -1,5 +1,5 @@
 import { useId, useMemo } from "react";
-import { cubehelix, toCssRgb, type CubehelixParams } from "@lumenfast/core";
+import { cubehelix, toCssRgb, type CubehelixParams } from "@cubehelix-studio/core";
 
 interface GradientStripProps {
   params: CubehelixParams;

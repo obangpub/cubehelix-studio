@@ -4,7 +4,7 @@ import math
 
 import pytest
 
-from lumenfast import CubehelixParams, cubehelix
+from cubehelix_studio import CubehelixParams, cubehelix
 
 
 def test_t0_default_params_returns_black() -> None:

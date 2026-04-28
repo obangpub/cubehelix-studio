@@ -38,7 +38,7 @@ importers:
 
   apps/web:
     dependencies:
-      '@lumenfast/core':
+      '@cubehelix-studio/core':
         specifier: workspace:*
         version: link:../../packages/core
       react:

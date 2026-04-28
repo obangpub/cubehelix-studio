@@ -1,12 +1,12 @@
-# lumenfast
+# Cubehelix Studio
 
 Cubehelix color palettes that survive grayscale, colorblindness, and print.
 
-`lumenfast` provides three ways to generate and consume cubehelix-based palettes:
+Cubehelix Studio provides three ways to generate and consume cubehelix-based palettes:
 
-- **`@lumenfast/core`** — TypeScript library (npm). Pure functions for generating cubehelix curves, sampling discrete palettes, and computing WCAG contrast. Zero runtime dependencies.
-- **`lumenfast`** — Python library (PyPI). Same math, plus a `to_matplotlib_colormap()` adapter for scientific plotting workflows.
-- **`@lumenfast/web`** — interactive web app. Sliders for cubehelix parameters, live gradient and swatch previews, contrast-aware text suggestions.
+- **`@cubehelix-studio/core`** — TypeScript library (npm). Pure functions for generating cubehelix curves, sampling discrete palettes, and computing WCAG contrast. Zero runtime dependencies.
+- **`cubehelix-studio`** — Python library (PyPI). Same math, plus a `to_matplotlib_colormap()` adapter for scientific plotting workflows.
+- **`@cubehelix-studio/web`** — interactive web app. Sliders for cubehelix parameters, live gradient and swatch previews, contrast-aware text suggestions.
 
 The two libraries are independent implementations kept in lockstep by a shared parity fixture at `fixtures/parity.json`.
 
@@ -22,10 +22,10 @@ This makes cubehelix a strong default for sequential data visualization, scienti
 
 ## Repository layout
 
-```
-packages/core/      @lumenfast/core (TypeScript)
-packages/python/    lumenfast (PyPI)
-apps/web/           @lumenfast/web (Vite + React)
+```text
+packages/core/      @cubehelix-studio/core (TypeScript)
+packages/python/    cubehelix-studio (PyPI)
+apps/web/           @cubehelix-studio/web (Vite + React)
 fixtures/           parity.json — shared test fixture
 scripts/            parity fixture generator
 ```

@@ -57,8 +57,8 @@ jobs:
       - name: Test
         run: pnpm -r test
 
-      - name: Build @lumenfast/core
-        run: pnpm --filter @lumenfast/core build
+      - name: Build @cubehelix-studio/core
+        run: pnpm --filter @cubehelix-studio/core build
 
-      - name: Build @lumenfast/web
-        run: pnpm --filter @lumenfast/web build
+      - name: Build @cubehelix-studio/web
+        run: pnpm --filter @cubehelix-studio/web build

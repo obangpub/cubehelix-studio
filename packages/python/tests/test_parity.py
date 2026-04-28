@@ -4,7 +4,7 @@ import json
 from pathlib import Path
 from typing import Any
 
-from lumenfast import CubehelixParams, cubehelix
+from cubehelix_studio import CubehelixParams, cubehelix
 
 FIXTURE_PATH = Path(__file__).resolve().parents[3] / "fixtures" / "parity.json"
 TOLERANCE = 1e-12

@@ -1,4 +1,4 @@
-import type { CubehelixParams } from "@lumenfast/core";
+import type { CubehelixParams } from "@cubehelix-studio/core";
 import { Slider } from "./Slider";
 
 interface ParamControlsProps {

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import pytest
 
-from lumenfast import CubehelixParams, sample_sequential
+from cubehelix_studio import CubehelixParams, sample_sequential
 
 
 def test_returns_n_samples_with_endpoints() -> None:

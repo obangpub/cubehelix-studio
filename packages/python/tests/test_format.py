@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from lumenfast import to_hex, to_rgb_255
+from cubehelix_studio import to_hex, to_rgb_255
 
 
 def test_to_hex_white() -> None:
