@@ -1,6 +1,6 @@
 # lumenfast
 
-Perceptually-honest color palettes from Dave Green's cubehelix algorithm.
+Cubehelix color palettes that survive grayscale, colorblindness, and print.
 
 `lumenfast` provides three ways to generate and consume cubehelix-based palettes:
 
@@ -12,7 +12,7 @@ The two libraries are independent implementations kept in lockstep by a shared p
 
 ## Why cubehelix
 
-The cubehelix curve traces a helix through RGB space whose luminance is monotonic. Palettes sampled from it remain interpretable when:
+Dave Green's cubehelix curve traces a helix through RGB space whose luminance is monotonic. Palettes sampled from it remain interpretable when:
 
 - Printed in grayscale
 - Viewed by people with color-vision differences

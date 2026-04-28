@@ -1,6 +1,6 @@
 # @lumenfast/core
 
-Cubehelix color palette generation, sampling, and WCAG contrast utilities. Zero runtime dependencies.
+Cubehelix color palettes that survive grayscale, colorblindness, and print. Generation, sampling, and WCAG contrast utilities. Zero runtime dependencies.
 
 ## Install
 

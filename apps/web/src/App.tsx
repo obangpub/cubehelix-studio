@@ -10,7 +10,7 @@ export default function App() {
     <main className="app">
       <header>
         <h1>lumenfast</h1>
-        <p>Perceptually-honest color palettes from cubehelix.</p>
+        <p>Build a cubehelix palette that holds up in grayscale, colorblindness, and print.</p>
       </header>
       <ParamControls params={params} onChange={setParams} />
       <section className="preview" aria-label="Palette preview">

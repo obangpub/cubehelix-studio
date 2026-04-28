@@ -1,7 +1,7 @@
 [project]
 name = "lumenfast"
 version = "0.0.1"
-description = "Perceptually-honest color palettes from cubehelix."
+description = "Grayscale-safe color palettes from cubehelix."
 readme = "README.md"
 requires-python = ">=3.10"
 license = "MIT"

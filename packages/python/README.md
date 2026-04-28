@@ -1,6 +1,6 @@
 # lumenfast
 
-Perceptually-honest color palettes from Dave Green's cubehelix algorithm. Zero runtime dependencies; matplotlib integration available behind an optional extra.
+Cubehelix color palettes that survive grayscale, colorblindness, and print. Zero runtime dependencies; matplotlib integration available behind an optional extra.
 
 ## Install
 

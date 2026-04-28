@@ -1,4 +1,4 @@
-"""Perceptually-honest color palettes from cubehelix."""
+"""Grayscale-safe color palettes from cubehelix."""
 
 from .contrast import contrast_ratio, pick_text_color
 from .cubehelix import CubehelixParams, cubehelix

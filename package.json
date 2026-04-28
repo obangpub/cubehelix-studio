@@ -2,7 +2,7 @@
   "name": "lumenfast",
   "private": true,
   "version": "0.0.1",
-  "description": "Perceptually-honest color palettes from cubehelix.",
+  "description": "Grayscale-safe color palettes from cubehelix.",
   "license": "MIT",
   "author": "Joseph Thiebes",
   "type": "module",
