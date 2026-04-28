@@ -33,7 +33,7 @@ from lumenfast import CubehelixParams, to_matplotlib_colormap
 import matplotlib.pyplot as plt
 import numpy as np
 
-cmap = to_matplotlib_colormap(CubehelixParams(rotations=-2.0, hue=1.2))
+cmap = to_matplotlib_colormap(CubehelixParams(rotations=-2.0, saturation=1.2))
 plt.imshow(np.random.rand(64, 64), cmap=cmap)
 plt.colorbar()
 plt.show()
@@ -47,8 +47,10 @@ Frozen dataclass with fields:
 
 - `start: float = 0.5` - starting hue position
 - `rotations: float = -1.5` - rotations through the color wheel
-- `hue: float = 1.0` - saturation amplitude
+- `saturation: float = 1.0` - chromatic amplitude
 - `gamma: float = 1.0` - gamma correction
+
+> Note: matplotlib's `cubehelix_palette` and Dave Green's 2011 paper call the `saturation` field `hue`. It controls chromatic amplitude — when zero, the output is a pure greyscale ramp — so `saturation` is more accurate.
 
 ### `cubehelix(t, params) -> tuple[float, float, float]`
 

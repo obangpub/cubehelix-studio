@@ -3,15 +3,15 @@ import type { CubehelixParams, RGB } from "./types";
 export const DEFAULT_CUBEHELIX_PARAMS: CubehelixParams = {
   start: 0.5,
   rotations: -1.5,
-  hue: 1.0,
+  saturation: 1.0,
   gamma: 1.0,
 };
 
 export function cubehelix(t: number, params: CubehelixParams): RGB {
-  const { start, rotations, hue, gamma } = params;
+  const { start, rotations, saturation, gamma } = params;
   const fraction = Math.pow(t, gamma);
   const angle = 2 * Math.PI * (start / 3 + rotations * t + 1);
-  const amp = (hue * fraction * (1 - fraction)) / 2;
+  const amp = (saturation * fraction * (1 - fraction)) / 2;
   const cosA = Math.cos(angle);
   const sinA = Math.sin(angle);
   const r = fraction + amp * (-0.14861 * cosA + 1.78277 * sinA);

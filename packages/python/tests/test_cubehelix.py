@@ -22,7 +22,7 @@ def test_t1_default_params_returns_white() -> None:
 
 
 def test_clamps_into_unit_interval() -> None:
-    params = CubehelixParams(start=0.0, rotations=5.0, hue=5.0, gamma=1.0)
+    params = CubehelixParams(start=0.0, rotations=5.0, saturation=5.0, gamma=1.0)
     for i in range(51):
         t = i / 50
         r, g, b = cubehelix(t, params)
@@ -31,8 +31,8 @@ def test_clamps_into_unit_interval() -> None:
         assert 0.0 <= b <= 1.0
 
 
-def test_hue_zero_yields_grayscale_ramp() -> None:
-    params = CubehelixParams(start=0.0, rotations=0.0, hue=0.0, gamma=1.0)
+def test_saturation_zero_yields_grayscale_ramp() -> None:
+    params = CubehelixParams(start=0.0, rotations=0.0, saturation=0.0, gamma=1.0)
     for i in range(11):
         t = i / 10
         r, g, b = cubehelix(t, params)

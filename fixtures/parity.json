@@ -14,7 +14,7 @@
       0,
       1.5
     ],
-    "hue": [
+    "saturation": [
       0.5,
       1,
       1.5
@@ -31,7 +31,7 @@
       "params": {
         "start": 0,
         "rotations": -2,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 0.7
       },
       "samples": [
@@ -167,7 +167,7 @@
       "params": {
         "start": 0,
         "rotations": -2,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 1
       },
       "samples": [
@@ -303,7 +303,7 @@
       "params": {
         "start": 0,
         "rotations": -2,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 1.4
       },
       "samples": [
@@ -439,7 +439,7 @@
       "params": {
         "start": 0,
         "rotations": -2,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 0.7
       },
       "samples": [
@@ -575,7 +575,7 @@
       "params": {
         "start": 0,
         "rotations": -2,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 1
       },
       "samples": [
@@ -711,7 +711,7 @@
       "params": {
         "start": 0,
         "rotations": -2,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 1.4
       },
       "samples": [
@@ -847,7 +847,7 @@
       "params": {
         "start": 0,
         "rotations": -2,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 0.7
       },
       "samples": [
@@ -983,7 +983,7 @@
       "params": {
         "start": 0,
         "rotations": -2,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 1
       },
       "samples": [
@@ -1119,7 +1119,7 @@
       "params": {
         "start": 0,
         "rotations": -2,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 1.4
       },
       "samples": [
@@ -1255,7 +1255,7 @@
       "params": {
         "start": 0,
         "rotations": -1.5,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 0.7
       },
       "samples": [
@@ -1391,7 +1391,7 @@
       "params": {
         "start": 0,
         "rotations": -1.5,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 1
       },
       "samples": [
@@ -1527,7 +1527,7 @@
       "params": {
         "start": 0,
         "rotations": -1.5,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 1.4
       },
       "samples": [
@@ -1663,7 +1663,7 @@
       "params": {
         "start": 0,
         "rotations": -1.5,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 0.7
       },
       "samples": [
@@ -1799,7 +1799,7 @@
       "params": {
         "start": 0,
         "rotations": -1.5,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 1
       },
       "samples": [
@@ -1935,7 +1935,7 @@
       "params": {
         "start": 0,
         "rotations": -1.5,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 1.4
       },
       "samples": [
@@ -2071,7 +2071,7 @@
       "params": {
         "start": 0,
         "rotations": -1.5,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 0.7
       },
       "samples": [
@@ -2207,7 +2207,7 @@
       "params": {
         "start": 0,
         "rotations": -1.5,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 1
       },
       "samples": [
@@ -2343,7 +2343,7 @@
       "params": {
         "start": 0,
         "rotations": -1.5,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 1.4
       },
       "samples": [
@@ -2479,7 +2479,7 @@
       "params": {
         "start": 0,
         "rotations": 0,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 0.7
       },
       "samples": [
@@ -2615,7 +2615,7 @@
       "params": {
         "start": 0,
         "rotations": 0,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 1
       },
       "samples": [
@@ -2751,7 +2751,7 @@
       "params": {
         "start": 0,
         "rotations": 0,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 1.4
       },
       "samples": [
@@ -2887,7 +2887,7 @@
       "params": {
         "start": 0,
         "rotations": 0,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 0.7
       },
       "samples": [
@@ -3023,7 +3023,7 @@
       "params": {
         "start": 0,
         "rotations": 0,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 1
       },
       "samples": [
@@ -3159,7 +3159,7 @@
       "params": {
         "start": 0,
         "rotations": 0,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 1.4
       },
       "samples": [
@@ -3295,7 +3295,7 @@
       "params": {
         "start": 0,
         "rotations": 0,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 0.7
       },
       "samples": [
@@ -3431,7 +3431,7 @@
       "params": {
         "start": 0,
         "rotations": 0,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 1
       },
       "samples": [
@@ -3567,7 +3567,7 @@
       "params": {
         "start": 0,
         "rotations": 0,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 1.4
       },
       "samples": [
@@ -3703,7 +3703,7 @@
       "params": {
         "start": 0,
         "rotations": 1.5,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 0.7
       },
       "samples": [
@@ -3839,7 +3839,7 @@
       "params": {
         "start": 0,
         "rotations": 1.5,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 1
       },
       "samples": [
@@ -3975,7 +3975,7 @@
       "params": {
         "start": 0,
         "rotations": 1.5,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 1.4
       },
       "samples": [
@@ -4111,7 +4111,7 @@
       "params": {
         "start": 0,
         "rotations": 1.5,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 0.7
       },
       "samples": [
@@ -4247,7 +4247,7 @@
       "params": {
         "start": 0,
         "rotations": 1.5,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 1
       },
       "samples": [
@@ -4383,7 +4383,7 @@
       "params": {
         "start": 0,
         "rotations": 1.5,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 1.4
       },
       "samples": [
@@ -4519,7 +4519,7 @@
       "params": {
         "start": 0,
         "rotations": 1.5,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 0.7
       },
       "samples": [
@@ -4655,7 +4655,7 @@
       "params": {
         "start": 0,
         "rotations": 1.5,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 1
       },
       "samples": [
@@ -4791,7 +4791,7 @@
       "params": {
         "start": 0,
         "rotations": 1.5,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 1.4
       },
       "samples": [
@@ -4927,7 +4927,7 @@
       "params": {
         "start": 0.5,
         "rotations": -2,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 0.7
       },
       "samples": [
@@ -5063,7 +5063,7 @@
       "params": {
         "start": 0.5,
         "rotations": -2,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 1
       },
       "samples": [
@@ -5199,7 +5199,7 @@
       "params": {
         "start": 0.5,
         "rotations": -2,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 1.4
       },
       "samples": [
@@ -5335,7 +5335,7 @@
       "params": {
         "start": 0.5,
         "rotations": -2,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 0.7
       },
       "samples": [
@@ -5471,7 +5471,7 @@
       "params": {
         "start": 0.5,
         "rotations": -2,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 1
       },
       "samples": [
@@ -5607,7 +5607,7 @@
       "params": {
         "start": 0.5,
         "rotations": -2,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 1.4
       },
       "samples": [
@@ -5743,7 +5743,7 @@
       "params": {
         "start": 0.5,
         "rotations": -2,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 0.7
       },
       "samples": [
@@ -5879,7 +5879,7 @@
       "params": {
         "start": 0.5,
         "rotations": -2,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 1
       },
       "samples": [
@@ -6015,7 +6015,7 @@
       "params": {
         "start": 0.5,
         "rotations": -2,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 1.4
       },
       "samples": [
@@ -6151,7 +6151,7 @@
       "params": {
         "start": 0.5,
         "rotations": -1.5,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 0.7
       },
       "samples": [
@@ -6287,7 +6287,7 @@
       "params": {
         "start": 0.5,
         "rotations": -1.5,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 1
       },
       "samples": [
@@ -6423,7 +6423,7 @@
       "params": {
         "start": 0.5,
         "rotations": -1.5,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 1.4
       },
       "samples": [
@@ -6559,7 +6559,7 @@
       "params": {
         "start": 0.5,
         "rotations": -1.5,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 0.7
       },
       "samples": [
@@ -6695,7 +6695,7 @@
       "params": {
         "start": 0.5,
         "rotations": -1.5,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 1
       },
       "samples": [
@@ -6831,7 +6831,7 @@
       "params": {
         "start": 0.5,
         "rotations": -1.5,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 1.4
       },
       "samples": [
@@ -6967,7 +6967,7 @@
       "params": {
         "start": 0.5,
         "rotations": -1.5,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 0.7
       },
       "samples": [
@@ -7103,7 +7103,7 @@
       "params": {
         "start": 0.5,
         "rotations": -1.5,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 1
       },
       "samples": [
@@ -7239,7 +7239,7 @@
       "params": {
         "start": 0.5,
         "rotations": -1.5,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 1.4
       },
       "samples": [
@@ -7375,7 +7375,7 @@
       "params": {
         "start": 0.5,
         "rotations": 0,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 0.7
       },
       "samples": [
@@ -7511,7 +7511,7 @@
       "params": {
         "start": 0.5,
         "rotations": 0,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 1
       },
       "samples": [
@@ -7647,7 +7647,7 @@
       "params": {
         "start": 0.5,
         "rotations": 0,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 1.4
       },
       "samples": [
@@ -7783,7 +7783,7 @@
       "params": {
         "start": 0.5,
         "rotations": 0,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 0.7
       },
       "samples": [
@@ -7919,7 +7919,7 @@
       "params": {
         "start": 0.5,
         "rotations": 0,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 1
       },
       "samples": [
@@ -8055,7 +8055,7 @@
       "params": {
         "start": 0.5,
         "rotations": 0,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 1.4
       },
       "samples": [
@@ -8191,7 +8191,7 @@
       "params": {
         "start": 0.5,
         "rotations": 0,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 0.7
       },
       "samples": [
@@ -8327,7 +8327,7 @@
       "params": {
         "start": 0.5,
         "rotations": 0,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 1
       },
       "samples": [
@@ -8463,7 +8463,7 @@
       "params": {
         "start": 0.5,
         "rotations": 0,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 1.4
       },
       "samples": [
@@ -8599,7 +8599,7 @@
       "params": {
         "start": 0.5,
         "rotations": 1.5,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 0.7
       },
       "samples": [
@@ -8735,7 +8735,7 @@
       "params": {
         "start": 0.5,
         "rotations": 1.5,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 1
       },
       "samples": [
@@ -8871,7 +8871,7 @@
       "params": {
         "start": 0.5,
         "rotations": 1.5,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 1.4
       },
       "samples": [
@@ -9007,7 +9007,7 @@
       "params": {
         "start": 0.5,
         "rotations": 1.5,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 0.7
       },
       "samples": [
@@ -9143,7 +9143,7 @@
       "params": {
         "start": 0.5,
         "rotations": 1.5,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 1
       },
       "samples": [
@@ -9279,7 +9279,7 @@
       "params": {
         "start": 0.5,
         "rotations": 1.5,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 1.4
       },
       "samples": [
@@ -9415,7 +9415,7 @@
       "params": {
         "start": 0.5,
         "rotations": 1.5,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 0.7
       },
       "samples": [
@@ -9551,7 +9551,7 @@
       "params": {
         "start": 0.5,
         "rotations": 1.5,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 1
       },
       "samples": [
@@ -9687,7 +9687,7 @@
       "params": {
         "start": 0.5,
         "rotations": 1.5,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 1.4
       },
       "samples": [
@@ -9823,7 +9823,7 @@
       "params": {
         "start": 1,
         "rotations": -2,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 0.7
       },
       "samples": [
@@ -9959,7 +9959,7 @@
       "params": {
         "start": 1,
         "rotations": -2,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 1
       },
       "samples": [
@@ -10095,7 +10095,7 @@
       "params": {
         "start": 1,
         "rotations": -2,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 1.4
       },
       "samples": [
@@ -10231,7 +10231,7 @@
       "params": {
         "start": 1,
         "rotations": -2,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 0.7
       },
       "samples": [
@@ -10367,7 +10367,7 @@
       "params": {
         "start": 1,
         "rotations": -2,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 1
       },
       "samples": [
@@ -10503,7 +10503,7 @@
       "params": {
         "start": 1,
         "rotations": -2,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 1.4
       },
       "samples": [
@@ -10639,7 +10639,7 @@
       "params": {
         "start": 1,
         "rotations": -2,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 0.7
       },
       "samples": [
@@ -10775,7 +10775,7 @@
       "params": {
         "start": 1,
         "rotations": -2,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 1
       },
       "samples": [
@@ -10911,7 +10911,7 @@
       "params": {
         "start": 1,
         "rotations": -2,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 1.4
       },
       "samples": [
@@ -11047,7 +11047,7 @@
       "params": {
         "start": 1,
         "rotations": -1.5,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 0.7
       },
       "samples": [
@@ -11183,7 +11183,7 @@
       "params": {
         "start": 1,
         "rotations": -1.5,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 1
       },
       "samples": [
@@ -11319,7 +11319,7 @@
       "params": {
         "start": 1,
         "rotations": -1.5,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 1.4
       },
       "samples": [
@@ -11455,7 +11455,7 @@
       "params": {
         "start": 1,
         "rotations": -1.5,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 0.7
       },
       "samples": [
@@ -11591,7 +11591,7 @@
       "params": {
         "start": 1,
         "rotations": -1.5,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 1
       },
       "samples": [
@@ -11727,7 +11727,7 @@
       "params": {
         "start": 1,
         "rotations": -1.5,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 1.4
       },
       "samples": [
@@ -11863,7 +11863,7 @@
       "params": {
         "start": 1,
         "rotations": -1.5,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 0.7
       },
       "samples": [
@@ -11999,7 +11999,7 @@
       "params": {
         "start": 1,
         "rotations": -1.5,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 1
       },
       "samples": [
@@ -12135,7 +12135,7 @@
       "params": {
         "start": 1,
         "rotations": -1.5,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 1.4
       },
       "samples": [
@@ -12271,7 +12271,7 @@
       "params": {
         "start": 1,
         "rotations": 0,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 0.7
       },
       "samples": [
@@ -12407,7 +12407,7 @@
       "params": {
         "start": 1,
         "rotations": 0,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 1
       },
       "samples": [
@@ -12543,7 +12543,7 @@
       "params": {
         "start": 1,
         "rotations": 0,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 1.4
       },
       "samples": [
@@ -12679,7 +12679,7 @@
       "params": {
         "start": 1,
         "rotations": 0,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 0.7
       },
       "samples": [
@@ -12815,7 +12815,7 @@
       "params": {
         "start": 1,
         "rotations": 0,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 1
       },
       "samples": [
@@ -12951,7 +12951,7 @@
       "params": {
         "start": 1,
         "rotations": 0,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 1.4
       },
       "samples": [
@@ -13087,7 +13087,7 @@
       "params": {
         "start": 1,
         "rotations": 0,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 0.7
       },
       "samples": [
@@ -13223,7 +13223,7 @@
       "params": {
         "start": 1,
         "rotations": 0,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 1
       },
       "samples": [
@@ -13359,7 +13359,7 @@
       "params": {
         "start": 1,
         "rotations": 0,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 1.4
       },
       "samples": [
@@ -13495,7 +13495,7 @@
       "params": {
         "start": 1,
         "rotations": 1.5,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 0.7
       },
       "samples": [
@@ -13631,7 +13631,7 @@
       "params": {
         "start": 1,
         "rotations": 1.5,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 1
       },
       "samples": [
@@ -13767,7 +13767,7 @@
       "params": {
         "start": 1,
         "rotations": 1.5,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 1.4
       },
       "samples": [
@@ -13903,7 +13903,7 @@
       "params": {
         "start": 1,
         "rotations": 1.5,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 0.7
       },
       "samples": [
@@ -14039,7 +14039,7 @@
       "params": {
         "start": 1,
         "rotations": 1.5,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 1
       },
       "samples": [
@@ -14175,7 +14175,7 @@
       "params": {
         "start": 1,
         "rotations": 1.5,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 1.4
       },
       "samples": [
@@ -14311,7 +14311,7 @@
       "params": {
         "start": 1,
         "rotations": 1.5,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 0.7
       },
       "samples": [
@@ -14447,7 +14447,7 @@
       "params": {
         "start": 1,
         "rotations": 1.5,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 1
       },
       "samples": [
@@ -14583,7 +14583,7 @@
       "params": {
         "start": 1,
         "rotations": 1.5,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 1.4
       },
       "samples": [
@@ -14719,7 +14719,7 @@
       "params": {
         "start": 2.5,
         "rotations": -2,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 0.7
       },
       "samples": [
@@ -14855,7 +14855,7 @@
       "params": {
         "start": 2.5,
         "rotations": -2,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 1
       },
       "samples": [
@@ -14991,7 +14991,7 @@
       "params": {
         "start": 2.5,
         "rotations": -2,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 1.4
       },
       "samples": [
@@ -15127,7 +15127,7 @@
       "params": {
         "start": 2.5,
         "rotations": -2,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 0.7
       },
       "samples": [
@@ -15263,7 +15263,7 @@
       "params": {
         "start": 2.5,
         "rotations": -2,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 1
       },
       "samples": [
@@ -15399,7 +15399,7 @@
       "params": {
         "start": 2.5,
         "rotations": -2,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 1.4
       },
       "samples": [
@@ -15535,7 +15535,7 @@
       "params": {
         "start": 2.5,
         "rotations": -2,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 0.7
       },
       "samples": [
@@ -15671,7 +15671,7 @@
       "params": {
         "start": 2.5,
         "rotations": -2,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 1
       },
       "samples": [
@@ -15807,7 +15807,7 @@
       "params": {
         "start": 2.5,
         "rotations": -2,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 1.4
       },
       "samples": [
@@ -15943,7 +15943,7 @@
       "params": {
         "start": 2.5,
         "rotations": -1.5,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 0.7
       },
       "samples": [
@@ -16079,7 +16079,7 @@
       "params": {
         "start": 2.5,
         "rotations": -1.5,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 1
       },
       "samples": [
@@ -16215,7 +16215,7 @@
       "params": {
         "start": 2.5,
         "rotations": -1.5,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 1.4
       },
       "samples": [
@@ -16351,7 +16351,7 @@
       "params": {
         "start": 2.5,
         "rotations": -1.5,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 0.7
       },
       "samples": [
@@ -16487,7 +16487,7 @@
       "params": {
         "start": 2.5,
         "rotations": -1.5,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 1
       },
       "samples": [
@@ -16623,7 +16623,7 @@
       "params": {
         "start": 2.5,
         "rotations": -1.5,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 1.4
       },
       "samples": [
@@ -16759,7 +16759,7 @@
       "params": {
         "start": 2.5,
         "rotations": -1.5,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 0.7
       },
       "samples": [
@@ -16895,7 +16895,7 @@
       "params": {
         "start": 2.5,
         "rotations": -1.5,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 1
       },
       "samples": [
@@ -17031,7 +17031,7 @@
       "params": {
         "start": 2.5,
         "rotations": -1.5,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 1.4
       },
       "samples": [
@@ -17167,7 +17167,7 @@
       "params": {
         "start": 2.5,
         "rotations": 0,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 0.7
       },
       "samples": [
@@ -17303,7 +17303,7 @@
       "params": {
         "start": 2.5,
         "rotations": 0,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 1
       },
       "samples": [
@@ -17439,7 +17439,7 @@
       "params": {
         "start": 2.5,
         "rotations": 0,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 1.4
       },
       "samples": [
@@ -17575,7 +17575,7 @@
       "params": {
         "start": 2.5,
         "rotations": 0,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 0.7
       },
       "samples": [
@@ -17711,7 +17711,7 @@
       "params": {
         "start": 2.5,
         "rotations": 0,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 1
       },
       "samples": [
@@ -17847,7 +17847,7 @@
       "params": {
         "start": 2.5,
         "rotations": 0,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 1.4
       },
       "samples": [
@@ -17983,7 +17983,7 @@
       "params": {
         "start": 2.5,
         "rotations": 0,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 0.7
       },
       "samples": [
@@ -18119,7 +18119,7 @@
       "params": {
         "start": 2.5,
         "rotations": 0,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 1
       },
       "samples": [
@@ -18255,7 +18255,7 @@
       "params": {
         "start": 2.5,
         "rotations": 0,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 1.4
       },
       "samples": [
@@ -18391,7 +18391,7 @@
       "params": {
         "start": 2.5,
         "rotations": 1.5,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 0.7
       },
       "samples": [
@@ -18527,7 +18527,7 @@
       "params": {
         "start": 2.5,
         "rotations": 1.5,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 1
       },
       "samples": [
@@ -18663,7 +18663,7 @@
       "params": {
         "start": 2.5,
         "rotations": 1.5,
-        "hue": 0.5,
+        "saturation": 0.5,
         "gamma": 1.4
       },
       "samples": [
@@ -18799,7 +18799,7 @@
       "params": {
         "start": 2.5,
         "rotations": 1.5,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 0.7
       },
       "samples": [
@@ -18935,7 +18935,7 @@
       "params": {
         "start": 2.5,
         "rotations": 1.5,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 1
       },
       "samples": [
@@ -19071,7 +19071,7 @@
       "params": {
         "start": 2.5,
         "rotations": 1.5,
-        "hue": 1,
+        "saturation": 1,
         "gamma": 1.4
       },
       "samples": [
@@ -19207,7 +19207,7 @@
       "params": {
         "start": 2.5,
         "rotations": 1.5,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 0.7
       },
       "samples": [
@@ -19343,7 +19343,7 @@
       "params": {
         "start": 2.5,
         "rotations": 1.5,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 1
       },
       "samples": [
@@ -19479,7 +19479,7 @@
       "params": {
         "start": 2.5,
         "rotations": 1.5,
-        "hue": 1.5,
+        "saturation": 1.5,
         "gamma": 1.4
       },
       "samples": [

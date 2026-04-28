@@ -32,12 +32,12 @@ export function ParamControls({ params, onChange }: ParamControlsProps) {
       />
       <Slider
         label="Saturation"
-        technicalName="hue"
-        value={params.hue}
+        technicalName="saturation"
+        value={params.saturation}
         min={0}
         max={2}
         step={0.01}
-        onChange={update("hue")}
+        onChange={update("saturation")}
       />
       <Slider
         label="Lightness Curve"

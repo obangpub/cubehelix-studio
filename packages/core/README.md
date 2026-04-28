@@ -41,7 +41,7 @@ Evaluates the cubehelix curve at fraction `t` in `[0, 1]`.
 interface CubehelixParams {
   start: number; // starting hue position; default 0.5
   rotations: number; // rotations through the color wheel; default -1.5
-  hue: number; // saturation amplitude; default 1.0
+  saturation: number; // chromatic amplitude; default 1.0
   gamma: number; // gamma correction; default 1.0
 }
 
@@ -66,7 +66,9 @@ Formats an `RGB` as `rgb(R G B)` using modern space-separated syntax.
 
 ### `DEFAULT_CUBEHELIX_PARAMS`
 
-The standard cubehelix parameters: `{ start: 0.5, rotations: -1.5, hue: 1.0, gamma: 1.0 }`.
+The standard cubehelix parameters: `{ start: 0.5, rotations: -1.5, saturation: 1.0, gamma: 1.0 }`.
+
+> Note: matplotlib's `cubehelix_palette` and Dave Green's original 2011 paper call this parameter `hue`. It controls chromatic amplitude — when zero, the output collapses to a pure greyscale ramp — so `saturation` is more accurate.
 
 ### `contrastRatio(a, b): number`
 

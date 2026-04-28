@@ -1,7 +1,7 @@
 export interface CubehelixParams {
   start: number;
   rotations: number;
-  hue: number;
+  saturation: number;
   gamma: number;
 }
 

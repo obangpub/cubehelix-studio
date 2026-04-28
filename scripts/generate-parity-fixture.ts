@@ -6,7 +6,7 @@ import type { CubehelixParams } from "../packages/core/src/types";
 
 const STARTS = [0.0, 0.5, 1.0, 2.5];
 const ROTATIONS = [-2.0, -1.5, 0.0, 1.5];
-const HUES = [0.5, 1.0, 1.5];
+const SATURATIONS = [0.5, 1.0, 1.5];
 const GAMMAS = [0.7, 1.0, 1.4];
 const T_COUNT = 21;
 
@@ -18,9 +18,9 @@ interface FixtureEntry {
 const entries: FixtureEntry[] = [];
 for (const start of STARTS) {
   for (const rotations of ROTATIONS) {
-    for (const hue of HUES) {
+    for (const saturation of SATURATIONS) {
       for (const gamma of GAMMAS) {
-        const params: CubehelixParams = { start, rotations, hue, gamma };
+        const params: CubehelixParams = { start, rotations, saturation, gamma };
         const samples: FixtureEntry["samples"] = [];
         for (let i = 0; i < T_COUNT; i++) {
           const t = i / (T_COUNT - 1);
@@ -39,7 +39,7 @@ const fixture = {
   parameterGrid: {
     start: STARTS,
     rotations: ROTATIONS,
-    hue: HUES,
+    saturation: SATURATIONS,
     gamma: GAMMAS,
     tCount: T_COUNT,
   },

@@ -18,7 +18,7 @@ describe("cubehelix", () => {
   });
 
   test("clamps output channels into [0, 1]", () => {
-    const params: CubehelixParams = { start: 0, rotations: 5, hue: 5, gamma: 1 };
+    const params: CubehelixParams = { start: 0, rotations: 5, saturation: 5, gamma: 1 };
     for (let i = 0; i <= 50; i++) {
       const c = cubehelix(i / 50, params);
       expect(c.r).toBeGreaterThanOrEqual(0);
@@ -41,8 +41,8 @@ describe("cubehelix", () => {
     }
   });
 
-  test("hue=0 yields a pure greyscale ramp", () => {
-    const params: CubehelixParams = { start: 0, rotations: 0, hue: 0, gamma: 1 };
+  test("saturation=0 yields a pure greyscale ramp", () => {
+    const params: CubehelixParams = { start: 0, rotations: 0, saturation: 0, gamma: 1 };
     for (let i = 0; i <= 10; i++) {
       const t = i / 10;
       const { r, g, b } = cubehelix(t, params);
