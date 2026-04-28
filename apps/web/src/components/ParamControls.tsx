@@ -31,7 +31,7 @@ export function ParamControls({ params, onChange }: ParamControlsProps) {
         onChange={update("rotations")}
       />
       <Slider
-        label="Color Richness"
+        label="Saturation"
         technicalName="hue"
         value={params.hue}
         min={0}
