@@ -3,6 +3,8 @@ export interface CubehelixParams {
   rotations: number;
   saturation: number;
   gamma: number;
+  lightnessMin: number;
+  lightnessMax: number;
 }
 
 export interface RGB {

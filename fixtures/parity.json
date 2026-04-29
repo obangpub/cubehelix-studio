@@ -1,5 +1,5 @@
 {
-  "version": 1,
+  "version": 2,
   "generator": "cubehelix-studio/scripts/generate-parity-fixture.ts",
   "parameterGrid": {
     "start": [
@@ -24,6 +24,20 @@
       1,
       1.4
     ],
+    "lightnessRanges": [
+      {
+        "lightnessMin": 0.15,
+        "lightnessMax": 0.85
+      },
+      {
+        "lightnessMin": 0,
+        "lightnessMax": 0.6
+      },
+      {
+        "lightnessMin": 0.4,
+        "lightnessMax": 1
+      }
+    ],
     "tCount": 21
   },
   "entries": [
@@ -32,7 +46,9 @@
         "start": 0,
         "rotations": -2,
         "saturation": 0.5,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -168,7 +184,9 @@
         "start": 0,
         "rotations": -2,
         "saturation": 0.5,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -304,7 +322,9 @@
         "start": 0,
         "rotations": -2,
         "saturation": 0.5,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -440,7 +460,9 @@
         "start": 0,
         "rotations": -2,
         "saturation": 1,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -576,7 +598,9 @@
         "start": 0,
         "rotations": -2,
         "saturation": 1,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -712,7 +736,9 @@
         "start": 0,
         "rotations": -2,
         "saturation": 1,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -848,7 +874,9 @@
         "start": 0,
         "rotations": -2,
         "saturation": 1.5,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -984,7 +1012,9 @@
         "start": 0,
         "rotations": -2,
         "saturation": 1.5,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -1120,7 +1150,9 @@
         "start": 0,
         "rotations": -2,
         "saturation": 1.5,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -1256,7 +1288,9 @@
         "start": 0,
         "rotations": -1.5,
         "saturation": 0.5,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -1392,7 +1426,9 @@
         "start": 0,
         "rotations": -1.5,
         "saturation": 0.5,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -1528,7 +1564,9 @@
         "start": 0,
         "rotations": -1.5,
         "saturation": 0.5,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -1664,7 +1702,9 @@
         "start": 0,
         "rotations": -1.5,
         "saturation": 1,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -1800,7 +1840,9 @@
         "start": 0,
         "rotations": -1.5,
         "saturation": 1,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -1936,7 +1978,9 @@
         "start": 0,
         "rotations": -1.5,
         "saturation": 1,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -2072,7 +2116,9 @@
         "start": 0,
         "rotations": -1.5,
         "saturation": 1.5,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -2208,7 +2254,9 @@
         "start": 0,
         "rotations": -1.5,
         "saturation": 1.5,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -2344,7 +2392,9 @@
         "start": 0,
         "rotations": -1.5,
         "saturation": 1.5,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -2480,7 +2530,9 @@
         "start": 0,
         "rotations": 0,
         "saturation": 0.5,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -2616,7 +2668,9 @@
         "start": 0,
         "rotations": 0,
         "saturation": 0.5,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -2752,7 +2806,9 @@
         "start": 0,
         "rotations": 0,
         "saturation": 0.5,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -2888,7 +2944,9 @@
         "start": 0,
         "rotations": 0,
         "saturation": 1,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -3024,7 +3082,9 @@
         "start": 0,
         "rotations": 0,
         "saturation": 1,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -3160,7 +3220,9 @@
         "start": 0,
         "rotations": 0,
         "saturation": 1,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -3296,7 +3358,9 @@
         "start": 0,
         "rotations": 0,
         "saturation": 1.5,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -3432,7 +3496,9 @@
         "start": 0,
         "rotations": 0,
         "saturation": 1.5,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -3568,7 +3634,9 @@
         "start": 0,
         "rotations": 0,
         "saturation": 1.5,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -3704,7 +3772,9 @@
         "start": 0,
         "rotations": 1.5,
         "saturation": 0.5,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -3840,7 +3910,9 @@
         "start": 0,
         "rotations": 1.5,
         "saturation": 0.5,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -3976,7 +4048,9 @@
         "start": 0,
         "rotations": 1.5,
         "saturation": 0.5,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -4112,7 +4186,9 @@
         "start": 0,
         "rotations": 1.5,
         "saturation": 1,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -4248,7 +4324,9 @@
         "start": 0,
         "rotations": 1.5,
         "saturation": 1,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -4384,7 +4462,9 @@
         "start": 0,
         "rotations": 1.5,
         "saturation": 1,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -4520,7 +4600,9 @@
         "start": 0,
         "rotations": 1.5,
         "saturation": 1.5,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -4656,7 +4738,9 @@
         "start": 0,
         "rotations": 1.5,
         "saturation": 1.5,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -4792,7 +4876,9 @@
         "start": 0,
         "rotations": 1.5,
         "saturation": 1.5,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -4928,7 +5014,9 @@
         "start": 0.5,
         "rotations": -2,
         "saturation": 0.5,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -5064,7 +5152,9 @@
         "start": 0.5,
         "rotations": -2,
         "saturation": 0.5,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -5200,7 +5290,9 @@
         "start": 0.5,
         "rotations": -2,
         "saturation": 0.5,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -5336,7 +5428,9 @@
         "start": 0.5,
         "rotations": -2,
         "saturation": 1,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -5472,7 +5566,9 @@
         "start": 0.5,
         "rotations": -2,
         "saturation": 1,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -5608,7 +5704,9 @@
         "start": 0.5,
         "rotations": -2,
         "saturation": 1,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -5744,7 +5842,9 @@
         "start": 0.5,
         "rotations": -2,
         "saturation": 1.5,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -5880,7 +5980,9 @@
         "start": 0.5,
         "rotations": -2,
         "saturation": 1.5,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -6016,7 +6118,9 @@
         "start": 0.5,
         "rotations": -2,
         "saturation": 1.5,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -6152,7 +6256,9 @@
         "start": 0.5,
         "rotations": -1.5,
         "saturation": 0.5,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -6288,7 +6394,9 @@
         "start": 0.5,
         "rotations": -1.5,
         "saturation": 0.5,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -6424,7 +6532,9 @@
         "start": 0.5,
         "rotations": -1.5,
         "saturation": 0.5,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -6560,7 +6670,9 @@
         "start": 0.5,
         "rotations": -1.5,
         "saturation": 1,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -6696,7 +6808,9 @@
         "start": 0.5,
         "rotations": -1.5,
         "saturation": 1,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -6832,7 +6946,9 @@
         "start": 0.5,
         "rotations": -1.5,
         "saturation": 1,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -6968,7 +7084,9 @@
         "start": 0.5,
         "rotations": -1.5,
         "saturation": 1.5,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -7104,7 +7222,9 @@
         "start": 0.5,
         "rotations": -1.5,
         "saturation": 1.5,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -7240,7 +7360,9 @@
         "start": 0.5,
         "rotations": -1.5,
         "saturation": 1.5,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -7376,7 +7498,9 @@
         "start": 0.5,
         "rotations": 0,
         "saturation": 0.5,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -7512,7 +7636,9 @@
         "start": 0.5,
         "rotations": 0,
         "saturation": 0.5,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -7648,7 +7774,9 @@
         "start": 0.5,
         "rotations": 0,
         "saturation": 0.5,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -7784,7 +7912,9 @@
         "start": 0.5,
         "rotations": 0,
         "saturation": 1,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -7920,7 +8050,9 @@
         "start": 0.5,
         "rotations": 0,
         "saturation": 1,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -8056,7 +8188,9 @@
         "start": 0.5,
         "rotations": 0,
         "saturation": 1,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -8192,7 +8326,9 @@
         "start": 0.5,
         "rotations": 0,
         "saturation": 1.5,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -8328,7 +8464,9 @@
         "start": 0.5,
         "rotations": 0,
         "saturation": 1.5,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -8464,7 +8602,9 @@
         "start": 0.5,
         "rotations": 0,
         "saturation": 1.5,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -8600,7 +8740,9 @@
         "start": 0.5,
         "rotations": 1.5,
         "saturation": 0.5,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -8736,7 +8878,9 @@
         "start": 0.5,
         "rotations": 1.5,
         "saturation": 0.5,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -8872,7 +9016,9 @@
         "start": 0.5,
         "rotations": 1.5,
         "saturation": 0.5,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -9008,7 +9154,9 @@
         "start": 0.5,
         "rotations": 1.5,
         "saturation": 1,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -9144,7 +9292,9 @@
         "start": 0.5,
         "rotations": 1.5,
         "saturation": 1,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -9280,7 +9430,9 @@
         "start": 0.5,
         "rotations": 1.5,
         "saturation": 1,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -9416,7 +9568,9 @@
         "start": 0.5,
         "rotations": 1.5,
         "saturation": 1.5,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -9552,7 +9706,9 @@
         "start": 0.5,
         "rotations": 1.5,
         "saturation": 1.5,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -9688,7 +9844,9 @@
         "start": 0.5,
         "rotations": 1.5,
         "saturation": 1.5,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -9824,7 +9982,9 @@
         "start": 1,
         "rotations": -2,
         "saturation": 0.5,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -9960,7 +10120,9 @@
         "start": 1,
         "rotations": -2,
         "saturation": 0.5,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -10096,7 +10258,9 @@
         "start": 1,
         "rotations": -2,
         "saturation": 0.5,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -10232,7 +10396,9 @@
         "start": 1,
         "rotations": -2,
         "saturation": 1,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -10368,7 +10534,9 @@
         "start": 1,
         "rotations": -2,
         "saturation": 1,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -10504,7 +10672,9 @@
         "start": 1,
         "rotations": -2,
         "saturation": 1,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -10640,7 +10810,9 @@
         "start": 1,
         "rotations": -2,
         "saturation": 1.5,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -10776,7 +10948,9 @@
         "start": 1,
         "rotations": -2,
         "saturation": 1.5,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -10912,7 +11086,9 @@
         "start": 1,
         "rotations": -2,
         "saturation": 1.5,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -11048,7 +11224,9 @@
         "start": 1,
         "rotations": -1.5,
         "saturation": 0.5,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -11184,7 +11362,9 @@
         "start": 1,
         "rotations": -1.5,
         "saturation": 0.5,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -11320,7 +11500,9 @@
         "start": 1,
         "rotations": -1.5,
         "saturation": 0.5,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -11456,7 +11638,9 @@
         "start": 1,
         "rotations": -1.5,
         "saturation": 1,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -11592,7 +11776,9 @@
         "start": 1,
         "rotations": -1.5,
         "saturation": 1,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -11728,7 +11914,9 @@
         "start": 1,
         "rotations": -1.5,
         "saturation": 1,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -11864,7 +12052,9 @@
         "start": 1,
         "rotations": -1.5,
         "saturation": 1.5,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -12000,7 +12190,9 @@
         "start": 1,
         "rotations": -1.5,
         "saturation": 1.5,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -12136,7 +12328,9 @@
         "start": 1,
         "rotations": -1.5,
         "saturation": 1.5,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -12272,7 +12466,9 @@
         "start": 1,
         "rotations": 0,
         "saturation": 0.5,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -12408,7 +12604,9 @@
         "start": 1,
         "rotations": 0,
         "saturation": 0.5,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -12544,7 +12742,9 @@
         "start": 1,
         "rotations": 0,
         "saturation": 0.5,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -12680,7 +12880,9 @@
         "start": 1,
         "rotations": 0,
         "saturation": 1,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -12816,7 +13018,9 @@
         "start": 1,
         "rotations": 0,
         "saturation": 1,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -12952,7 +13156,9 @@
         "start": 1,
         "rotations": 0,
         "saturation": 1,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -13088,7 +13294,9 @@
         "start": 1,
         "rotations": 0,
         "saturation": 1.5,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -13224,7 +13432,9 @@
         "start": 1,
         "rotations": 0,
         "saturation": 1.5,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -13360,7 +13570,9 @@
         "start": 1,
         "rotations": 0,
         "saturation": 1.5,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -13496,7 +13708,9 @@
         "start": 1,
         "rotations": 1.5,
         "saturation": 0.5,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -13632,7 +13846,9 @@
         "start": 1,
         "rotations": 1.5,
         "saturation": 0.5,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -13768,7 +13984,9 @@
         "start": 1,
         "rotations": 1.5,
         "saturation": 0.5,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -13904,7 +14122,9 @@
         "start": 1,
         "rotations": 1.5,
         "saturation": 1,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -14040,7 +14260,9 @@
         "start": 1,
         "rotations": 1.5,
         "saturation": 1,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -14176,7 +14398,9 @@
         "start": 1,
         "rotations": 1.5,
         "saturation": 1,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -14312,7 +14536,9 @@
         "start": 1,
         "rotations": 1.5,
         "saturation": 1.5,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -14448,7 +14674,9 @@
         "start": 1,
         "rotations": 1.5,
         "saturation": 1.5,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -14584,7 +14812,9 @@
         "start": 1,
         "rotations": 1.5,
         "saturation": 1.5,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -14720,7 +14950,9 @@
         "start": 2.5,
         "rotations": -2,
         "saturation": 0.5,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -14856,7 +15088,9 @@
         "start": 2.5,
         "rotations": -2,
         "saturation": 0.5,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -14992,7 +15226,9 @@
         "start": 2.5,
         "rotations": -2,
         "saturation": 0.5,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -15128,7 +15364,9 @@
         "start": 2.5,
         "rotations": -2,
         "saturation": 1,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -15264,7 +15502,9 @@
         "start": 2.5,
         "rotations": -2,
         "saturation": 1,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -15400,7 +15640,9 @@
         "start": 2.5,
         "rotations": -2,
         "saturation": 1,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -15536,7 +15778,9 @@
         "start": 2.5,
         "rotations": -2,
         "saturation": 1.5,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -15672,7 +15916,9 @@
         "start": 2.5,
         "rotations": -2,
         "saturation": 1.5,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -15808,7 +16054,9 @@
         "start": 2.5,
         "rotations": -2,
         "saturation": 1.5,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -15944,7 +16192,9 @@
         "start": 2.5,
         "rotations": -1.5,
         "saturation": 0.5,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -16080,7 +16330,9 @@
         "start": 2.5,
         "rotations": -1.5,
         "saturation": 0.5,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -16216,7 +16468,9 @@
         "start": 2.5,
         "rotations": -1.5,
         "saturation": 0.5,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -16352,7 +16606,9 @@
         "start": 2.5,
         "rotations": -1.5,
         "saturation": 1,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -16488,7 +16744,9 @@
         "start": 2.5,
         "rotations": -1.5,
         "saturation": 1,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -16624,7 +16882,9 @@
         "start": 2.5,
         "rotations": -1.5,
         "saturation": 1,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -16760,7 +17020,9 @@
         "start": 2.5,
         "rotations": -1.5,
         "saturation": 1.5,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -16896,7 +17158,9 @@
         "start": 2.5,
         "rotations": -1.5,
         "saturation": 1.5,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -17032,7 +17296,9 @@
         "start": 2.5,
         "rotations": -1.5,
         "saturation": 1.5,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -17168,7 +17434,9 @@
         "start": 2.5,
         "rotations": 0,
         "saturation": 0.5,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -17304,7 +17572,9 @@
         "start": 2.5,
         "rotations": 0,
         "saturation": 0.5,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -17440,7 +17710,9 @@
         "start": 2.5,
         "rotations": 0,
         "saturation": 0.5,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -17576,7 +17848,9 @@
         "start": 2.5,
         "rotations": 0,
         "saturation": 1,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -17712,7 +17986,9 @@
         "start": 2.5,
         "rotations": 0,
         "saturation": 1,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -17848,7 +18124,9 @@
         "start": 2.5,
         "rotations": 0,
         "saturation": 1,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -17984,7 +18262,9 @@
         "start": 2.5,
         "rotations": 0,
         "saturation": 1.5,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -18120,7 +18400,9 @@
         "start": 2.5,
         "rotations": 0,
         "saturation": 1.5,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -18256,7 +18538,9 @@
         "start": 2.5,
         "rotations": 0,
         "saturation": 1.5,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -18392,7 +18676,9 @@
         "start": 2.5,
         "rotations": 1.5,
         "saturation": 0.5,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -18528,7 +18814,9 @@
         "start": 2.5,
         "rotations": 1.5,
         "saturation": 0.5,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -18664,7 +18952,9 @@
         "start": 2.5,
         "rotations": 1.5,
         "saturation": 0.5,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -18800,7 +19090,9 @@
         "start": 2.5,
         "rotations": 1.5,
         "saturation": 1,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -18936,7 +19228,9 @@
         "start": 2.5,
         "rotations": 1.5,
         "saturation": 1,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -19072,7 +19366,9 @@
         "start": 2.5,
         "rotations": 1.5,
         "saturation": 1,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -19208,7 +19504,9 @@
         "start": 2.5,
         "rotations": 1.5,
         "saturation": 1.5,
-        "gamma": 0.7
+        "gamma": 0.7,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -19344,7 +19642,9 @@
         "start": 2.5,
         "rotations": 1.5,
         "saturation": 1.5,
-        "gamma": 1
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -19480,7 +19780,9 @@
         "start": 2.5,
         "rotations": 1.5,
         "saturation": 1.5,
-        "gamma": 1.4
+        "gamma": 1.4,
+        "lightnessMin": 0,
+        "lightnessMax": 1
       },
       "samples": [
         {
@@ -19602,6 +19904,420 @@
           "r": 1,
           "g": 0.8876615113607343,
           "b": 0.9257128185742903
+        },
+        {
+          "t": 1,
+          "r": 1,
+          "g": 1,
+          "b": 1
+        }
+      ]
+    },
+    {
+      "params": {
+        "start": 0.5,
+        "rotations": -1.5,
+        "saturation": 1,
+        "gamma": 1,
+        "lightnessMin": 0.15,
+        "lightnessMax": 0.85
+      },
+      "samples": [
+        {
+          "t": 0,
+          "r": 0.24368821820542996,
+          "g": 0.09063737902236955,
+          "b": 0.21288746249999996
+        },
+        {
+          "t": 0.05,
+          "r": 0.24880280082985134,
+          "g": 0.12930159768596058,
+          "b": 0.3097396788744183
+        },
+        {
+          "t": 0.1,
+          "r": 0.2233079597627357,
+          "g": 0.18693071337590225,
+          "b": 0.38835092802366816
+        },
+        {
+          "t": 0.15,
+          "r": 0.18113515376140804,
+          "g": 0.25993929408380173,
+          "b": 0.4299573021049887
+        },
+        {
+          "t": 0.2,
+          "r": 0.14336874739748193,
+          "g": 0.33921901037670316,
+          "b": 0.4259099097395679
+        },
+        {
+          "t": 0.25,
+          "r": 0.13189661688976784,
+          "g": 0.4127452900144353,
+          "b": 0.38101021588826334
+        },
+        {
+          "t": 0.3,
+          "r": 0.1626722563060478,
+          "g": 0.4691459368471097,
+          "b": 0.3127452720443146
+        },
+        {
+          "t": 0.35,
+          "r": 0.2406282196790989,
+          "g": 0.501153473257129,
+          "b": 0.24664296115016904
+        },
+        {
+          "t": 0.4,
+          "r": 0.3577744351025571,
+          "g": 0.5079056024661799,
+          "b": 0.20911951051906918
+        },
+        {
+          "t": 0.45,
+          "r": 0.4950656165328178,
+          "g": 0.4954037173407034,
+          "b": 0.2199272503571718
+        },
+        {
+          "t": 0.5,
+          "r": 0.6275106294070507,
+          "g": 0.4749835305955097,
+          "b": 0.28642297998219124
+        },
+        {
+          "t": 0.55,
+          "r": 0.7310465834107676,
+          "g": 0.4602350481632027,
+          "b": 0.4013406386165491
+        },
+        {
+          "t": 0.6,
+          "r": 0.7891853042443746,
+          "g": 0.46326218299484057,
+          "b": 0.5447267112565716
+        },
+        {
+          "t": 0.65,
+          "r": 0.7975065640813068,
+          "g": 0.491364815958246,
+          "b": 0.689482258273141
+        },
+        {
+          "t": 0.7,
+          "r": 0.7647002235808983,
+          "g": 0.54510294689914,
+          "b": 0.8089039535077929
+        },
+        {
+          "t": 0.75,
+          "r": 0.7098662111841885,
+          "g": 0.6182994580865575,
+          "b": 0.8840329714379008
+        },
+        {
+          "t": 0.8,
+          "r": 0.6568756133436237,
+          "g": 0.6999712976088538,
+          "b": 0.9086756409949811
+        },
+        {
+          "t": 0.85,
+          "r": 0.6274600762007024,
+          "g": 0.7776126464547459,
+          "b": 0.8906407577742922
+        },
+        {
+          "t": 0.9,
+          "r": 0.6350763724613964,
+          "g": 0.8408530410968489,
+          "b": 0.8488516679642194
+        },
+        {
+          "t": 0.95,
+          "r": 0.6813719525211421,
+          "g": 0.8843975045346051,
+          "b": 0.8072158108024186
+        },
+        {
+          "t": 1,
+          "r": 0.7563117817945699,
+          "g": 0.9093626209776304,
+          "b": 0.7871125375000001
+        }
+      ]
+    },
+    {
+      "params": {
+        "start": 0.5,
+        "rotations": -1.5,
+        "saturation": 1,
+        "gamma": 1,
+        "lightnessMin": 0,
+        "lightnessMax": 0.6
+      },
+      "samples": [
+        {
+          "t": 0,
+          "r": 0,
+          "g": 0,
+          "b": 0
+        },
+        {
+          "t": 0.05,
+          "r": 0.04231412040556242,
+          "g": 0.019250051352422172,
+          "b": 0.05407510963518867
+        },
+        {
+          "t": 0.1,
+          "r": 0.061087231530409646,
+          "g": 0.0491310736270448,
+          "b": 0.11533212319659024
+        },
+        {
+          "t": 0.15,
+          "r": 0.058156173670532,
+          "g": 0.09212937589400373,
+          "b": 0.16542572992445626
+        },
+        {
+          "t": 0.2,
+          "r": 0.04479718176383725,
+          "g": 0.1452429698677992,
+          "b": 0.18970415963330925
+        },
+        {
+          "t": 0.25,
+          "r": 0.03776897391883943,
+          "g": 0.20099726257249234,
+          "b": 0.1825529459863411
+        },
+        {
+          "t": 0.3,
+          "r": 0.053586914196061874,
+          "g": 0.24992161579267966,
+          "b": 0.14972743990338905
+        },
+        {
+          "t": 0.35,
+          "r": 0.10283281366152319,
+          "g": 0.28369332027767635,
+          "b": 0.10700833666623306
+        },
+        {
+          "t": 0.4,
+          "r": 0.18625074240190298,
+          "g": 0.29797626230041296,
+          "b": 0.0756238217816329
+        },
+        {
+          "t": 0.45,
+          "r": 0.293820452290698,
+          "g": 0.29408832353674064,
+          "b": 0.07583322699386424
+        },
+        {
+          "t": 0.5,
+          "r": 0.4071089287019226,
+          "g": 0.2789861657002281,
+          "b": 0.12059530318504064
+        },
+        {
+          "t": 0.55,
+          "r": 0.5042373614395366,
+          "g": 0.26355228278116416,
+          "b": 0.21120958777256155
+        },
+        {
+          "t": 0.6,
+          "r": 0.5660395516030352,
+          "g": 0.25966383909429325,
+          "b": 0.33624248989601835
+        },
+        {
+          "t": 0.65,
+          "r": 0.5816405966939759,
+          "g": 0.27687599002601415,
+          "b": 0.474102225099614
+        },
+        {
+          "t": 0.7,
+          "r": 0.551844507223554,
+          "g": 0.3196661365652367,
+          "b": 0.5985807425108436
+        },
+        {
+          "t": 0.75,
+          "r": 0.48933623825908446,
+          "g": 0.38603015784124434,
+          "b": 0.6858320703401958
+        },
+        {
+          "t": 0.8,
+          "r": 0.41560054924996825,
+          "g": 0.46784281633399666,
+          "b": 0.7208423506184909
+        },
+        {
+          "t": 0.85,
+          "r": 0.35538372439823945,
+          "g": 0.5528998570814108,
+          "b": 0.7015811310319549
+        },
+        {
+          "t": 0.9,
+          "r": 0.33021544824831495,
+          "g": 0.6280879685807533,
+          "b": 0.6396664004796742
+        },
+        {
+          "t": 0.95,
+          "r": 0.35277410421443844,
+          "g": 0.6828126570149673,
+          "b": 0.5573460137799555
+        },
+        {
+          "t": 1,
+          "r": 0.42364570690742587,
+          "g": 0.7117414041931867,
+          "b": 0.48162360000000015
+        }
+      ]
+    },
+    {
+      "params": {
+        "start": 0.5,
+        "rotations": -1.5,
+        "saturation": 1,
+        "gamma": 1,
+        "lightnessMin": 0.4,
+        "lightnessMax": 1
+      },
+      "samples": [
+        {
+          "t": 0,
+          "r": 0.5763542930925741,
+          "g": 0.28825859580681334,
+          "b": 0.5183764
+        },
+        {
+          "t": 0.05,
+          "r": 0.5337179007355104,
+          "g": 0.3394566180920507,
+          "b": 0.6327769543499913
+        },
+        {
+          "t": 0.1,
+          "r": 0.46478844525095314,
+          "g": 0.41213047320847396,
+          "b": 0.7036967979083869
+        },
+        {
+          "t": 0.15,
+          "r": 0.3928355042767515,
+          "g": 0.4964973264458063,
+          "b": 0.7201451759233409
+        },
+        {
+          "t": 0.2,
+          "r": 0.3422478841690699,
+          "g": 0.5796652015057072,
+          "b": 0.6847552864060037
+        },
+        {
+          "t": 0.25,
+          "r": 0.3321397729012766,
+          "g": 0.6489946861701322,
+          "b": 0.6131910127970152
+        },
+        {
+          "t": 0.3,
+          "r": 0.37136702099024854,
+          "g": 0.6953990894789754,
+          "b": 0.5300379699218536
+        },
+        {
+          "t": 0.35,
+          "r": 0.456322642375385,
+          "g": 0.7156759547562339,
+          "b": 0.46231032726278987
+        },
+        {
+          "t": 0.4,
+          "r": 0.5721062009287196,
+          "g": 0.7132331734321006,
+          "b": 0.4323669327767995
+        },
+        {
+          "t": 0.45,
+          "r": 0.6967209639851514,
+          "g": 0.6970214527345173,
+          "b": 0.45219039314228
+        },
+        {
+          "t": 0.5,
+          "r": 0.8071089287019226,
+          "g": 0.6789861657002281,
+          "b": 0.5205953031850405
+        },
+        {
+          "t": 0.55,
+          "r": 0.8853242150146208,
+          "g": 0.6707650607696403,
+          "b": 0.624104069425472
+        },
+        {
+          "t": 0.6,
+          "r": 0.9231146450190695,
+          "g": 0.6805672059496488,
+          "b": 0.7411919711676812
+        },
+        {
+          "t": 0.65,
+          "r": 0.9236409205192544,
+          "g": 0.7111127647974601,
+          "b": 0.8486488404540814
+        },
+        {
+          "t": 0.7,
+          "r": 0.8998860807315131,
+          "g": 0.7592065753572617,
+          "b": 0.9282040952159298
+        },
+        {
+          "t": 0.75,
+          "r": 0.8702641227395284,
+          "g": 0.8170458388879137,
+          "b": 0.9714892483570705
+        },
+        {
+          "t": 0.8,
+          "r": 0.8527540785288328,
+          "g": 0.8748565761413063,
+          "b": 0.9818948406462846
+        },
+        {
+          "t": 0.85,
+          "r": 0.8593274390884987,
+          "g": 0.9240596170266808,
+          "b": 0.9727870933634137
+        },
+        {
+          "t": 0.9,
+          "r": 0.8923677587810185,
+          "g": 0.9600006498709923,
+          "b": 0.9626295691910371
+        },
+        {
+          "t": 0.95,
+          "r": 0.9442094101698905,
+          "g": 0.9833939139907611,
+          "b": 0.9684976295430302
         },
         {
           "t": 1,

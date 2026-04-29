@@ -5,11 +5,13 @@ export const DEFAULT_CUBEHELIX_PARAMS: CubehelixParams = {
   rotations: -1.5,
   saturation: 1.0,
   gamma: 1.0,
+  lightnessMin: 0.0,
+  lightnessMax: 1.0,
 };
 
 export function cubehelixRaw(t: number, params: CubehelixParams): RGB {
-  const { start, rotations, saturation, gamma } = params;
-  const fraction = Math.pow(t, gamma);
+  const { start, rotations, saturation, gamma, lightnessMin, lightnessMax } = params;
+  const fraction = lightnessMin + (lightnessMax - lightnessMin) * Math.pow(t, gamma);
   const angle = 2 * Math.PI * (start / 3 + rotations * t + 1);
   const amp = (saturation * fraction * (1 - fraction)) / 2;
   const cosA = Math.cos(angle);
@@ -23,6 +25,10 @@ export function cubehelixRaw(t: number, params: CubehelixParams): RGB {
 export function cubehelix(t: number, params: CubehelixParams): RGB {
   const { r, g, b } = cubehelixRaw(t, params);
   return { r: clamp01(r), g: clamp01(g), b: clamp01(b) };
+}
+
+export function wasClamped(rgb: RGB): boolean {
+  return rgb.r < 0 || rgb.r > 1 || rgb.g < 0 || rgb.g > 1 || rgb.b < 0 || rgb.b > 1;
 }
 
 function clamp01(x: number): number {

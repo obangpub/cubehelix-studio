@@ -5,6 +5,8 @@ const KEYS = [
   "rotations",
   "saturation",
   "gamma",
+  "lightnessMin",
+  "lightnessMax",
 ] as const satisfies readonly (keyof CubehelixParams)[];
 
 const PARAM_BOUNDS: Record<keyof CubehelixParams, { min: number; max: number }> = {
@@ -12,6 +14,8 @@ const PARAM_BOUNDS: Record<keyof CubehelixParams, { min: number; max: number }> 
   rotations: { min: -3, max: 3 },
   saturation: { min: 0, max: 2 },
   gamma: { min: 0.5, max: 2 },
+  lightnessMin: { min: 0, max: 1 },
+  lightnessMax: { min: 0, max: 1 },
 };
 
 const ENCODE_PRECISION = 4;
@@ -50,6 +54,12 @@ export function decodeParams(searchString: string): CubehelixParams {
     if (!Number.isFinite(num)) continue;
     const { min, max } = PARAM_BOUNDS[key];
     result[key] = clamp(num, min, max);
+  }
+  if (result.lightnessMin > result.lightnessMax) {
+    const lo = result.lightnessMax;
+    const hi = result.lightnessMin;
+    result.lightnessMin = lo;
+    result.lightnessMax = hi;
   }
   return result;
 }

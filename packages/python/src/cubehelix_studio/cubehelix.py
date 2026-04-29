@@ -12,6 +12,8 @@ class CubehelixParams:
     rotations: float = -1.5
     saturation: float = 1.0
     gamma: float = 1.0
+    lightness_min: float = 0.0
+    lightness_max: float = 1.0
 
 
 def _clamp01(x: float) -> float:
@@ -22,8 +24,8 @@ def _clamp01(x: float) -> float:
     return x
 
 
-def cubehelix(t: float, params: CubehelixParams) -> tuple[float, float, float]:
-    fraction = t**params.gamma
+def cubehelix_raw(t: float, params: CubehelixParams) -> tuple[float, float, float]:
+    fraction = params.lightness_min + (params.lightness_max - params.lightness_min) * t**params.gamma
     angle = 2.0 * math.pi * (params.start / 3.0 + params.rotations * t + 1.0)
     amp = (params.saturation * fraction * (1.0 - fraction)) / 2.0
     cos_a = math.cos(angle)
@@ -31,4 +33,14 @@ def cubehelix(t: float, params: CubehelixParams) -> tuple[float, float, float]:
     r = fraction + amp * (-0.14861 * cos_a + 1.78277 * sin_a)
     g = fraction + amp * (-0.29227 * cos_a - 0.90649 * sin_a)
     b = fraction + amp * (1.97294 * cos_a)
+    return r, g, b
+
+
+def cubehelix(t: float, params: CubehelixParams) -> tuple[float, float, float]:
+    r, g, b = cubehelix_raw(t, params)
     return _clamp01(r), _clamp01(g), _clamp01(b)
+
+
+def was_clamped(rgb: tuple[float, float, float]) -> bool:
+    r, g, b = rgb
+    return r < 0.0 or r > 1.0 or g < 0.0 or g > 1.0 or b < 0.0 or b > 1.0

@@ -18,7 +18,13 @@ describe("cubehelix", () => {
   });
 
   test("clamps output channels into [0, 1]", () => {
-    const params: CubehelixParams = { start: 0, rotations: 5, saturation: 5, gamma: 1 };
+    const params: CubehelixParams = {
+      ...DEFAULT_CUBEHELIX_PARAMS,
+      start: 0,
+      rotations: 5,
+      saturation: 5,
+      gamma: 1,
+    };
     for (let i = 0; i <= 50; i++) {
       const c = cubehelix(i / 50, params);
       expect(c.r).toBeGreaterThanOrEqual(0);
@@ -42,7 +48,13 @@ describe("cubehelix", () => {
   });
 
   test("saturation=0 yields a pure greyscale ramp", () => {
-    const params: CubehelixParams = { start: 0, rotations: 0, saturation: 0, gamma: 1 };
+    const params: CubehelixParams = {
+      ...DEFAULT_CUBEHELIX_PARAMS,
+      start: 0,
+      rotations: 0,
+      saturation: 0,
+      gamma: 1,
+    };
     for (let i = 0; i <= 10; i++) {
       const t = i / 10;
       const { r, g, b } = cubehelix(t, params);
@@ -65,7 +77,13 @@ describe("cubehelix", () => {
   });
 
   test("cubehelixRaw produces out-of-gamut values at high saturation", () => {
-    const params: CubehelixParams = { start: 0, rotations: 1, saturation: 4, gamma: 1 };
+    const params: CubehelixParams = {
+      ...DEFAULT_CUBEHELIX_PARAMS,
+      start: 0,
+      rotations: 1,
+      saturation: 4,
+      gamma: 1,
+    };
     let sawOutOfGamut = false;
     for (let i = 0; i <= 50; i++) {
       const t = i / 50;
@@ -79,7 +97,13 @@ describe("cubehelix", () => {
   });
 
   test("cubehelix clamps cubehelixRaw to [0,1] per channel", () => {
-    const params: CubehelixParams = { start: 0, rotations: 1, saturation: 4, gamma: 1 };
+    const params: CubehelixParams = {
+      ...DEFAULT_CUBEHELIX_PARAMS,
+      start: 0,
+      rotations: 1,
+      saturation: 4,
+      gamma: 1,
+    };
     for (let i = 0; i <= 50; i++) {
       const t = i / 50;
       const raw = cubehelixRaw(t, params);

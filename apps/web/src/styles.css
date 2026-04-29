@@ -190,6 +190,58 @@ header p {
   width: 100%;
 }
 
+.range-slider {
+  display: flex;
+  flex-direction: column;
+}
+
+.range-slider-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-bottom: 0.25rem;
+}
+
+.range-slider-values {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.range-slider-track {
+  position: relative;
+  height: 28px;
+}
+
+.range-slider-track input[type="range"] {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  margin: 0;
+  pointer-events: none;
+  background: transparent;
+}
+
+.range-slider-track input[type="range"]::-webkit-slider-thumb {
+  pointer-events: auto;
+}
+
+.range-slider-track input[type="range"]::-moz-range-thumb {
+  pointer-events: auto;
+}
+
+.range-slider-fill {
+  position: absolute;
+  top: 50%;
+  height: 4px;
+  transform: translateY(-50%);
+  background: var(--fg);
+  border-radius: 2px;
+  pointer-events: none;
+  opacity: 0.4;
+}
+
 .preview {
   display: flex;
   flex-direction: column;

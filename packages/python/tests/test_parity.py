@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import re
 from pathlib import Path
 from typing import Any
 
@@ -9,6 +10,12 @@ from cubehelix_studio import CubehelixParams, cubehelix
 FIXTURE_PATH = Path(__file__).resolve().parents[3] / "fixtures" / "parity.json"
 TOLERANCE = 1e-12
 
+_CAMEL_TO_SNAKE = re.compile(r"(?<!^)(?=[A-Z])")
+
+
+def _to_snake_case_keys(params: dict[str, Any]) -> dict[str, Any]:
+    return {_CAMEL_TO_SNAKE.sub("_", key).lower(): value for key, value in params.items()}
+
 
 def test_parity_with_typescript_core() -> None:
     assert FIXTURE_PATH.exists(), f"parity fixture missing at {FIXTURE_PATH}"
@@ -16,7 +23,7 @@ def test_parity_with_typescript_core() -> None:
     entries = fixture["entries"]
     assert entries, "fixture has no entries"
     for entry in entries:
-        params = CubehelixParams(**entry["params"])
+        params = CubehelixParams(**_to_snake_case_keys(entry["params"]))
         for sample in entry["samples"]:
             r, g, b = cubehelix(sample["t"], params)
             dr = abs(r - sample["r"])

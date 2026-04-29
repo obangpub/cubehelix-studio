@@ -13,12 +13,29 @@ describe("encodeParams", () => {
   });
 
   test("multiple non-default params are all included", () => {
-    const qs = encodeParams({ start: 1.0, rotations: 0.5, saturation: 1.5, gamma: 0.8 });
+    const qs = encodeParams({
+      ...DEFAULT_CUBEHELIX_PARAMS,
+      start: 1.0,
+      rotations: 0.5,
+      saturation: 1.5,
+      gamma: 0.8,
+    });
     const parsed = new URLSearchParams(qs.slice(1));
     expect(parsed.get("start")).toBe("1");
     expect(parsed.get("rotations")).toBe("0.5");
     expect(parsed.get("saturation")).toBe("1.5");
     expect(parsed.get("gamma")).toBe("0.8");
+  });
+
+  test("non-default lightness range is encoded", () => {
+    const qs = encodeParams({
+      ...DEFAULT_CUBEHELIX_PARAMS,
+      lightnessMin: 0.15,
+      lightnessMax: 0.85,
+    });
+    const parsed = new URLSearchParams(qs.slice(1));
+    expect(parsed.get("lightnessMin")).toBe("0.15");
+    expect(parsed.get("lightnessMax")).toBe("0.85");
   });
 
   test("rounds to four decimal places", () => {
@@ -54,6 +71,18 @@ describe("decodeParams", () => {
     expect(decoded.gamma).toBe(2);
   });
 
+  test("lightness range is clamped to [0, 1]", () => {
+    const decoded = decodeParams("?lightnessMin=-0.5&lightnessMax=2");
+    expect(decoded.lightnessMin).toBe(0);
+    expect(decoded.lightnessMax).toBe(1);
+  });
+
+  test("inverted lightness range is normalized to ascending order", () => {
+    const decoded = decodeParams("?lightnessMin=0.8&lightnessMax=0.3");
+    expect(decoded.lightnessMin).toBe(0.3);
+    expect(decoded.lightnessMax).toBe(0.8);
+  });
+
   test("supports leading question mark or omission", () => {
     expect(decodeParams("?saturation=1.5").saturation).toBe(1.5);
     expect(decodeParams("saturation=1.5").saturation).toBe(1.5);
@@ -62,7 +91,14 @@ describe("decodeParams", () => {
 
 describe("round-trip", () => {
   test("encoded values decode back to themselves", () => {
-    const original: CubehelixParams = { start: 1.2, rotations: 0.5, saturation: 1.7, gamma: 0.9 };
+    const original: CubehelixParams = {
+      start: 1.2,
+      rotations: 0.5,
+      saturation: 1.7,
+      gamma: 0.9,
+      lightnessMin: 0.1,
+      lightnessMax: 0.9,
+    };
     expect(decodeParams(encodeParams(original))).toEqual(original);
   });
 

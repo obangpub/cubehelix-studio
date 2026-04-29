@@ -1,4 +1,5 @@
 import type { CubehelixParams } from "@cubehelix-studio/core";
+import { RangeSlider } from "./RangeSlider";
 import { Slider } from "./Slider";
 
 interface ParamControlsProps {
@@ -47,6 +48,19 @@ export function ParamControls({ params, onChange }: ParamControlsProps) {
         max={2}
         step={0.01}
         onChange={update("gamma")}
+      />
+      <RangeSlider
+        label="Lightness Range"
+        technicalNameMin="lightnessMin"
+        technicalNameMax="lightnessMax"
+        valueMin={params.lightnessMin}
+        valueMax={params.lightnessMax}
+        min={0}
+        max={1}
+        step={0.01}
+        onChange={({ min: nextMin, max: nextMax }) =>
+          onChange({ ...params, lightnessMin: nextMin, lightnessMax: nextMax })
+        }
       />
     </section>
   );
