@@ -25,7 +25,9 @@ def _clamp01(x: float) -> float:
 
 
 def cubehelix_raw(t: float, params: CubehelixParams) -> tuple[float, float, float]:
-    fraction = params.lightness_min + (params.lightness_max - params.lightness_min) * t**params.gamma
+    fraction = (
+        params.lightness_min + (params.lightness_max - params.lightness_min) * t**params.gamma
+    )
     angle = 2.0 * math.pi * (params.start / 3.0 + params.rotations * t + 1.0)
     amp = (params.saturation * fraction * (1.0 - fraction)) / 2.0
     cos_a = math.cos(angle)
