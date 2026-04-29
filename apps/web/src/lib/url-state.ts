@@ -33,7 +33,7 @@ const NUMERIC_KEYS = [
 const PARAM_BOUNDS: Record<NumericKey, { min: number; max: number }> = {
   start: { min: 0, max: 3 },
   rotations: { min: -Infinity, max: Infinity },
-  saturation: { min: 0, max: 2 },
+  saturation: { min: 0, max: Infinity },
   gamma: { min: 0.5, max: 2 },
   lightnessMin: { min: 0, max: 1 },
   lightnessMax: { min: 0, max: 1 },

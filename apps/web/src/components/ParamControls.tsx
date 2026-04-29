@@ -1,5 +1,10 @@
 import { useMemo } from "react";
-import { cubehelix, toCssRgb, type CubehelixParams } from "@cubehelix-studio/core";
+import {
+  cubehelix,
+  saturationCap,
+  toCssRgb,
+  type CubehelixParams,
+} from "@cubehelix-studio/core";
 import { SWATCH_COUNT_BOUNDS } from "../lib/url-state";
 import { RangeSlider } from "./RangeSlider";
 import { Slider } from "./Slider";
@@ -22,6 +27,7 @@ export function ParamControls({
   };
   const minThumbColor = useMemo(() => toCssRgb(cubehelix(0, params)), [params]);
   const maxThumbColor = useMemo(() => toCssRgb(cubehelix(1, params)), [params]);
+  const saturationMax = useMemo(() => Number(saturationCap(params).toFixed(2)), [params]);
   return (
     <section className="controls">
       <Slider
@@ -49,8 +55,9 @@ export function ParamControls({
         technicalName="saturation"
         value={params.saturation}
         min={0}
-        max={2}
+        max={saturationMax}
         step={0.01}
+        scaleExponent={3}
         onChange={update("saturation")}
       />
       <Slider

@@ -87,6 +87,11 @@ describe("decodeParams", () => {
     expect(decodeParams("?rotations=42.5").rotations).toBe(42.5);
   });
 
+  test("saturation is uncapped above on decode but floored at 0", () => {
+    expect(decodeParams("?saturation=42").saturation).toBe(42);
+    expect(decodeParams("?saturation=-5").saturation).toBe(0);
+  });
+
   test("lightness range is clamped to [0, 1]", () => {
     const decoded = decodeParams("?lightnessMin=-0.5&lightnessMax=2");
     expect(decoded.lightnessMin).toBe(0);

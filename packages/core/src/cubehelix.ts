@@ -37,6 +37,46 @@ export function wasClamped(rgb: RGB): boolean {
   return rgb.r < 0 || rgb.r > 1 || rgb.g < 0 || rgb.g > 1 || rgb.b < 0 || rgb.b > 1;
 }
 
+const SATURATION_CAP_SAMPLES = 256;
+const SATURATION_CAP_PERCENTILE = 0.95;
+
+export function saturationCap(params: CubehelixParams): number {
+  const { start, rotations, gamma, lightnessMin, lightnessMax } = params;
+  const invGamma = 1 / gamma;
+  const uMin = Math.pow(lightnessMin, invGamma);
+  const uMax = Math.pow(lightnessMax, invGamma);
+  const exitSaturations: number[] = [];
+  for (let i = 0; i <= SATURATION_CAP_SAMPLES; i++) {
+    const u = uMin + (uMax - uMin) * (i / SATURATION_CAP_SAMPLES);
+    const fraction = Math.pow(u, gamma);
+    const envelope = (fraction * (1 - fraction)) / 2;
+    if (envelope === 0) continue;
+    const angle = 2 * Math.PI * (start / 3 + rotations * u + 1);
+    const cosA = Math.cos(angle);
+    const sinA = Math.sin(angle);
+    const dirs = [
+      -0.14861 * cosA + 1.78277 * sinA,
+      -0.29227 * cosA - 0.90649 * sinA,
+      1.97294 * cosA,
+    ];
+    let sExit = Infinity;
+    for (const dir of dirs) {
+      const k = envelope * dir;
+      if (k === 0) continue;
+      const s = k > 0 ? (1 - fraction) / k : -fraction / k;
+      if (s < sExit) sExit = s;
+    }
+    if (Number.isFinite(sExit) && sExit > 0) exitSaturations.push(sExit);
+  }
+  if (exitSaturations.length === 0) return 0;
+  exitSaturations.sort((a, b) => a - b);
+  const idx = Math.min(
+    exitSaturations.length - 1,
+    Math.floor(exitSaturations.length * SATURATION_CAP_PERCENTILE),
+  );
+  return exitSaturations[idx]!;
+}
+
 function clamp01(x: number): number {
   if (x < 0) return 0;
   if (x > 1) return 1;

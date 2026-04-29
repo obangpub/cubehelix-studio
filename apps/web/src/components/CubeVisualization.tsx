@@ -21,6 +21,7 @@ const TUBE_RADIUS = 0.01;
 const COLOR_RADIAL_SEGMENTS = 8;
 const GHOST_RADIUS = 0.009;
 const GHOST_RADIAL_SEGMENTS = 3;
+const GHOST_EMERGE_SAMPLES = 4;
 const BISECT_ITER = 6;
 
 function clamp01(x: number): number {
@@ -155,27 +156,22 @@ interface ScenePieces {
   ghosts: THREE.BufferGeometry[];
 }
 
-type Category = "colored" | "ghost";
-
-function categoryOf(s: Sample): Category {
-  return s.inGamut && s.inRange ? "colored" : "ghost";
-}
-
-function pushRun(
-  run: Sample[],
-  cat: Category,
-  colored: THREE.BufferGeometry[],
-  ghosts: THREE.BufferGeometry[],
+function forEachRun(
+  samples: Sample[],
+  predicate: (s: Sample) => boolean,
+  extend: number,
+  onRun: (run: Sample[]) => void,
 ): void {
-  if (run.length < 2) return;
-  if (cat === "colored") {
-    const positions = run.map((s) => sampleToVec(s.clamped));
-    const cols = run.map((s) => s.clamped);
-    colored.push(buildColoredTube(positions, cols, TUBE_RADIUS, COLOR_RADIAL_SEGMENTS, true));
-  } else {
-    const positions = run.map((s) => sampleToVec(s.raw));
-    const ghostCols: RGB[] = run.map(() => ({ r: 1, g: 1, b: 1 }));
-    ghosts.push(buildColoredTube(positions, ghostCols, GHOST_RADIUS, GHOST_RADIAL_SEGMENTS));
+  let runStart = -1;
+  for (let i = 0; i <= samples.length; i++) {
+    const inRun = i < samples.length && predicate(samples[i]!);
+    if (inRun && runStart === -1) runStart = i;
+    if ((!inRun || i === samples.length) && runStart !== -1) {
+      const start = Math.max(0, runStart - extend);
+      const end = Math.min(samples.length, i + extend);
+      onRun(samples.slice(start, end));
+      runStart = -1;
+    }
   }
 }
 
@@ -184,17 +180,30 @@ function buildScene(samples: Sample[]): ScenePieces {
   const ghosts: THREE.BufferGeometry[] = [];
   if (samples.length < 2) return { colored, ghosts };
 
-  let runStart = 0;
-  let cur = categoryOf(samples[0]!);
-  for (let i = 1; i < samples.length; i++) {
-    const next = categoryOf(samples[i]!);
-    if (next !== cur) {
-      pushRun(samples.slice(runStart, i + 1), cur, colored, ghosts);
-      runStart = i;
-      cur = next;
-    }
-  }
-  pushRun(samples.slice(runStart), cur, colored, ghosts);
+  forEachRun(
+    samples,
+    (s) => s.inRange,
+    0,
+    (run) => {
+      if (run.length < 2) return;
+      const positions = run.map((s) => sampleToVec(s.clamped));
+      const cols = run.map((s) => s.clamped);
+      colored.push(buildColoredTube(positions, cols, TUBE_RADIUS, COLOR_RADIAL_SEGMENTS, true));
+    },
+  );
+
+  forEachRun(
+    samples,
+    (s) => !s.inGamut || !s.inRange,
+    GHOST_EMERGE_SAMPLES,
+    (run) => {
+      if (run.length < 2) return;
+      const positions = run.map((s) => sampleToVec(s.raw));
+      const ghostCols: RGB[] = run.map(() => ({ r: 1, g: 1, b: 1 }));
+      ghosts.push(buildColoredTube(positions, ghostCols, GHOST_RADIUS, GHOST_RADIAL_SEGMENTS));
+    },
+  );
+
   return { colored, ghosts };
 }
 
