@@ -1,13 +1,21 @@
 import type { CubehelixParams } from "@cubehelix-studio/core";
+import { SWATCH_COUNT_BOUNDS } from "../lib/url-state";
 import { RangeSlider } from "./RangeSlider";
 import { Slider } from "./Slider";
 
 interface ParamControlsProps {
   params: CubehelixParams;
   onChange: (params: CubehelixParams) => void;
+  swatchCount: number;
+  onSwatchCountChange: (count: number) => void;
 }
 
-export function ParamControls({ params, onChange }: ParamControlsProps) {
+export function ParamControls({
+  params,
+  onChange,
+  swatchCount,
+  onSwatchCountChange,
+}: ParamControlsProps) {
   const update = (key: keyof CubehelixParams) => (value: number) => {
     onChange({ ...params, [key]: value });
   };
@@ -61,6 +69,15 @@ export function ParamControls({ params, onChange }: ParamControlsProps) {
         onChange={({ min: nextMin, max: nextMax }) =>
           onChange({ ...params, lightnessMin: nextMin, lightnessMax: nextMax })
         }
+      />
+      <Slider
+        label="Swatches"
+        technicalName="swatchCount"
+        value={swatchCount}
+        min={SWATCH_COUNT_BOUNDS.min}
+        max={SWATCH_COUNT_BOUNDS.max}
+        step={1}
+        onChange={(value) => onSwatchCountChange(Math.round(value))}
       />
     </section>
   );

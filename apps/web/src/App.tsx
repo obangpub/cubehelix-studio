@@ -1,3 +1,4 @@
+import type { CubehelixParams } from "@cubehelix-studio/core";
 import { AboutDialog } from "./components/AboutDialog";
 import { CubeVisualization } from "./components/CubeVisualization";
 import { ExportPanel } from "./components/ExportPanel";
@@ -9,7 +10,19 @@ import { SwatchRow } from "./components/SwatchRow";
 import { useUrlParams } from "./hooks/useUrlParams";
 
 export default function App() {
-  const [params, setParams] = useUrlParams();
+  const [state, setState] = useUrlParams();
+  const { params, swatchCount } = state;
+
+  const setParams = (next: CubehelixParams | ((prev: CubehelixParams) => CubehelixParams)) => {
+    setState((prev) => ({
+      ...prev,
+      params: typeof next === "function" ? next(prev.params) : next,
+    }));
+  };
+  const setSwatchCount = (next: number) => {
+    setState((prev) => ({ ...prev, swatchCount: next }));
+  };
+
   return (
     <main className="app">
       <header>
@@ -24,10 +37,15 @@ export default function App() {
       </header>
       <div className="layout">
         <div className="layout-left">
-          <ParamControls params={params} onChange={setParams} />
+          <ParamControls
+            params={params}
+            onChange={setParams}
+            swatchCount={swatchCount}
+            onSwatchCountChange={setSwatchCount}
+          />
           <section className="preview" aria-label="Palette preview">
             <GradientStrip params={params} />
-            <SwatchRow params={params} />
+            <SwatchRow params={params} count={swatchCount} />
           </section>
         </div>
         <section className="visualization" aria-label="Cube and gamma visualization">
@@ -35,7 +53,7 @@ export default function App() {
           <GammaBar params={params} />
         </section>
       </div>
-      <ExportPanel params={params} />
+      <ExportPanel params={params} swatchCount={swatchCount} />
     </main>
   );
 }

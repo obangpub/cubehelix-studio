@@ -82,6 +82,7 @@ export function RangeSlider({
         />
         <input
           id={idMin}
+          className="thumb-min"
           type="range"
           value={valueMin}
           min={min}
@@ -92,6 +93,7 @@ export function RangeSlider({
         />
         <input
           id={idMax}
+          className="thumb-max"
           type="range"
           value={valueMax}
           min={min}

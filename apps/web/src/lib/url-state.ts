@@ -1,5 +1,18 @@
 import { DEFAULT_CUBEHELIX_PARAMS, type CubehelixParams } from "@cubehelix-studio/core";
 
+export interface AppState {
+  params: CubehelixParams;
+  swatchCount: number;
+}
+
+export const DEFAULT_SWATCH_COUNT = 9;
+export const SWATCH_COUNT_BOUNDS = { min: 2, max: 20 } as const;
+
+export const DEFAULT_APP_STATE: AppState = {
+  params: DEFAULT_CUBEHELIX_PARAMS,
+  swatchCount: DEFAULT_SWATCH_COUNT,
+};
+
 const KEYS = [
   "start",
   "rotations",
@@ -31,8 +44,7 @@ function clamp(value: number, min: number, max: number): number {
   return value;
 }
 
-export function encodeParams(params: CubehelixParams): string {
-  const search = new URLSearchParams();
+function appendParamsToSearch(search: URLSearchParams, params: CubehelixParams): void {
   for (const key of KEYS) {
     const rounded = roundTo(params[key], ENCODE_PRECISION);
     const defaultRounded = roundTo(DEFAULT_CUBEHELIX_PARAMS[key], ENCODE_PRECISION);
@@ -40,12 +52,9 @@ export function encodeParams(params: CubehelixParams): string {
       search.set(key, String(rounded));
     }
   }
-  const qs = search.toString();
-  return qs ? `?${qs}` : "";
 }
 
-export function decodeParams(searchString: string): CubehelixParams {
-  const search = new URLSearchParams(searchString);
+function readParamsFromSearch(search: URLSearchParams): CubehelixParams {
   const result: CubehelixParams = { ...DEFAULT_CUBEHELIX_PARAMS };
   for (const key of KEYS) {
     const raw = search.get(key);
@@ -62,4 +71,40 @@ export function decodeParams(searchString: string): CubehelixParams {
     result.lightnessMax = hi;
   }
   return result;
+}
+
+export function encodeParams(params: CubehelixParams): string {
+  const search = new URLSearchParams();
+  appendParamsToSearch(search, params);
+  const qs = search.toString();
+  return qs ? `?${qs}` : "";
+}
+
+export function decodeParams(searchString: string): CubehelixParams {
+  return readParamsFromSearch(new URLSearchParams(searchString));
+}
+
+export function encodeAppState(state: AppState): string {
+  const search = new URLSearchParams();
+  appendParamsToSearch(search, state.params);
+  const swatchCount = Math.round(state.swatchCount);
+  if (swatchCount !== DEFAULT_SWATCH_COUNT) {
+    search.set("swatchCount", String(swatchCount));
+  }
+  const qs = search.toString();
+  return qs ? `?${qs}` : "";
+}
+
+export function decodeAppState(searchString: string): AppState {
+  const search = new URLSearchParams(searchString);
+  const params = readParamsFromSearch(search);
+  let swatchCount = DEFAULT_SWATCH_COUNT;
+  const rawCount = search.get("swatchCount");
+  if (rawCount !== null) {
+    const num = Number(rawCount);
+    if (Number.isFinite(num)) {
+      swatchCount = clamp(Math.round(num), SWATCH_COUNT_BOUNDS.min, SWATCH_COUNT_BOUNDS.max);
+    }
+  }
+  return { params, swatchCount };
 }

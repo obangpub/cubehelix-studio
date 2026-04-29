@@ -4,11 +4,22 @@ import {
   serialize,
   type CubehelixParams,
   type ExportFormat,
+  type PaletteRole,
   type RolePalette,
 } from "@cubehelix-studio/core";
 
 interface ExportPanelProps {
   params: CubehelixParams;
+  swatchCount: number;
+}
+
+function rolesForCount(count: number): PaletteRole[] {
+  if (count === DEFAULT_ROLES.length) return DEFAULT_ROLES;
+  if (count < 2) return [{ name: "1", t: 0 }];
+  return Array.from({ length: count }, (_, i) => ({
+    name: String(i + 1),
+    t: i / (count - 1),
+  }));
 }
 
 interface FormatOption {
@@ -27,11 +38,14 @@ const FORMATS: FormatOption[] = [
 
 const COPY_FEEDBACK_MS = 1500;
 
-export function ExportPanel({ params }: ExportPanelProps) {
+export function ExportPanel({ params, swatchCount }: ExportPanelProps) {
   const [format, setFormat] = useState<ExportFormat>("css");
   const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "failed">("idle");
 
-  const palette: RolePalette = useMemo(() => ({ params, roles: DEFAULT_ROLES }), [params]);
+  const palette: RolePalette = useMemo(
+    () => ({ params, roles: rolesForCount(swatchCount) }),
+    [params, swatchCount],
+  );
 
   const output = useMemo(() => serialize(palette, format), [palette, format]);
 

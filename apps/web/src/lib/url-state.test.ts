@@ -1,6 +1,13 @@
 import { describe, expect, test } from "vitest";
 import { DEFAULT_CUBEHELIX_PARAMS, type CubehelixParams } from "@cubehelix-studio/core";
-import { decodeParams, encodeParams } from "./url-state";
+import {
+  DEFAULT_APP_STATE,
+  DEFAULT_SWATCH_COUNT,
+  decodeAppState,
+  decodeParams,
+  encodeAppState,
+  encodeParams,
+} from "./url-state";
 
 describe("encodeParams", () => {
   test("default params produce empty querystring", () => {
@@ -104,5 +111,55 @@ describe("round-trip", () => {
 
   test("default params survive a round trip", () => {
     expect(decodeParams(encodeParams(DEFAULT_CUBEHELIX_PARAMS))).toEqual(DEFAULT_CUBEHELIX_PARAMS);
+  });
+});
+
+describe("encodeAppState / decodeAppState", () => {
+  test("default state produces empty querystring", () => {
+    expect(encodeAppState(DEFAULT_APP_STATE)).toBe("");
+  });
+
+  test("default swatchCount is omitted from the querystring", () => {
+    const qs = encodeAppState({
+      params: { ...DEFAULT_CUBEHELIX_PARAMS, saturation: 1.5 },
+      swatchCount: DEFAULT_SWATCH_COUNT,
+    });
+    expect(qs).toBe("?saturation=1.5");
+  });
+
+  test("non-default swatchCount is encoded", () => {
+    const qs = encodeAppState({ params: DEFAULT_CUBEHELIX_PARAMS, swatchCount: 12 });
+    expect(qs).toBe("?swatchCount=12");
+  });
+
+  test("missing swatchCount falls back to default", () => {
+    const decoded = decodeAppState("?saturation=1.5");
+    expect(decoded.swatchCount).toBe(DEFAULT_SWATCH_COUNT);
+    expect(decoded.params.saturation).toBe(1.5);
+  });
+
+  test("swatchCount is clamped and rounded", () => {
+    expect(decodeAppState("?swatchCount=999").swatchCount).toBe(20);
+    expect(decodeAppState("?swatchCount=0").swatchCount).toBe(2);
+    expect(decodeAppState("?swatchCount=7.6").swatchCount).toBe(8);
+  });
+
+  test("invalid swatchCount falls back to default", () => {
+    expect(decodeAppState("?swatchCount=foo").swatchCount).toBe(DEFAULT_SWATCH_COUNT);
+  });
+
+  test("encoded state round-trips", () => {
+    const original = {
+      params: {
+        start: 1.2,
+        rotations: 0.5,
+        saturation: 1.7,
+        gamma: 0.9,
+        lightnessMin: 0.1,
+        lightnessMax: 0.9,
+      } satisfies CubehelixParams,
+      swatchCount: 14,
+    };
+    expect(decodeAppState(encodeAppState(original))).toEqual(original);
   });
 });

@@ -21,7 +21,12 @@ export function SwatchRow({ params, count = 9 }: SwatchRowProps) {
     }));
   }, [params, count]);
   return (
-    <div className="swatch-row" role="list" aria-label="Discrete palette samples">
+    <div
+      className="swatch-row"
+      role="list"
+      aria-label="Discrete palette samples"
+      style={{ gridTemplateColumns: `repeat(${count}, 1fr)` }}
+    >
       {swatches.map((s, i) => (
         <div key={i} role="listitem" className="swatch" style={{ background: s.bg, color: s.text }}>
           <span className="swatch-hex">{s.hex}</span>

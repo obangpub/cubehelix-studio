@@ -1,31 +1,30 @@
 import { useCallback, useEffect, useState } from "react";
-import type { CubehelixParams } from "@cubehelix-studio/core";
-import { decodeParams, encodeParams } from "../lib/url-state";
+import { decodeAppState, encodeAppState, type AppState } from "../lib/url-state";
 
-type SetParams = (next: CubehelixParams | ((prev: CubehelixParams) => CubehelixParams)) => void;
+type SetAppState = (next: AppState | ((prev: AppState) => AppState)) => void;
 
-export function useUrlParams(): readonly [CubehelixParams, SetParams] {
-  const [params, setParams] = useState<CubehelixParams>(() => decodeParams(window.location.search));
+export function useUrlParams(): readonly [AppState, SetAppState] {
+  const [state, setState] = useState<AppState>(() => decodeAppState(window.location.search));
 
   useEffect(() => {
-    const qs = encodeParams(params);
+    const qs = encodeAppState(state);
     const newUrl = window.location.pathname + qs + window.location.hash;
     if (newUrl !== window.location.pathname + window.location.search + window.location.hash) {
       window.history.replaceState(null, "", newUrl);
     }
-  }, [params]);
+  }, [state]);
 
   useEffect(() => {
     const onPopState = () => {
-      setParams(decodeParams(window.location.search));
+      setState(decodeAppState(window.location.search));
     };
     window.addEventListener("popstate", onPopState);
     return () => window.removeEventListener("popstate", onPopState);
   }, []);
 
-  const setParamsStable = useCallback<SetParams>((next) => {
-    setParams(next);
+  const setStateStable = useCallback<SetAppState>((next) => {
+    setState(next);
   }, []);
 
-  return [params, setParamsStable] as const;
+  return [state, setStateStable] as const;
 }
