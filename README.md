@@ -46,6 +46,14 @@ uv sync --all-extras
 uv run pytest
 ```
 
+## Citation
+
+The cubehelix scheme is from:
+
+> Green, D. A., 2011, "A colour scheme for the display of astronomical intensity images", _Bulletin of the Astronomical Society of India_, 39, 289. <https://people.phy.cam.ac.uk/dag9/CUBEHELIX/>
+
+If you use cubehelix in a publication, please cite this paper.
+
 ## License
 
-MIT — see [LICENSE](LICENSE).
+MIT — see [LICENSE](LICENSE). The MIT license covers this codebase; it does not extend to the cubehelix algorithm itself, which is described in the paper above.

@@ -94,6 +94,10 @@ element.style.backgroundColor = toCssRgb(swatch);
 element.style.color = toCssRgb(text);
 ```
 
+## Citation
+
+Cubehelix is from Green, D. A., 2011, "A colour scheme for the display of astronomical intensity images", _Bulletin of the Astronomical Society of India_, 39, 289. If you use it in a publication, please cite the paper.
+
 ## License
 
-MIT
+MIT. The MIT license covers this package; it does not extend to the cubehelix algorithm itself.
