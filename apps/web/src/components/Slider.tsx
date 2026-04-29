@@ -10,6 +10,12 @@ interface SliderProps {
 
 export function Slider({ label, technicalName, value, min, max, step, onChange }: SliderProps) {
   const id = `slider-${technicalName}`;
+  const numberId = `${id}-number`;
+  const commit = (raw: number) => {
+    if (!Number.isFinite(raw)) return;
+    const clamped = Math.min(max, Math.max(min, raw));
+    onChange(clamped);
+  };
   return (
     <div className="slider">
       <label htmlFor={id}>
@@ -17,7 +23,17 @@ export function Slider({ label, technicalName, value, min, max, step, onChange }
           <span className="slider-label">{label}</span>
           <span className="slider-technical">{technicalName}</span>
         </span>
-        <span className="slider-value">{value.toFixed(2)}</span>
+        <input
+          id={numberId}
+          className="slider-value"
+          type="number"
+          value={value}
+          min={min}
+          max={max}
+          step={step}
+          onChange={(e) => commit(e.target.valueAsNumber)}
+          aria-label={`${label} value`}
+        />
       </label>
       <input
         id={id}
@@ -26,7 +42,7 @@ export function Slider({ label, technicalName, value, min, max, step, onChange }
         min={min}
         max={max}
         step={step}
-        onChange={(e) => onChange(Number(e.target.value))}
+        onChange={(e) => commit(Number(e.target.value))}
       />
     </div>
   );

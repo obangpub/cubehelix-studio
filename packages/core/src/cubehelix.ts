@@ -7,7 +7,7 @@ export const DEFAULT_CUBEHELIX_PARAMS: CubehelixParams = {
   gamma: 1.0,
 };
 
-export function cubehelix(t: number, params: CubehelixParams): RGB {
+export function cubehelixRaw(t: number, params: CubehelixParams): RGB {
   const { start, rotations, saturation, gamma } = params;
   const fraction = Math.pow(t, gamma);
   const angle = 2 * Math.PI * (start / 3 + rotations * t + 1);
@@ -17,11 +17,12 @@ export function cubehelix(t: number, params: CubehelixParams): RGB {
   const r = fraction + amp * (-0.14861 * cosA + 1.78277 * sinA);
   const g = fraction + amp * (-0.29227 * cosA - 0.90649 * sinA);
   const b = fraction + amp * (1.97294 * cosA);
-  return {
-    r: clamp01(r),
-    g: clamp01(g),
-    b: clamp01(b),
-  };
+  return { r, g, b };
+}
+
+export function cubehelix(t: number, params: CubehelixParams): RGB {
+  const { r, g, b } = cubehelixRaw(t, params);
+  return { r: clamp01(r), g: clamp01(g), b: clamp01(b) };
 }
 
 function clamp01(x: number): number {

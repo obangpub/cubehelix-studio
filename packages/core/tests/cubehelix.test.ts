@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { DEFAULT_CUBEHELIX_PARAMS, cubehelix } from "../src/cubehelix";
+import { DEFAULT_CUBEHELIX_PARAMS, cubehelix, cubehelixRaw } from "../src/cubehelix";
 import type { CubehelixParams } from "../src/types";
 
 describe("cubehelix", () => {
@@ -49,6 +49,44 @@ describe("cubehelix", () => {
       expect(r).toBeCloseTo(t, 12);
       expect(g).toBeCloseTo(t, 12);
       expect(b).toBeCloseTo(t, 12);
+    }
+  });
+
+  test("cubehelixRaw equals cubehelix when channels are in [0,1]", () => {
+    const params: CubehelixParams = DEFAULT_CUBEHELIX_PARAMS;
+    for (let i = 0; i <= 20; i++) {
+      const t = i / 20;
+      const raw = cubehelixRaw(t, params);
+      const clamped = cubehelix(t, params);
+      expect(clamped.r).toBeCloseTo(raw.r, 12);
+      expect(clamped.g).toBeCloseTo(raw.g, 12);
+      expect(clamped.b).toBeCloseTo(raw.b, 12);
+    }
+  });
+
+  test("cubehelixRaw produces out-of-gamut values at high saturation", () => {
+    const params: CubehelixParams = { start: 0, rotations: 1, saturation: 4, gamma: 1 };
+    let sawOutOfGamut = false;
+    for (let i = 0; i <= 50; i++) {
+      const t = i / 50;
+      const { r, g, b } = cubehelixRaw(t, params);
+      if (r < 0 || r > 1 || g < 0 || g > 1 || b < 0 || b > 1) {
+        sawOutOfGamut = true;
+        break;
+      }
+    }
+    expect(sawOutOfGamut).toBe(true);
+  });
+
+  test("cubehelix clamps cubehelixRaw to [0,1] per channel", () => {
+    const params: CubehelixParams = { start: 0, rotations: 1, saturation: 4, gamma: 1 };
+    for (let i = 0; i <= 50; i++) {
+      const t = i / 50;
+      const raw = cubehelixRaw(t, params);
+      const clamped = cubehelix(t, params);
+      expect(clamped.r).toBeCloseTo(Math.min(1, Math.max(0, raw.r)), 12);
+      expect(clamped.g).toBeCloseTo(Math.min(1, Math.max(0, raw.g)), 12);
+      expect(clamped.b).toBeCloseTo(Math.min(1, Math.max(0, raw.b)), 12);
     }
   });
 });
