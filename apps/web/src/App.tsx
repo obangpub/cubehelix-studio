@@ -1,5 +1,6 @@
 import { AboutDialog } from "./components/AboutDialog";
 import { CubeVisualization } from "./components/CubeVisualization";
+import { ExportPanel } from "./components/ExportPanel";
 import { GammaBar } from "./components/GammaBar";
 import { GradientStrip } from "./components/GradientStrip";
 import { ParamControls } from "./components/ParamControls";
@@ -34,6 +35,7 @@ export default function App() {
           <GammaBar params={params} />
         </section>
       </div>
+      <ExportPanel params={params} />
     </main>
   );
 }

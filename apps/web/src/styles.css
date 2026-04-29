@@ -358,3 +358,89 @@ header p {
   outline: 2px solid var(--fg);
   outline-offset: 2px;
 }
+
+.export-panel {
+  margin-top: 2rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.export-panel-header {
+  display: flex;
+  align-items: stretch;
+  justify-content: space-between;
+  gap: 0.5rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--bg);
+  padding: 0.4rem 0.4rem 0.4rem 0.6rem;
+}
+
+.export-panel-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+}
+
+.export-panel-tab {
+  font: inherit;
+  font-size: 0.8125rem;
+  color: var(--muted);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 4px;
+  padding: 0.3rem 0.6rem;
+  cursor: pointer;
+  transition:
+    background 120ms ease,
+    color 120ms ease;
+}
+
+.export-panel-tab:hover {
+  color: var(--fg);
+}
+
+.export-panel-tab.is-active {
+  background: var(--surface);
+  border-color: var(--border);
+  color: var(--fg);
+}
+
+.export-panel-tab:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 1px;
+}
+
+.export-panel-copy {
+  font: inherit;
+  font-size: 0.8125rem;
+  color: var(--fg);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.3rem 0.75rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 120ms ease;
+}
+
+.export-panel-copy:hover {
+  background: var(--bg);
+}
+
+.export-panel-copy:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 1px;
+}
+
+.export-panel-output {
+  margin: 0;
+  padding: 1rem 1.25rem;
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.8125rem;
+  line-height: 1.6;
+  overflow-x: auto;
+  white-space: pre;
+  max-height: 400px;
+}
