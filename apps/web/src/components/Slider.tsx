@@ -5,17 +5,35 @@ interface SliderProps {
   min: number;
   max: number;
   step: number;
+  numberMin?: number;
+  numberMax?: number;
   onChange: (value: number) => void;
 }
 
-export function Slider({ label, technicalName, value, min, max, step, onChange }: SliderProps) {
+export function Slider({
+  label,
+  technicalName,
+  value,
+  min,
+  max,
+  step,
+  numberMin,
+  numberMax,
+  onChange,
+}: SliderProps) {
   const id = `slider-${technicalName}`;
   const numberId = `${id}-number`;
-  const commit = (raw: number) => {
+  const effectiveNumberMin = numberMin ?? min;
+  const effectiveNumberMax = numberMax ?? max;
+  const commitFromSlider = (raw: number) => {
     if (!Number.isFinite(raw)) return;
-    const clamped = Math.min(max, Math.max(min, raw));
-    onChange(clamped);
+    onChange(Math.min(max, Math.max(min, raw)));
   };
+  const commitFromNumber = (raw: number) => {
+    if (!Number.isFinite(raw)) return;
+    onChange(Math.min(effectiveNumberMax, Math.max(effectiveNumberMin, raw)));
+  };
+  const sliderValue = Math.min(max, Math.max(min, value));
   return (
     <div className="slider">
       <label htmlFor={id}>
@@ -28,21 +46,21 @@ export function Slider({ label, technicalName, value, min, max, step, onChange }
           className="slider-value"
           type="number"
           value={value}
-          min={min}
-          max={max}
+          min={Number.isFinite(effectiveNumberMin) ? effectiveNumberMin : undefined}
+          max={Number.isFinite(effectiveNumberMax) ? effectiveNumberMax : undefined}
           step={step}
-          onChange={(e) => commit(e.target.valueAsNumber)}
+          onChange={(e) => commitFromNumber(e.target.valueAsNumber)}
           aria-label={`${label} value`}
         />
       </label>
       <input
         id={id}
         type="range"
-        value={value}
+        value={sliderValue}
         min={min}
         max={max}
         step={step}
-        onChange={(e) => commit(Number(e.target.value))}
+        onChange={(e) => commitFromSlider(Number(e.target.value))}
       />
     </div>
   );

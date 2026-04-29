@@ -61,7 +61,7 @@ for (const range of LIGHTNESS_RANGES) {
 }
 
 const fixture = {
-  version: 2,
+  version: 3,
   generator: "cubehelix-studio/scripts/generate-parity-fixture.ts",
   parameterGrid: {
     start: STARTS,

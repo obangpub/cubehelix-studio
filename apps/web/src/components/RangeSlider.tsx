@@ -1,3 +1,5 @@
+import type { CSSProperties } from "react";
+
 interface RangeSliderProps {
   label: string;
   technicalNameMin: string;
@@ -7,6 +9,8 @@ interface RangeSliderProps {
   min: number;
   max: number;
   step: number;
+  thumbMinColor?: string;
+  thumbMaxColor?: string;
   onChange: (next: { min: number; max: number }) => void;
 }
 
@@ -19,6 +23,8 @@ export function RangeSlider({
   min,
   max,
   step,
+  thumbMinColor,
+  thumbMaxColor,
   onChange,
 }: RangeSliderProps) {
   const idMin = `range-${technicalNameMin}`;
@@ -88,6 +94,9 @@ export function RangeSlider({
           min={min}
           max={max}
           step={step}
+          style={
+            thumbMinColor ? ({ "--thumb-color": thumbMinColor } as CSSProperties) : undefined
+          }
           onChange={(e) => commitMin(Number(e.target.value))}
           aria-label={`${label} minimum`}
         />
@@ -99,6 +108,9 @@ export function RangeSlider({
           min={min}
           max={max}
           step={step}
+          style={
+            thumbMaxColor ? ({ "--thumb-color": thumbMaxColor } as CSSProperties) : undefined
+          }
           onChange={(e) => commitMax(Number(e.target.value))}
           aria-label={`${label} maximum`}
         />

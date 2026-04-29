@@ -71,11 +71,15 @@ describe("decodeParams", () => {
   });
 
   test("out-of-range values are clamped to slider bounds", () => {
-    const decoded = decodeParams("?start=999&rotations=-999&saturation=-5&gamma=99");
+    const decoded = decodeParams("?start=999&saturation=-5&gamma=99");
     expect(decoded.start).toBe(3);
-    expect(decoded.rotations).toBe(-3);
     expect(decoded.saturation).toBe(0);
     expect(decoded.gamma).toBe(2);
+  });
+
+  test("rotations is uncapped on decode", () => {
+    expect(decodeParams("?rotations=-999").rotations).toBe(-999);
+    expect(decodeParams("?rotations=42.5").rotations).toBe(42.5);
   });
 
   test("lightness range is clamped to [0, 1]", () => {

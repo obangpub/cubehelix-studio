@@ -43,13 +43,11 @@ export default function App() {
             swatchCount={swatchCount}
             onSwatchCountChange={setSwatchCount}
           />
-          <section className="preview" aria-label="Palette preview">
-            <GradientStrip params={params} />
-            <SwatchRow params={params} count={swatchCount} />
-          </section>
+          <SwatchRow params={params} count={swatchCount} />
         </div>
         <section className="visualization" aria-label="Cube and gamma visualization">
           <CubeVisualization params={params} />
+          <GradientStrip params={params} />
           <GammaBar params={params} />
         </section>
       </div>

@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef, type ComponentRef } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
@@ -10,17 +10,17 @@ interface CubeVisualizationProps {
 }
 
 interface Sample {
-  t: number;
+  u: number;
   raw: RGB;
   clamped: RGB;
   inGamut: boolean;
+  inRange: boolean;
 }
 
 const TUBE_RADIUS = 0.01;
 const COLOR_RADIAL_SEGMENTS = 8;
-const GHOST_RADIUS = 0.008;
-const GHOST_RADIAL_SEGMENTS = 4;
-const GHOST_EMERGE_SAMPLES = 4;
+const GHOST_RADIUS = 0.009;
+const GHOST_RADIAL_SEGMENTS = 3;
 const BISECT_ITER = 6;
 
 function clamp01(x: number): number {
@@ -36,15 +36,9 @@ function isInGamut(c: RGB): boolean {
   return c.r >= 0 && c.r <= 1 && c.g >= 0 && c.g <= 1 && c.b >= 0 && c.b <= 1;
 }
 
-function makeSample(t: number, params: CubehelixParams): Sample {
-  const raw = cubehelixRaw(t, params);
-  const clamped = { r: clamp01(raw.r), g: clamp01(raw.g), b: clamp01(raw.b) };
-  return { t, raw, clamped, inGamut: isInGamut(raw) };
-}
-
-function bisectCrossing(tLo: number, tHi: number, inLo: boolean, params: CubehelixParams): number {
-  let lo = tLo;
-  let hi = tHi;
+function bisectCrossing(uLo: number, uHi: number, inLo: boolean, params: CubehelixParams): number {
+  let lo = uLo;
+  let hi = uHi;
   for (let i = 0; i < BISECT_ITER; i++) {
     const mid = (lo + hi) / 2;
     const inMid = isInGamut(cubehelixRaw(mid, params));
@@ -58,17 +52,44 @@ function bisectCrossing(tLo: number, tHi: number, inLo: boolean, params: Cubehel
 }
 
 function buildSamples(params: CubehelixParams, n: number): Sample[] {
+  const fullHelixParams: CubehelixParams = { ...params, lightnessMin: 0, lightnessMax: 1 };
+  const invGamma = 1 / params.gamma;
+  const uMin = Math.pow(params.lightnessMin, invGamma);
+  const uMax = Math.pow(params.lightnessMax, invGamma);
+
+  const makeAt = (u: number): Sample => {
+    const raw = cubehelixRaw(u, fullHelixParams);
+    const clamped = { r: clamp01(raw.r), g: clamp01(raw.g), b: clamp01(raw.b) };
+    return {
+      u,
+      raw,
+      clamped,
+      inGamut: isInGamut(raw),
+      inRange: u >= uMin && u <= uMax,
+    };
+  };
+
   const base: Sample[] = [];
   for (let i = 0; i <= n; i++) {
-    base.push(makeSample(i / n, params));
+    base.push(makeAt(i / n));
   }
+
+  const breakpoints: number[] = [];
+  if (uMin > 0 && uMin < 1) breakpoints.push(uMin);
+  if (uMax > uMin && uMax > 0 && uMax < 1) breakpoints.push(uMax);
+  for (const u of breakpoints) {
+    const idx = base.findIndex((s) => s.u >= u);
+    if (idx === -1) base.push(makeAt(u));
+    else if (base[idx]!.u !== u) base.splice(idx, 0, makeAt(u));
+  }
+
   const out: Sample[] = [base[0]!];
-  for (let i = 0; i < n; i++) {
+  for (let i = 0; i < base.length - 1; i++) {
     const a = base[i]!;
     const b = base[i + 1]!;
     if (a.inGamut !== b.inGamut) {
-      const tCross = bisectCrossing(a.t, b.t, a.inGamut, params);
-      out.push(makeSample(tCross, params));
+      const uCross = bisectCrossing(a.u, b.u, a.inGamut, fullHelixParams);
+      out.push(makeAt(uCross));
     }
     out.push(b);
   }
@@ -130,39 +151,50 @@ function sampleToVec(c: RGB): THREE.Vector3 {
 }
 
 interface ScenePieces {
-  colored: THREE.BufferGeometry;
+  colored: THREE.BufferGeometry[];
   ghosts: THREE.BufferGeometry[];
 }
 
-function buildScene(samples: Sample[], gamma: number): ScenePieces {
-  const positions = samples.map((s) => sampleToVec(s.clamped));
-  const cols = samples.map((s) => s.clamped);
-  const colored = buildColoredTube(positions, cols, TUBE_RADIUS, COLOR_RADIAL_SEGMENTS, true);
+type Category = "colored" | "ghost";
 
+function categoryOf(s: Sample): Category {
+  return s.inGamut && s.inRange ? "colored" : "ghost";
+}
+
+function pushRun(
+  run: Sample[],
+  cat: Category,
+  colored: THREE.BufferGeometry[],
+  ghosts: THREE.BufferGeometry[],
+): void {
+  if (run.length < 2) return;
+  if (cat === "colored") {
+    const positions = run.map((s) => sampleToVec(s.clamped));
+    const cols = run.map((s) => s.clamped);
+    colored.push(buildColoredTube(positions, cols, TUBE_RADIUS, COLOR_RADIAL_SEGMENTS, true));
+  } else {
+    const positions = run.map((s) => sampleToVec(s.raw));
+    const ghostCols: RGB[] = run.map(() => ({ r: 1, g: 1, b: 1 }));
+    ghosts.push(buildColoredTube(positions, ghostCols, GHOST_RADIUS, GHOST_RADIAL_SEGMENTS));
+  }
+}
+
+function buildScene(samples: Sample[]): ScenePieces {
+  const colored: THREE.BufferGeometry[] = [];
   const ghosts: THREE.BufferGeometry[] = [];
-  let runStart = -1;
-  for (let i = 0; i <= samples.length; i++) {
-    const s = samples[i];
-    const out = s !== undefined && !s.inGamut;
-    if (out && runStart === -1) runStart = i;
-    if ((!out || i === samples.length) && runStart !== -1) {
-      const start = Math.max(0, runStart - 1 - GHOST_EMERGE_SAMPLES);
-      const end = Math.min(samples.length - 1, i + GHOST_EMERGE_SAMPLES);
-      if (end - start >= 1) {
-        const runSamples = samples.slice(start, end + 1);
-        const ghostPositions = runSamples.map((rs) => sampleToVec(rs.raw));
-        const ghostCols: RGB[] = runSamples.map((rs) => {
-          const l = clamp01(Math.pow(rs.t, gamma));
-          return { r: l, g: l, b: l };
-        });
-        ghosts.push(
-          buildColoredTube(ghostPositions, ghostCols, GHOST_RADIUS, GHOST_RADIAL_SEGMENTS),
-        );
-      }
-      runStart = -1;
+  if (samples.length < 2) return { colored, ghosts };
+
+  let runStart = 0;
+  let cur = categoryOf(samples[0]!);
+  for (let i = 1; i < samples.length; i++) {
+    const next = categoryOf(samples[i]!);
+    if (next !== cur) {
+      pushRun(samples.slice(runStart, i + 1), cur, colored, ghosts);
+      runStart = i;
+      cur = next;
     }
   }
-
+  pushRun(samples.slice(runStart), cur, colored, ghosts);
   return { colored, ghosts };
 }
 
@@ -228,43 +260,71 @@ interface HelixProps {
 function Helix({ params, samples }: HelixProps) {
   const { colored, ghosts } = useMemo(() => {
     const s = buildSamples(params, samples);
-    return buildScene(s, params.gamma);
+    return buildScene(s);
   }, [params, samples]);
 
   useEffect(() => {
     return () => {
-      colored.dispose();
+      for (const g of colored) g.dispose();
       for (const g of ghosts) g.dispose();
     };
   }, [colored, ghosts]);
 
   return (
     <>
-      <mesh geometry={colored}>
-        <meshBasicMaterial vertexColors />
-      </mesh>
+      {colored.map((g, i) => (
+        <mesh key={`colored-${i}`} geometry={g}>
+          <meshBasicMaterial vertexColors />
+        </mesh>
+      ))}
       {ghosts.map((g, i) => (
         <mesh key={`ghost-${i}`} geometry={g}>
-          <meshBasicMaterial vertexColors wireframe transparent opacity={0.7} />
+          <meshBasicMaterial vertexColors wireframe transparent opacity={0.5} />
         </mesh>
       ))}
     </>
   );
 }
 
+const CUBE_CAMERA: [number, number, number] = [1.3, 0.9, 1.7];
+
 export function CubeVisualization({ params, samples = 256 }: CubeVisualizationProps) {
+  const controlsRef = useRef<ComponentRef<typeof OrbitControls>>(null);
+  const handleReset = () => {
+    controlsRef.current?.reset();
+  };
   return (
     <div className="cube-visualization">
+      <button
+        type="button"
+        className="cube-reset"
+        onClick={handleReset}
+        title="Reset view"
+        aria-label="Reset view"
+      >
+        <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+          <path
+            fill="currentColor"
+            d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.42A6 6 0 1 1 8 2v1z"
+          />
+          <path
+            fill="currentColor"
+            d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"
+          />
+        </svg>
+      </button>
       <Canvas
-        camera={{ position: [1.8, 1.4, 2.2], fov: 45 }}
+        camera={{ position: CUBE_CAMERA, fov: 45 }}
         gl={{ toneMapping: THREE.NoToneMapping, outputColorSpace: THREE.SRGBColorSpace }}
       >
         <color attach="background" args={["#1a1a1a"]} />
-        <CubeWireframe />
-        <GrayDiagonal />
-        <CornerMarkers />
-        <Helix params={params} samples={samples} />
-        <OrbitControls target={[0.5, 0.5, 0.5]} enableDamping />
+        <group position={[-0.5, -0.5, -0.5]}>
+          <CubeWireframe />
+          <GrayDiagonal />
+          <CornerMarkers />
+          <Helix params={params} samples={samples} />
+        </group>
+        <OrbitControls ref={controlsRef} enableDamping />
       </Canvas>
     </div>
   );

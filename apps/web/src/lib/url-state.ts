@@ -24,7 +24,7 @@ const KEYS = [
 
 const PARAM_BOUNDS: Record<keyof CubehelixParams, { min: number; max: number }> = {
   start: { min: 0, max: 3 },
-  rotations: { min: -3, max: 3 },
+  rotations: { min: -Infinity, max: Infinity },
   saturation: { min: 0, max: 2 },
   gamma: { min: 0.5, max: 2 },
   lightnessMin: { min: 0, max: 1 },

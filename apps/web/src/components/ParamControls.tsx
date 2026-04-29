@@ -1,4 +1,5 @@
-import type { CubehelixParams } from "@cubehelix-studio/core";
+import { useMemo } from "react";
+import { cubehelix, toCssRgb, type CubehelixParams } from "@cubehelix-studio/core";
 import { SWATCH_COUNT_BOUNDS } from "../lib/url-state";
 import { RangeSlider } from "./RangeSlider";
 import { Slider } from "./Slider";
@@ -19,6 +20,8 @@ export function ParamControls({
   const update = (key: keyof CubehelixParams) => (value: number) => {
     onChange({ ...params, [key]: value });
   };
+  const minThumbColor = useMemo(() => toCssRgb(cubehelix(0, params)), [params]);
+  const maxThumbColor = useMemo(() => toCssRgb(cubehelix(1, params)), [params]);
   return (
     <section className="controls">
       <Slider
@@ -37,6 +40,8 @@ export function ParamControls({
         min={-3}
         max={3}
         step={0.05}
+        numberMin={-Infinity}
+        numberMax={Infinity}
         onChange={update("rotations")}
       />
       <Slider
@@ -66,6 +71,8 @@ export function ParamControls({
         min={0}
         max={1}
         step={0.01}
+        thumbMinColor={minThumbColor}
+        thumbMaxColor={maxThumbColor}
         onChange={({ min: nextMin, max: nextMax }) =>
           onChange({ ...params, lightnessMin: nextMin, lightnessMax: nextMax })
         }
