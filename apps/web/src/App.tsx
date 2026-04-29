@@ -1,18 +1,25 @@
-import { useState } from "react";
-import { DEFAULT_CUBEHELIX_PARAMS, type CubehelixParams } from "@cubehelix-studio/core";
+import { AboutDialog } from "./components/AboutDialog";
 import { CubeVisualization } from "./components/CubeVisualization";
 import { GammaBar } from "./components/GammaBar";
 import { GradientStrip } from "./components/GradientStrip";
 import { ParamControls } from "./components/ParamControls";
+import { ShareLink } from "./components/ShareLink";
 import { SwatchRow } from "./components/SwatchRow";
+import { useUrlParams } from "./hooks/useUrlParams";
 
 export default function App() {
-  const [params, setParams] = useState<CubehelixParams>(DEFAULT_CUBEHELIX_PARAMS);
+  const [params, setParams] = useUrlParams();
   return (
     <main className="app">
       <header>
-        <h1>Cubehelix Studio</h1>
-        <p>Build a cubehelix palette that holds up in grayscale, colorblindness, and print.</p>
+        <div className="header-titles">
+          <h1>Cubehelix Studio</h1>
+          <p>Build a cubehelix palette that holds up in grayscale, colorblindness, and print.</p>
+        </div>
+        <div className="header-actions">
+          <ShareLink />
+          <AboutDialog />
+        </div>
       </header>
       <div className="layout">
         <div className="layout-left">

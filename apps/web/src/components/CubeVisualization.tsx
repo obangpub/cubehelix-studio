@@ -42,12 +42,7 @@ function makeSample(t: number, params: CubehelixParams): Sample {
   return { t, raw, clamped, inGamut: isInGamut(raw) };
 }
 
-function bisectCrossing(
-  tLo: number,
-  tHi: number,
-  inLo: boolean,
-  params: CubehelixParams,
-): number {
+function bisectCrossing(tLo: number, tHi: number, inLo: boolean, params: CubehelixParams): number {
   let lo = tLo;
   let hi = tHi;
   for (let i = 0; i < BISECT_ITER; i++) {
@@ -160,7 +155,9 @@ function buildScene(samples: Sample[], gamma: number): ScenePieces {
           const l = clamp01(Math.pow(rs.t, gamma));
           return { r: l, g: l, b: l };
         });
-        ghosts.push(buildColoredTube(ghostPositions, ghostCols, GHOST_RADIUS, GHOST_RADIAL_SEGMENTS));
+        ghosts.push(
+          buildColoredTube(ghostPositions, ghostCols, GHOST_RADIUS, GHOST_RADIAL_SEGMENTS),
+        );
       }
       runStart = -1;
     }
