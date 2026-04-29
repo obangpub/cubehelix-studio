@@ -58,9 +58,13 @@ function formatNumber(n: number): string {
   return n.toString();
 }
 
+function camelToSnake(key: string): string {
+  return key.replace(/([a-z0-9])([A-Z])/g, "$1_$2").toLowerCase();
+}
+
 function serializePython(palette: RolePalette): string {
   const paramLines = Object.entries(palette.params).map(
-    ([k, v]) => `    ${k}=${formatNumber(v as number)},`,
+    ([k, v]) => `    ${camelToSnake(k)}=${formatNumber(v as number)},`,
   );
   const resolved = resolveHex(palette);
   const roleLines = resolved.map(

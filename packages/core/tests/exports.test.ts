@@ -61,11 +61,16 @@ describe("serialize: python", () => {
     expect(out).toContain("roles = {");
   });
 
-  test("includes every param the palette has, generically", () => {
-    const out = serialize(palette, "python");
-    for (const key of Object.keys(palette.params)) {
-      expect(out).toContain(`${key}=`);
-    }
+  test("converts camelCase param keys to snake_case for Python", () => {
+    // Force a camelCase key onto params via cast — guards against future
+    // additions like lightnessMin without depending on the current shape.
+    const camelPalette: RolePalette = {
+      params: { ...DEFAULT_CUBEHELIX_PARAMS, lightnessMin: 0.15 } as RolePalette["params"],
+      roles: palette.roles,
+    };
+    const out = serialize(camelPalette, "python");
+    expect(out).toContain("lightness_min=0.15");
+    expect(out).not.toContain("lightnessMin=");
   });
 
   test("produces six-digit role rgb tuples", () => {
