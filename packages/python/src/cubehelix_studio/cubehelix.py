@@ -14,6 +14,7 @@ class CubehelixParams:
     gamma: float = 1.0
     lightness_min: float = 0.0
     lightness_max: float = 1.0
+    reverse: bool = False
 
 
 def _clamp01(x: float) -> float:
@@ -25,10 +26,11 @@ def _clamp01(x: float) -> float:
 
 
 def cubehelix_raw(t: float, params: CubehelixParams) -> tuple[float, float, float]:
+    t_eff = 1.0 - t if params.reverse else t
     inv_gamma = 1.0 / params.gamma
     u_min = params.lightness_min**inv_gamma
     u_max = params.lightness_max**inv_gamma
-    u = u_min + (u_max - u_min) * t
+    u = u_min + (u_max - u_min) * t_eff
     fraction = u**params.gamma
     angle = 2.0 * math.pi * (params.start / 3.0 + params.rotations * u + 1.0)
     amp = (params.saturation * fraction * (1.0 - fraction)) / 2.0

@@ -13,16 +13,24 @@ export const DEFAULT_APP_STATE: AppState = {
   swatchCount: DEFAULT_SWATCH_COUNT,
 };
 
-const KEYS = [
+type NumericKey =
+  | "start"
+  | "rotations"
+  | "saturation"
+  | "gamma"
+  | "lightnessMin"
+  | "lightnessMax";
+
+const NUMERIC_KEYS = [
   "start",
   "rotations",
   "saturation",
   "gamma",
   "lightnessMin",
   "lightnessMax",
-] as const satisfies readonly (keyof CubehelixParams)[];
+] as const satisfies readonly NumericKey[];
 
-const PARAM_BOUNDS: Record<keyof CubehelixParams, { min: number; max: number }> = {
+const PARAM_BOUNDS: Record<NumericKey, { min: number; max: number }> = {
   start: { min: 0, max: 3 },
   rotations: { min: -Infinity, max: Infinity },
   saturation: { min: 0, max: 2 },
@@ -45,24 +53,31 @@ function clamp(value: number, min: number, max: number): number {
 }
 
 function appendParamsToSearch(search: URLSearchParams, params: CubehelixParams): void {
-  for (const key of KEYS) {
+  for (const key of NUMERIC_KEYS) {
     const rounded = roundTo(params[key], ENCODE_PRECISION);
     const defaultRounded = roundTo(DEFAULT_CUBEHELIX_PARAMS[key], ENCODE_PRECISION);
     if (rounded !== defaultRounded) {
       search.set(key, String(rounded));
     }
   }
+  if (params.reverse !== DEFAULT_CUBEHELIX_PARAMS.reverse) {
+    search.set("reverse", params.reverse ? "1" : "0");
+  }
 }
 
 function readParamsFromSearch(search: URLSearchParams): CubehelixParams {
   const result: CubehelixParams = { ...DEFAULT_CUBEHELIX_PARAMS };
-  for (const key of KEYS) {
+  for (const key of NUMERIC_KEYS) {
     const raw = search.get(key);
     if (raw === null) continue;
     const num = Number(raw);
     if (!Number.isFinite(num)) continue;
     const { min, max } = PARAM_BOUNDS[key];
     result[key] = clamp(num, min, max);
+  }
+  const rawReverse = search.get("reverse");
+  if (rawReverse !== null) {
+    result.reverse = rawReverse === "1" || rawReverse === "true";
   }
   if (result.lightnessMin > result.lightnessMax) {
     const lo = result.lightnessMax;

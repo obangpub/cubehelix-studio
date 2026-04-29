@@ -45,6 +45,11 @@ describe("encodeParams", () => {
     expect(parsed.get("lightnessMax")).toBe("0.85");
   });
 
+  test("reverse=true is encoded as 1; default false is omitted", () => {
+    expect(encodeParams({ ...DEFAULT_CUBEHELIX_PARAMS, reverse: true })).toBe("?reverse=1");
+    expect(encodeParams(DEFAULT_CUBEHELIX_PARAMS)).toBe("");
+  });
+
   test("rounds to four decimal places", () => {
     const qs = encodeParams({ ...DEFAULT_CUBEHELIX_PARAMS, gamma: 0.123456789 });
     expect(qs).toBe("?gamma=0.1235");
@@ -94,6 +99,13 @@ describe("decodeParams", () => {
     expect(decoded.lightnessMax).toBe(0.8);
   });
 
+  test("reverse decodes from 1 or true; absence yields default", () => {
+    expect(decodeParams("?reverse=1").reverse).toBe(true);
+    expect(decodeParams("?reverse=true").reverse).toBe(true);
+    expect(decodeParams("?reverse=0").reverse).toBe(false);
+    expect(decodeParams("").reverse).toBe(DEFAULT_CUBEHELIX_PARAMS.reverse);
+  });
+
   test("supports leading question mark or omission", () => {
     expect(decodeParams("?saturation=1.5").saturation).toBe(1.5);
     expect(decodeParams("saturation=1.5").saturation).toBe(1.5);
@@ -109,6 +121,7 @@ describe("round-trip", () => {
       gamma: 0.9,
       lightnessMin: 0.1,
       lightnessMax: 0.9,
+      reverse: true,
     };
     expect(decodeParams(encodeParams(original))).toEqual(original);
   });
@@ -161,6 +174,7 @@ describe("encodeAppState / decodeAppState", () => {
         gamma: 0.9,
         lightnessMin: 0.1,
         lightnessMax: 0.9,
+        reverse: true,
       } satisfies CubehelixParams,
       swatchCount: 14,
     };

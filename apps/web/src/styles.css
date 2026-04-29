@@ -63,8 +63,8 @@ body {
 
 .cube-visualization {
   position: relative;
-  aspect-ratio: 1;
-  width: 100%;
+  flex: 1;
+  min-height: 320px;
   border: 1px solid var(--border);
   border-radius: 8px;
   overflow: hidden;
@@ -224,6 +224,17 @@ header p {
   width: 100%;
 }
 
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.625rem;
+  cursor: pointer;
+}
+
+.toggle input[type="checkbox"] {
+  margin: 0;
+}
+
 .range-slider {
   display: flex;
   flex-direction: column;
@@ -353,8 +364,8 @@ header p {
 .gradient-strip {
   display: block;
   width: 100%;
-  flex: 1;
-  min-height: 60px;
+  height: 60px;
+  flex-shrink: 0;
   border: 1px solid var(--border);
   border-radius: 8px;
   background: var(--surface);

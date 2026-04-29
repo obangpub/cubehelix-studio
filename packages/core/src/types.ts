@@ -5,6 +5,7 @@ export interface CubehelixParams {
   gamma: number;
   lightnessMin: number;
   lightnessMax: number;
+  reverse: boolean;
 }
 
 export interface RGB {

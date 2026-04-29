@@ -62,9 +62,14 @@ function camelToSnake(key: string): string {
   return key.replace(/([a-z0-9])([A-Z])/g, "$1_$2").toLowerCase();
 }
 
+function formatPythonValue(v: unknown): string {
+  if (typeof v === "boolean") return v ? "True" : "False";
+  return formatNumber(v as number);
+}
+
 function serializePython(palette: RolePalette): string {
   const paramLines = Object.entries(palette.params).map(
-    ([k, v]) => `    ${camelToSnake(k)}=${formatNumber(v as number)},`,
+    ([k, v]) => `    ${camelToSnake(k)}=${formatPythonValue(v)},`,
   );
   const resolved = resolveHex(palette);
   const roleLines = resolved.map(

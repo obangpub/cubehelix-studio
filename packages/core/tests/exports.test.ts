@@ -77,6 +77,17 @@ describe("serialize: python", () => {
     const out = serialize(palette, "python");
     expect(out).toMatch(/"500": \(\d\.\d{6}, \d\.\d{6}, \d\.\d{6}\)/);
   });
+
+  test("serializes boolean params using Python literals", () => {
+    const reversed: RolePalette = {
+      params: { ...DEFAULT_CUBEHELIX_PARAMS, reverse: true },
+      roles: palette.roles,
+    };
+    const out = serialize(reversed, "python");
+    expect(out).toContain("reverse=True");
+    expect(out).not.toContain("reverse=true");
+    expect(out).not.toContain("reverse=1.0");
+  });
 });
 
 describe("serialize: round-trip name preservation", () => {

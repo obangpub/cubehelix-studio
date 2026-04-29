@@ -77,6 +77,17 @@ export function ParamControls({
           onChange({ ...params, lightnessMin: nextMin, lightnessMax: nextMax })
         }
       />
+      <label className="toggle">
+        <input
+          type="checkbox"
+          checked={params.reverse}
+          onChange={(e) => onChange({ ...params, reverse: e.currentTarget.checked })}
+        />
+        <span className="slider-titles">
+          <span className="slider-label">Reverse</span>
+          <span className="slider-technical">reverse</span>
+        </span>
+      </label>
       <Slider
         label="Swatches"
         technicalName="swatchCount"

@@ -7,14 +7,16 @@ export const DEFAULT_CUBEHELIX_PARAMS: CubehelixParams = {
   gamma: 1.0,
   lightnessMin: 0.0,
   lightnessMax: 1.0,
+  reverse: false,
 };
 
 export function cubehelixRaw(t: number, params: CubehelixParams): RGB {
-  const { start, rotations, saturation, gamma, lightnessMin, lightnessMax } = params;
+  const { start, rotations, saturation, gamma, lightnessMin, lightnessMax, reverse } = params;
+  const tEff = reverse ? 1 - t : t;
   const invGamma = 1 / gamma;
   const uMin = Math.pow(lightnessMin, invGamma);
   const uMax = Math.pow(lightnessMax, invGamma);
-  const u = uMin + (uMax - uMin) * t;
+  const u = uMin + (uMax - uMin) * tEff;
   const fraction = Math.pow(u, gamma);
   const angle = 2 * Math.PI * (start / 3 + rotations * u + 1);
   const amp = (saturation * fraction * (1 - fraction)) / 2;

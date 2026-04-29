@@ -59,9 +59,13 @@ for (const start of STARTS) {
 for (const range of LIGHTNESS_RANGES) {
   entries.push(buildEntry({ ...LIGHTNESS_RANGE_PROBE, ...range }));
 }
+entries.push(buildEntry({ ...LIGHTNESS_RANGE_PROBE, reverse: true }));
+entries.push(
+  buildEntry({ ...LIGHTNESS_RANGE_PROBE, reverse: true, lightnessMin: 0.2, lightnessMax: 0.8 }),
+);
 
 const fixture = {
-  version: 3,
+  version: 4,
   generator: "cubehelix-studio/scripts/generate-parity-fixture.ts",
   parameterGrid: {
     start: STARTS,
