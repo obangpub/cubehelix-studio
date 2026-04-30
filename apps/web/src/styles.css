@@ -244,19 +244,8 @@ header p {
   margin-bottom: 0.25rem;
 }
 
-.slider-titles {
-  display: flex;
-  flex-direction: column;
-}
-
 .slider-label {
   font-weight: 500;
-}
-
-.slider-technical {
-  color: var(--muted);
-  font-style: italic;
-  font-size: 0.875rem;
 }
 
 .slider-value {

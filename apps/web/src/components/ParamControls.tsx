@@ -154,10 +154,7 @@ export function ParamControls({
         <div className="control-section-body">
           <div className="hue-control">
             <div className="hue-control-header">
-              <span className="slider-titles">
-                <span className="slider-label">Starting Hue</span>
-                <span className="slider-technical">start</span>
-              </span>
+              <span className="slider-label">Starting Hue</span>
               <details className="info-popover">
                 <summary
                   className="info-popover-trigger"
@@ -224,10 +221,7 @@ export function ParamControls({
         </summary>
         <div className="control-section-body">
           <div className="curve-control">
-            <div className="slider-titles">
-              <span className="slider-label">Lightness Curve</span>
-              <span className="slider-technical">lightnessCurve</span>
-            </div>
+            <span className="slider-label">Lightness Curve</span>
             <div
               className="curve-kind-selector"
               role="radiogroup"
@@ -373,10 +367,7 @@ export function ParamControls({
               checked={params.reverse}
               onChange={(e) => onChange({ ...params, reverse: e.currentTarget.checked })}
             />
-            <span className="slider-titles">
-              <span className="slider-label">Reverse</span>
-              <span className="slider-technical">reverse</span>
-            </span>
+            <span className="slider-label">Reverse</span>
           </label>
           <Slider
             label="Swatches"

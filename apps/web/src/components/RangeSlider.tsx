@@ -50,12 +50,7 @@ export function RangeSlider({
   return (
     <div className="range-slider">
       <div className="range-slider-header">
-        <span className="slider-titles">
-          <span className="slider-label">{label}</span>
-          <span className="slider-technical">
-            {technicalNameMin} / {technicalNameMax}
-          </span>
-        </span>
+        <span className="slider-label">{label}</span>
         <span className="range-slider-values">
           <input
             id={numberIdMin}

@@ -62,10 +62,7 @@ export function Slider({
   return (
     <div className="slider">
       <label htmlFor={id}>
-        <span className="slider-titles">
-          <span className="slider-label">{label}</span>
-          <span className="slider-technical">{technicalName}</span>
-        </span>
+        <span className="slider-label">{label}</span>
         <input
           id={numberId}
           className="slider-value"
