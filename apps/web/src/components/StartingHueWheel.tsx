@@ -20,10 +20,10 @@ const POINTER_INNER = INNER_RADIUS - 0.04;
 const POINTER_OUTER = OUTER_RADIUS + 0.04;
 const REFERENCE_T = 0.5;
 
-function neutralParamsFor(rotations: number, start: number): CubehelixParams {
+function neutralParamsFor(start: number): CubehelixParams {
   return {
     start,
-    rotations,
+    rotations: 0,
     saturation: 1,
     lightnessCurve: DEFAULT_LIGHTNESS_CURVE,
     lightnessMin: 0,
@@ -60,9 +60,13 @@ export function StartingHueWheel({ value, onChange, params, shading }: StartingH
     const out: { path: string; color: string }[] = [];
     for (let i = 0; i < SEGMENT_COUNT; i++) {
       const segStart = ((i + 0.5) / SEGMENT_COUNT) * 3;
+      // Each segment shows the hue family at the start angle. We pin rotations
+      // to 0 so the angle at REFERENCE_T equals 2π·(start/3 + 1) regardless of
+      // the user's rotation count — otherwise the displayed hue drifts by
+      // rotations·π·REFERENCE_T from the actual start angle.
       const segParams: CubehelixParams = shading
-        ? { ...params, start: segStart }
-        : neutralParamsFor(params.rotations, segStart);
+        ? { ...params, start: segStart, rotations: 0 }
+        : neutralParamsFor(segStart);
       const color = toCssRgb(cubehelix(REFERENCE_T, segParams));
       const a0 = (i / SEGMENT_COUNT) * 2 * Math.PI;
       const a1 = ((i + 1) / SEGMENT_COUNT) * 2 * Math.PI;
