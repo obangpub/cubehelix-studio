@@ -178,9 +178,9 @@ export function ParamControls({
                     traverses the lightness ramp.
                   </p>
                   <p>
-                    The wheel is a fixed reference rendered at peak chroma. It only depends on{" "}
-                    <em>Starting Hue</em> — adjusting other parameters changes the gradient, not the
-                    picker.
+                    The picker shows each start angle&apos;s hue at peak chroma. Other parameters
+                    bend the path the gradient traces from there — they don&apos;t move where it
+                    begins.
                   </p>
                 </div>
               </details>
