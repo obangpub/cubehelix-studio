@@ -83,8 +83,8 @@ export function ParamControls({
   }, [
     params.rotations,
     params.lightnessCurve,
-    params.lightnessMin,
-    params.lightnessMax,
+    params.lightnessAxisMin,
+    params.lightnessAxisMax,
     params.chromaPeak,
     params.chromaWidth,
     params.chromaFloor,
@@ -146,7 +146,7 @@ export function ParamControls({
     <section className="controls">
       <details className="control-section" open>
         <summary className="control-section-header">
-          <span className="control-section-title">Classic</span>
+          <span className="control-section-title">Hue</span>
           <span className="control-section-chevron" aria-hidden>
             ▾
           </span>
@@ -199,20 +199,10 @@ export function ParamControls({
             numberMax={Infinity}
             onChange={update("rotations")}
           />
-          <Slider
-            label="Saturation"
-            technicalName="saturation"
-            value={params.saturation}
-            min={0}
-            max={saturationMax}
-            step={0.01}
-            scaleExponent={3}
-            onChange={update("saturation")}
-          />
         </div>
       </details>
 
-      <details className="control-section" open>
+      <details className="control-section">
         <summary className="control-section-header">
           <span className="control-section-title">Lightness</span>
           <span className="control-section-chevron" aria-hidden>
@@ -297,24 +287,24 @@ export function ParamControls({
             )}
           </div>
           <RangeSlider
-            label="Lightness Range"
-            technicalNameMin="lightnessMin"
-            technicalNameMax="lightnessMax"
-            valueMin={params.lightnessMin}
-            valueMax={params.lightnessMax}
+            label="Lightness Axis"
+            technicalNameMin="lightnessAxisMin"
+            technicalNameMax="lightnessAxisMax"
+            valueMin={params.lightnessAxisMin}
+            valueMax={params.lightnessAxisMax}
             min={0}
             max={1}
             step={0.01}
             thumbMinColor={minThumbColor}
             thumbMaxColor={maxThumbColor}
             onChange={({ min: nextMin, max: nextMax }) =>
-              onChange({ ...params, lightnessMin: nextMin, lightnessMax: nextMax })
+              onChange({ ...params, lightnessAxisMin: nextMin, lightnessAxisMax: nextMax })
             }
           />
         </div>
       </details>
 
-      <details className="control-section">
+      <details className="control-section" open>
         <summary className="control-section-header">
           <span className="control-section-title">Chroma</span>
           <span className="control-section-chevron" aria-hidden>
@@ -323,7 +313,17 @@ export function ParamControls({
         </summary>
         <div className="control-section-body">
           <Slider
-            label="Chroma Peak"
+            label="Saturation"
+            technicalName="saturation"
+            value={params.saturation}
+            min={0}
+            max={saturationMax}
+            step={0.01}
+            scaleExponent={3}
+            onChange={update("saturation")}
+          />
+          <Slider
+            label="Peak Position"
             technicalName="chromaPeak"
             value={params.chromaPeak}
             min={CHROMA_PEAK_BOUNDS.min}
