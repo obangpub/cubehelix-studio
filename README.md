@@ -22,19 +22,23 @@ This makes cubehelix a strong default for sequential data visualization, scienti
 
 ## Model
 
-The mental model the libraries and the web app are built around:
+A palette is the path of a wire — the cubehelix — drawn through the RGB cube. Four ideas stack up:
 
-- **The RGB cube is fixed.** Its black and white corners are anchored at lightness 0 and 1. The cube does not change.
-- **The helix is a curve inside that cube**, parameterized by `u ∈ [0, 1]` along the diagonal from black to white. Its shape is set by:
-  - `start` — the hue offset at the black corner
-  - `rotations` — the number of hue turns over the full black-to-white axis
-  - `saturation` and the chroma envelope (`chromaPeak`, `chromaWidth`, `chromaFloor`) — how far the helix bulges away from the diagonal
-- **The lightness curve reshapes the lightness profile along the helix**, accelerating or decelerating how lightness rises with `u`. It does not change which colors lie on the helix, only how the parameter is paced.
-- **The lightness axis bounds clip the helix to a sub-arc.** Setting `[lightnessAxisMin, lightnessAxisMax]` keeps the black and white corners exactly where they are; it discards the portion of the helix whose lightness falls outside that window. The visible palette traverses only the sub-arc that survives.
+**1. The cube is the workspace.** RGB coordinates from `(0, 0, 0)` (black) to `(1, 1, 1)` (white). It doesn't change.
 
-A direct consequence: narrowing the axis bounds exposes fewer hue cycles within the visible palette. With `rotations = 3` over the full axis, restricting to `[0.4, 0.6]` shows roughly the middle 20% of the helix and therefore roughly `3 × 0.2 = 0.6` hue cycles. This is intentional — `rotations` describes the helix in cube space, not the visible palette.
+**2. The helix is a wire whose ends are anchored at the black and white corners.** Its shape between them is parameter-controlled:
 
-The 3D cube view in the web app draws the full helix and shades the in-range sub-arc; the swatches, gradients, and exports all sample that same sub-arc.
+- `start` — the hue offset at the black anchor
+- `rotations` — the number of hue turns from black to white
+- `saturation`, `chromaPeak`, `chromaWidth`, `chromaFloor` — how far the wire bulges away from the cube's grey diagonal at each point along it
+
+**3. The lightness curve paces how you walk along the wire.** Power, sigmoid, or bezier — these accelerate or decelerate the lightness rise as the helix parameter `u` advances from `0` (black) to `1` (white). They don't change which colors lie on the wire, only how the curve is traversed.
+
+**4. The lightness axis bounds clip the wire to a sub-arc.** `[lightnessAxisMin, lightnessAxisMax]` selects the portion whose lightness output lies inside that window — the visible palette traverses only the surviving sub-arc.
+
+A consequence worth knowing: narrowing the axis bounds exposes fewer hue cycles within the visible palette. With `rotations = 3` over the full axis, restricting to `[0.4, 0.6]` shows roughly the middle 20% of the wire and therefore roughly `3 × 0.2 = 0.6` hue cycles. This is intentional — `rotations` describes the wire in cube space, not the visible palette.
+
+The 3D cube view in the web app draws the full wire and highlights the in-range sub-arc; the swatches, gradients, and exports all sample from that same sub-arc.
 
 ## Repository layout
 
