@@ -168,19 +168,19 @@ export function ParamControls({
                 </summary>
                 <div className="info-popover-content" role="tooltip">
                   <p>
-                    The wheel shows the hue family that appears just past the dark end of your
-                    gradient — not the abstract start angle in isolation.
+                    The wheel pointer indicates the hue at <em>t = 0</em> of your gradient — the
+                    mathematical starting hue.
                   </p>
                   <p>
-                    Cubehelix sweeps through hues as it traverses the lightness range, so the
-                    visible start hue depends on both <em>Starting Hue</em> and{" "}
-                    <em>Hue Rotations</em>. That coupling is why the wheel rotates when you change
-                    rotations.
+                    With the default lightness range, the gradient starts at black, so this hue is
+                    not directly visible at the start. The first <em>visible</em> color also depends
+                    on <em>Hue Rotations</em>, which sweeps the helix through other hues as it
+                    traverses the lightness ramp.
                   </p>
                   <p>
-                    With rotations = 0, the wheel matches the abstract start angle exactly. With
-                    non-zero rotations it shifts to keep the pointer aligned with what your gradient
-                    actually starts with.
+                    The wheel itself is a pure-hue picker: each segment is rendered at peak chroma
+                    independent of your rotation count, so the pointer always points at the same
+                    family for a given <em>start</em>.
                   </p>
                 </div>
               </details>
@@ -194,11 +194,7 @@ export function ParamControls({
                 aria-label="Starting Hue value"
               />
             </div>
-            <StartingHueWheel
-              value={params.start}
-              onChange={setStart}
-              rotations={params.rotations}
-            />
+            <StartingHueWheel value={params.start} onChange={setStart} />
           </div>
           <Slider
             label="Hue Rotations"

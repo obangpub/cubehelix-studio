@@ -9,7 +9,6 @@ import {
 interface StartingHueWheelProps {
   value: number;
   onChange: (next: number) => void;
-  rotations: number;
 }
 
 const SEGMENT_COUNT = 60;
@@ -18,17 +17,13 @@ const INNER_RADIUS = 0.6;
 const POINTER_INNER = INNER_RADIUS - 0.04;
 const POINTER_OUTER = OUTER_RADIUS + 0.04;
 
-// Sample at the gradient's near-start position so each segment shows the
-// hue family that appears just past the achromatic start of that gradient.
-// SAMPLE_T = 0 would give the abstract start angle; with non-zero rotations
-// that hue is also revisited mid-gradient, so the pointer would visually
-// match the gradient's interior rather than its start.
-const SAMPLE_T = 0.1;
-
-// Pin fraction at 0.5 (peak chroma in the default envelope) regardless of
-// SAMPLE_T by collapsing the lightness range. Decouples vividness from how
-// early in the gradient we sample.
-const WHEEL_FRACTION = 0.5;
+// Pin sampling so each segment shows the abstract hue at t=0 of a gradient
+// with that start. Rotations=0 makes the angle equal to 2π·(start/3 + 1)
+// regardless of t; a fixed fraction of 0.5 (set via the collapsed lightness
+// range) puts the sample at peak chroma so the wheel is vivid. Together,
+// the pointer color is the mathematically pure starting hue at maximum
+// visible chroma — it does not depend on the user's rotation count.
+const REFERENCE_T = 0.5;
 
 // Maximum saturation that keeps every hue in [0, 1] at fraction=0.5 with
 // the default chroma envelope. The binding constraint is along the B
@@ -37,14 +32,14 @@ const WHEEL_FRACTION = 0.5;
 // 2.0 leaves a tiny floating-point buffer.
 const WHEEL_SATURATION = 2.0;
 
-function wheelParams(start: number, rotations: number): CubehelixParams {
+function wheelParams(start: number): CubehelixParams {
   return {
     start,
-    rotations,
+    rotations: 0,
     saturation: WHEEL_SATURATION,
     lightnessCurve: DEFAULT_LIGHTNESS_CURVE,
-    lightnessMin: WHEEL_FRACTION,
-    lightnessMax: WHEEL_FRACTION,
+    lightnessMin: 0,
+    lightnessMax: 1,
     chromaPeak: 0.5,
     chromaWidth: 1,
     chromaFloor: 0,
@@ -72,18 +67,18 @@ function arcSegmentPath(angleStart: number, angleEnd: number): string {
   return `M ${o0.x} ${o0.y} A ${OUTER_RADIUS} ${OUTER_RADIUS} 0 0 1 ${o1.x} ${o1.y} L ${i1.x} ${i1.y} A ${INNER_RADIUS} ${INNER_RADIUS} 0 0 0 ${i0.x} ${i0.y} Z`;
 }
 
-export function StartingHueWheel({ value, onChange, rotations }: StartingHueWheelProps) {
+export function StartingHueWheel({ value, onChange }: StartingHueWheelProps) {
   const segments = useMemo(() => {
     const out: { path: string; color: string }[] = [];
     for (let i = 0; i < SEGMENT_COUNT; i++) {
       const segStart = ((i + 0.5) / SEGMENT_COUNT) * 3;
-      const color = toCssRgb(cubehelix(SAMPLE_T, wheelParams(segStart, rotations)));
+      const color = toCssRgb(cubehelix(REFERENCE_T, wheelParams(segStart)));
       const a0 = (i / SEGMENT_COUNT) * 2 * Math.PI;
       const a1 = ((i + 1) / SEGMENT_COUNT) * 2 * Math.PI;
       out.push({ path: arcSegmentPath(a0, a1), color });
     }
     return out;
-  }, [rotations]);
+  }, []);
 
   const svgRef = useRef<SVGSVGElement>(null);
 
