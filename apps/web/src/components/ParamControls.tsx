@@ -178,9 +178,8 @@ export function ParamControls({
                     traverses the lightness ramp.
                   </p>
                   <p>
-                    The picker shows each start angle&apos;s hue at peak chroma. Other parameters
-                    bend the path the gradient traces from there — they don&apos;t move where it
-                    begins.
+                    The picker shows pure starting hues. Other parameters bend the path traced by
+                    the gradient from there.
                   </p>
                 </div>
               </details>
