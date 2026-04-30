@@ -19,18 +19,14 @@ interface Sample {
 
 const TUBE_RADIUS = 0.01;
 const COLOR_RADIAL_SEGMENTS = 8;
-const GHOST_RADIUS = 0.009;
-const GHOST_RADIAL_SEGMENTS = 3;
+const GHOST_DASH_SIZE = 0.025;
+const GHOST_GAP_SIZE = 0.02;
+const GHOST_OPACITY = 0.55;
 const GHOST_EMERGE_SAMPLES = 4;
 const BISECT_ITER = 6;
 
 function clamp01(x: number): number {
   return x < 0 ? 0 : x > 1 ? 1 : x;
-}
-
-function srgbToLinear(c: number): number {
-  if (c <= 0.04045) return c / 12.92;
-  return Math.pow((c + 0.055) / 1.055, 2.4);
 }
 
 function isInGamut(c: RGB): boolean {
@@ -53,7 +49,18 @@ function bisectCrossing(uLo: number, uHi: number, inLo: boolean, params: Cubehel
 }
 
 function buildSamples(params: CubehelixParams, n: number): Sample[] {
-  const fullHelixParams: CubehelixParams = { ...params, lightnessMin: 0, lightnessMax: 1 };
+  // Cube viz renders the full underlying helix (u in [0,1] of the canonical
+  // cubehelix curve), then marks which segments fall in the user's visible
+  // window. The full-helix params must therefore strip lightness-range AND
+  // reverse, since both are user-visible-window concerns, not curve-shape
+  // concerns. Keeping reverse here would double-reverse and paint mismatched
+  // hues against the swatches.
+  const fullHelixParams: CubehelixParams = {
+    ...params,
+    lightnessMin: 0,
+    lightnessMax: 1,
+    reverse: false,
+  };
   const invGamma = 1 / params.gamma;
   const uMin = Math.pow(params.lightnessMin, invGamma);
   const uMax = Math.pow(params.lightnessMax, invGamma);
@@ -91,6 +98,18 @@ function buildSamples(params: CubehelixParams, n: number): Sample[] {
     if (a.inGamut !== b.inGamut) {
       const uCross = bisectCrossing(a.u, b.u, a.inGamut, fullHelixParams);
       out.push(makeAt(uCross));
+    } else {
+      // Both endpoints share the same gamut state. Probe the midpoint to
+      // catch sub-sample excursions (helix dips out and back within one
+      // sample interval at high saturation + extreme gamma).
+      const mid = makeAt((a.u + b.u) / 2);
+      if (mid.inGamut !== a.inGamut) {
+        const uEnter = bisectCrossing(a.u, mid.u, a.inGamut, fullHelixParams);
+        const uExit = bisectCrossing(mid.u, b.u, mid.inGamut, fullHelixParams);
+        out.push(makeAt(uEnter));
+        out.push(mid);
+        out.push(makeAt(uExit));
+      }
     }
     out.push(b);
   }
@@ -108,6 +127,15 @@ class PolylineCurve extends THREE.Curve<THREE.Vector3> {
     const i = Math.min(Math.floor(seg), n - 1);
     const f = seg - i;
     return target.lerpVectors(this.points[i]!, this.points[i + 1]!, f);
+  }
+  // TubeGeometry calls getPointAt(u) internally and the base class re-samples
+  // by arc length. With a non-uniformly-spaced polyline (e.g. high-rotation
+  // cubehelix where chroma rotation dominates near peak amp but lightness
+  // dominates near the endpoints), arc-length sampling places cross-sections
+  // at different parameter positions than our sample indices, breaking the
+  // mapping between vertex index and sample color. Treat u as t directly.
+  override getPointAt(u: number, optionalTarget?: THREE.Vector3): THREE.Vector3 {
+    return this.getPoint(u, optionalTarget);
   }
 }
 
@@ -147,13 +175,18 @@ function buildColoredTube(
   return geometry;
 }
 
+function srgbToLinear(c: number): number {
+  if (c <= 0.04045) return c / 12.92;
+  return Math.pow((c + 0.055) / 1.055, 2.4);
+}
+
 function sampleToVec(c: RGB): THREE.Vector3 {
   return new THREE.Vector3(c.r, c.g, c.b);
 }
 
 interface ScenePieces {
   colored: THREE.BufferGeometry[];
-  ghosts: THREE.BufferGeometry[];
+  ghosts: THREE.Line[];
 }
 
 function forEachRun(
@@ -175,9 +208,23 @@ function forEachRun(
   }
 }
 
+function buildGhostLine(positions: THREE.Vector3[]): THREE.Line {
+  const geometry = new THREE.BufferGeometry().setFromPoints(positions);
+  const material = new THREE.LineDashedMaterial({
+    color: 0xffffff,
+    dashSize: GHOST_DASH_SIZE,
+    gapSize: GHOST_GAP_SIZE,
+    transparent: true,
+    opacity: GHOST_OPACITY,
+  });
+  const line = new THREE.Line(geometry, material);
+  line.computeLineDistances();
+  return line;
+}
+
 function buildScene(samples: Sample[]): ScenePieces {
   const colored: THREE.BufferGeometry[] = [];
-  const ghosts: THREE.BufferGeometry[] = [];
+  const ghosts: THREE.Line[] = [];
   if (samples.length < 2) return { colored, ghosts };
 
   forEachRun(
@@ -199,8 +246,7 @@ function buildScene(samples: Sample[]): ScenePieces {
     (run) => {
       if (run.length < 2) return;
       const positions = run.map((s) => sampleToVec(s.raw));
-      const ghostCols: RGB[] = run.map(() => ({ r: 1, g: 1, b: 1 }));
-      ghosts.push(buildColoredTube(positions, ghostCols, GHOST_RADIUS, GHOST_RADIAL_SEGMENTS));
+      ghosts.push(buildGhostLine(positions));
     },
   );
 
@@ -275,7 +321,15 @@ function Helix({ params, samples }: HelixProps) {
   useEffect(() => {
     return () => {
       for (const g of colored) g.dispose();
-      for (const g of ghosts) g.dispose();
+      for (const line of ghosts) {
+        line.geometry.dispose();
+        const material = line.material;
+        if (Array.isArray(material)) {
+          for (const m of material) m.dispose();
+        } else {
+          material.dispose();
+        }
+      }
     };
   }, [colored, ghosts]);
 
@@ -286,10 +340,8 @@ function Helix({ params, samples }: HelixProps) {
           <meshBasicMaterial vertexColors />
         </mesh>
       ))}
-      {ghosts.map((g, i) => (
-        <mesh key={`ghost-${i}`} geometry={g}>
-          <meshBasicMaterial vertexColors wireframe transparent opacity={0.5} />
-        </mesh>
+      {ghosts.map((line, i) => (
+        <primitive key={`ghost-${i}`} object={line} />
       ))}
     </>
   );
@@ -297,7 +349,17 @@ function Helix({ params, samples }: HelixProps) {
 
 const CUBE_CAMERA: [number, number, number] = [1.3, 0.9, 1.7];
 
-export function CubeVisualization({ params, samples = 256 }: CubeVisualizationProps) {
+const SAMPLES_PER_ROTATION = 96;
+const MIN_SAMPLES = 256;
+
+export function CubeVisualization({ params, samples }: CubeVisualizationProps) {
+  const effectiveSamples = useMemo(() => {
+    if (samples != null) return samples;
+    const absR = Math.abs(params.rotations);
+    if (absR < 1) return MIN_SAMPLES;
+    const perRotation = SAMPLES_PER_ROTATION;
+    return Math.ceil(absR) * perRotation;
+  }, [samples, params.rotations]);
   const controlsRef = useRef<ComponentRef<typeof OrbitControls>>(null);
   const handleReset = () => {
     controlsRef.current?.reset();
@@ -331,7 +393,7 @@ export function CubeVisualization({ params, samples = 256 }: CubeVisualizationPr
           <CubeWireframe />
           <GrayDiagonal />
           <CornerMarkers />
-          <Helix params={params} samples={samples} />
+          <Helix params={params} samples={effectiveSamples} />
         </group>
         <OrbitControls ref={controlsRef} enableDamping />
       </Canvas>

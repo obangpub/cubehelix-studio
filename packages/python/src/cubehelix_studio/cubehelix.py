@@ -32,7 +32,9 @@ def cubehelix_raw(t: float, params: CubehelixParams) -> tuple[float, float, floa
     u_max = params.lightness_max**inv_gamma
     u = u_min + (u_max - u_min) * t_eff
     fraction = u**params.gamma
-    angle = 2.0 * math.pi * (params.start / 3.0 + params.rotations * u + 1.0)
+    # Angle parameterized by the user's visible position (t_eff), so `rotations`
+    # means turns over the visible palette regardless of lightness range.
+    angle = 2.0 * math.pi * (params.start / 3.0 + params.rotations * t_eff + 1.0)
     amp = (params.saturation * fraction * (1.0 - fraction)) / 2.0
     cos_a = math.cos(angle)
     sin_a = math.sin(angle)

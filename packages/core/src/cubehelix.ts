@@ -18,7 +18,9 @@ export function cubehelixRaw(t: number, params: CubehelixParams): RGB {
   const uMax = Math.pow(lightnessMax, invGamma);
   const u = uMin + (uMax - uMin) * tEff;
   const fraction = Math.pow(u, gamma);
-  const angle = 2 * Math.PI * (start / 3 + rotations * u + 1);
+  // Angle is parameterized by the user's visible position (tEff), so `rotations`
+  // means "turns over the visible palette" regardless of lightness range.
+  const angle = 2 * Math.PI * (start / 3 + rotations * tEff + 1);
   const amp = (saturation * fraction * (1 - fraction)) / 2;
   const cosA = Math.cos(angle);
   const sinA = Math.sin(angle);
@@ -47,11 +49,12 @@ export function saturationCap(params: CubehelixParams): number {
   const uMax = Math.pow(lightnessMax, invGamma);
   const exitSaturations: number[] = [];
   for (let i = 0; i <= SATURATION_CAP_SAMPLES; i++) {
-    const u = uMin + (uMax - uMin) * (i / SATURATION_CAP_SAMPLES);
+    const tEff = i / SATURATION_CAP_SAMPLES;
+    const u = uMin + (uMax - uMin) * tEff;
     const fraction = Math.pow(u, gamma);
     const envelope = (fraction * (1 - fraction)) / 2;
     if (envelope === 0) continue;
-    const angle = 2 * Math.PI * (start / 3 + rotations * u + 1);
+    const angle = 2 * Math.PI * (start / 3 + rotations * tEff + 1);
     const cosA = Math.cos(angle);
     const sinA = Math.sin(angle);
     const dirs = [
