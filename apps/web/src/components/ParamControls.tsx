@@ -178,9 +178,9 @@ export function ParamControls({
                     traverses the lightness ramp.
                   </p>
                   <p>
-                    The wheel itself is a pure-hue picker: each segment is rendered at peak chroma
-                    independent of your rotation count, so the pointer always points at the same
-                    family for a given <em>start</em>.
+                    The wheel is a fixed reference rendered at peak chroma. It only depends on{" "}
+                    <em>Starting Hue</em> — adjusting other parameters changes the gradient, not
+                    the picker.
                   </p>
                 </div>
               </details>
