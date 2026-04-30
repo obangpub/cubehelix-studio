@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import {
   cubehelix,
   saturationCap,
@@ -8,6 +8,11 @@ import {
 import { SWATCH_COUNT_BOUNDS } from "../lib/url-state";
 import { RangeSlider } from "./RangeSlider";
 import { Slider } from "./Slider";
+import { StartingHueWheel } from "./StartingHueWheel";
+
+function mod3(v: number): number {
+  return ((v % 3) + 3) % 3;
+}
 
 interface ParamControlsProps {
   params: CubehelixParams;
@@ -27,18 +32,55 @@ export function ParamControls({
   };
   const minThumbColor = useMemo(() => toCssRgb(cubehelix(0, params)), [params]);
   const maxThumbColor = useMemo(() => toCssRgb(cubehelix(1, params)), [params]);
-  const saturationMax = useMemo(() => Number(saturationCap(params).toFixed(2)), [params]);
+  const saturationMax = useMemo(() => {
+    const SAMPLES = 24;
+    let max = 0;
+    for (let i = 0; i < SAMPLES; i++) {
+      const start = (i / SAMPLES) * 3;
+      const cap = saturationCap({ ...params, start });
+      if (cap > max) max = cap;
+    }
+    return Number(max.toFixed(2));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params.rotations, params.gamma, params.lightnessMin, params.lightnessMax, params.reverse]);
+  const [hueShading, setHueShading] = useState(true);
+  const setStart = (v: number) => {
+    if (!Number.isFinite(v)) return;
+    onChange({ ...params, start: mod3(v) });
+  };
   return (
     <section className="controls">
-      <Slider
-        label="Starting Hue"
-        technicalName="start"
-        value={params.start}
-        min={0}
-        max={3}
-        step={0.05}
-        onChange={update("start")}
-      />
+      <div className="hue-control">
+        <div className="hue-control-header">
+          <span className="slider-titles">
+            <span className="slider-label">Starting Hue</span>
+            <span className="slider-technical">start</span>
+          </span>
+          <input
+            id="hue-control-number"
+            className="slider-value"
+            type="number"
+            value={Number(mod3(params.start).toFixed(3))}
+            step={0.05}
+            onChange={(e) => setStart(e.currentTarget.valueAsNumber)}
+            aria-label="Starting Hue value"
+          />
+        </div>
+        <StartingHueWheel
+          value={params.start}
+          onChange={setStart}
+          params={params}
+          shading={hueShading}
+        />
+        <label className="hue-shading-toggle">
+          <input
+            type="checkbox"
+            checked={hueShading}
+            onChange={(e) => setHueShading(e.currentTarget.checked)}
+          />
+          <span>Shading</span>
+        </label>
+      </div>
       <Slider
         label="Hue Rotations"
         technicalName="rotations"

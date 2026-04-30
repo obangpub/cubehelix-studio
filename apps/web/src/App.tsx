@@ -36,20 +36,20 @@ export default function App() {
         </div>
       </header>
       <div className="layout">
-        <div className="layout-left">
+        <section className="visualization" aria-label="Palette preview">
+          <CubeVisualization params={params} />
+          <GradientStrip params={params} />
+          <GammaBar params={params} />
+          <SwatchRow params={params} count={swatchCount} />
+        </section>
+        <div className="layout-controls">
           <ParamControls
             params={params}
             onChange={setParams}
             swatchCount={swatchCount}
             onSwatchCountChange={setSwatchCount}
           />
-          <SwatchRow params={params} count={swatchCount} />
         </div>
-        <section className="visualization" aria-label="Cube and gamma visualization">
-          <CubeVisualization params={params} />
-          <GradientStrip params={params} />
-          <GammaBar params={params} />
-        </section>
       </div>
       <ExportPanel params={params} swatchCount={swatchCount} />
     </main>
