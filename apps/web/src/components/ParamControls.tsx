@@ -158,6 +158,32 @@ export function ParamControls({
                 <span className="slider-label">Starting Hue</span>
                 <span className="slider-technical">start</span>
               </span>
+              <details className="info-popover">
+                <summary
+                  className="info-popover-trigger"
+                  aria-label="About the starting hue wheel"
+                  title="About the starting hue wheel"
+                >
+                  ?
+                </summary>
+                <div className="info-popover-content" role="tooltip">
+                  <p>
+                    The wheel shows the hue family that appears just past the dark end of your
+                    gradient — not the abstract start angle in isolation.
+                  </p>
+                  <p>
+                    Cubehelix sweeps through hues as it traverses the lightness range, so the
+                    visible start hue depends on both <em>Starting Hue</em> and{" "}
+                    <em>Hue Rotations</em>. That coupling is why the wheel rotates when you change
+                    rotations.
+                  </p>
+                  <p>
+                    With rotations = 0, the wheel matches the abstract start angle exactly. With
+                    non-zero rotations it shifts to keep the pointer aligned with what your gradient
+                    actually starts with.
+                  </p>
+                </div>
+              </details>
               <input
                 id="hue-control-number"
                 className="slider-value"
@@ -168,7 +194,11 @@ export function ParamControls({
                 aria-label="Starting Hue value"
               />
             </div>
-            <StartingHueWheel value={params.start} onChange={setStart} />
+            <StartingHueWheel
+              value={params.start}
+              onChange={setStart}
+              rotations={params.rotations}
+            />
           </div>
           <Slider
             label="Hue Rotations"
