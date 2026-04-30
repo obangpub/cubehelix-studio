@@ -694,28 +694,6 @@ header p {
   outline-offset: 1px;
 }
 
-.export-panel-copy {
-  font: inherit;
-  font-size: 0.8125rem;
-  color: var(--fg);
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  padding: 0.3rem 0.75rem;
-  cursor: pointer;
-  white-space: nowrap;
-  transition: background 120ms ease;
-}
-
-.export-panel-copy:hover {
-  background: var(--bg);
-}
-
-.export-panel-copy:focus-visible {
-  outline: 2px solid var(--fg);
-  outline-offset: 1px;
-}
-
 .export-panel-output {
   margin: 0;
   padding: 1rem 1.25rem;
