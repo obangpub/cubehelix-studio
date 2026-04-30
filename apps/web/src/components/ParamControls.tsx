@@ -167,19 +167,15 @@ export function ParamControls({
                   ?
                 </summary>
                 <div className="info-popover-content" role="tooltip">
+                  <p>The wheel sets your gradient&apos;s starting hue, shown at full saturation.</p>
                   <p>
-                    The wheel pointer indicates the hue at <em>t = 0</em> of your gradient — the
-                    mathematical starting hue.
+                    You may not see that hue in the gradient itself. By default the gradient starts
+                    at black, so it&apos;s hidden at that end. <em>Hue Rotations</em> also turns the
+                    hue as the gradient brightens, shifting the first visible color away from the
+                    pointer.
                   </p>
                   <p>
-                    With the default lightness range, the gradient starts at black, so this hue is
-                    not directly visible at the start. The first <em>visible</em> color also depends
-                    on <em>Hue Rotations</em>, which sweeps the helix through other hues as it
-                    traverses the lightness ramp.
-                  </p>
-                  <p>
-                    The picker shows pure starting hues. Other parameters bend the path traced by
-                    the gradient from there.
+                    Other parameters bend the gradient&apos;s path; they don&apos;t move its start.
                   </p>
                 </div>
               </details>
