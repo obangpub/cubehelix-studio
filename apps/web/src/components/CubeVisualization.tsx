@@ -13,6 +13,7 @@ import {
 interface CubeVisualizationProps {
   params: CubehelixParams;
   samples?: number;
+  resetSignal?: number;
 }
 
 interface Sample {
@@ -371,7 +372,7 @@ const CUBE_CAMERA: [number, number, number] = [1.3, 0.9, 1.7];
 const SAMPLES_PER_ROTATION = 96;
 const MIN_SAMPLES = 256;
 
-export function CubeVisualization({ params, samples }: CubeVisualizationProps) {
+export function CubeVisualization({ params, samples, resetSignal }: CubeVisualizationProps) {
   const effectiveSamples = useMemo(() => {
     if (samples != null) return samples;
     const absR = Math.abs(params.rotations);
@@ -383,6 +384,10 @@ export function CubeVisualization({ params, samples }: CubeVisualizationProps) {
   const handleReset = () => {
     controlsRef.current?.reset();
   };
+  useEffect(() => {
+    if (resetSignal === undefined) return;
+    controlsRef.current?.reset();
+  }, [resetSignal]);
   return (
     <div className="cube-visualization">
       <button

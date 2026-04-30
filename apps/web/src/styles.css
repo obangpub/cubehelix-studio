@@ -134,7 +134,8 @@ header p {
   gap: 0.5rem;
 }
 
-.share-link {
+.share-link,
+.header-button {
   flex-shrink: 0;
   font: inherit;
   font-size: 0.875rem;
@@ -148,11 +149,13 @@ header p {
   transition: background 120ms ease;
 }
 
-.share-link:hover {
+.share-link:hover,
+.header-button:hover {
   background: var(--bg);
 }
 
-.share-link:focus-visible {
+.share-link:focus-visible,
+.header-button:focus-visible {
   outline: 2px solid var(--fg);
   outline-offset: 2px;
 }
@@ -160,11 +163,52 @@ header p {
 .controls {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 8px;
-  padding: 1.5rem;
+  overflow: hidden;
+}
+
+.control-section + .control-section {
+  border-top: 1px solid var(--border);
+}
+
+.control-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.875rem 1.25rem;
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--fg);
+  user-select: none;
+  list-style: none;
+}
+
+.control-section-header::-webkit-details-marker {
+  display: none;
+}
+
+.control-section-header:hover {
+  background: var(--bg);
+}
+
+.control-section-chevron {
+  color: var(--muted);
+  font-size: 0.875rem;
+  transition: transform 150ms ease;
+}
+
+.control-section[open] > .control-section-header .control-section-chevron {
+  transform: rotate(180deg);
+}
+
+.control-section-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 0.5rem 1.25rem 1.25rem;
 }
 
 .slider label {
