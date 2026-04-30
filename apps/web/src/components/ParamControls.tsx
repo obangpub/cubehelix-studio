@@ -179,8 +179,8 @@ export function ParamControls({
                   </p>
                   <p>
                     The wheel is a fixed reference rendered at peak chroma. It only depends on{" "}
-                    <em>Starting Hue</em> — adjusting other parameters changes the gradient, not
-                    the picker.
+                    <em>Starting Hue</em> — adjusting other parameters changes the gradient, not the
+                    picker.
                   </p>
                 </div>
               </details>
