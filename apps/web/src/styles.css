@@ -325,20 +325,6 @@ header p {
   cursor: grabbing;
 }
 
-.hue-shading-toggle {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.4rem;
-  font-size: 0.875rem;
-  color: var(--muted);
-  cursor: pointer;
-  align-self: center;
-}
-
-.hue-shading-toggle input[type="checkbox"] {
-  margin: 0;
-}
-
 .curve-control {
   display: flex;
   flex-direction: column;

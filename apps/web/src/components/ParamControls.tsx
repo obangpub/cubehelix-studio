@@ -90,7 +90,6 @@ export function ParamControls({
     params.chromaFloor,
     params.reverse,
   ]);
-  const [hueShading, setHueShading] = useState(true);
   const setStart = (v: number) => {
     if (!Number.isFinite(v)) return;
     onChange({ ...params, start: mod3(v) });
@@ -169,20 +168,7 @@ export function ParamControls({
                 aria-label="Starting Hue value"
               />
             </div>
-            <StartingHueWheel
-              value={params.start}
-              onChange={setStart}
-              params={params}
-              shading={hueShading}
-            />
-            <label className="hue-shading-toggle">
-              <input
-                type="checkbox"
-                checked={hueShading}
-                onChange={(e) => setHueShading(e.currentTarget.checked)}
-              />
-              <span>Shading</span>
-            </label>
+            <StartingHueWheel value={params.start} onChange={setStart} />
           </div>
           <Slider
             label="Hue Rotations"

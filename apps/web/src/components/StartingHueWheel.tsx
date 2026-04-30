@@ -9,8 +9,6 @@ import {
 interface StartingHueWheelProps {
   value: number;
   onChange: (next: number) => void;
-  params: CubehelixParams;
-  shading: boolean;
 }
 
 const SEGMENT_COUNT = 60;
@@ -18,17 +16,23 @@ const OUTER_RADIUS = 1;
 const INNER_RADIUS = 0.6;
 const POINTER_INNER = INNER_RADIUS - 0.04;
 const POINTER_OUTER = OUTER_RADIUS + 0.04;
-// Sample early in the gradient so each segment shows the visible "starting" hue.
-// Picking t=0.5 (peak chroma) would show the gradient's middle hue; picking
-// t=0 gives black (no chroma). t=0.15 is far enough from the achromatic
-// endpoint to register a hue but still inside the visual "start" of the ramp.
-const REFERENCE_T = 0.15;
 
-function neutralParamsFor(rotations: number, start: number): CubehelixParams {
+// Sample at peak chroma (default chroma envelope) so the segments are as
+// vivid as the gamut allows.
+const REFERENCE_T = 0.5;
+
+// Maximum saturation that keeps every hue in [0, 1] at fraction=0.5 with
+// the default chroma envelope. The binding constraint is along the B
+// direction at angle 0 or π (|B_dir| = 1.97294, peak amplitude 0.125):
+//   s_max = 0.5 / (0.125 · 1.97294) ≈ 2.027
+// 2.0 leaves a tiny floating-point buffer.
+const WHEEL_SATURATION = 2.0;
+
+function wheelParams(start: number): CubehelixParams {
   return {
     start,
-    rotations,
-    saturation: 1,
+    rotations: 0,
+    saturation: WHEEL_SATURATION,
     lightnessCurve: DEFAULT_LIGHTNESS_CURVE,
     lightnessMin: 0,
     lightnessMax: 1,
@@ -59,27 +63,18 @@ function arcSegmentPath(angleStart: number, angleEnd: number): string {
   return `M ${o0.x} ${o0.y} A ${OUTER_RADIUS} ${OUTER_RADIUS} 0 0 1 ${o1.x} ${o1.y} L ${i1.x} ${i1.y} A ${INNER_RADIUS} ${INNER_RADIUS} 0 0 0 ${i0.x} ${i0.y} Z`;
 }
 
-export function StartingHueWheel({ value, onChange, params, shading }: StartingHueWheelProps) {
+export function StartingHueWheel({ value, onChange }: StartingHueWheelProps) {
   const segments = useMemo(() => {
     const out: { path: string; color: string }[] = [];
     for (let i = 0; i < SEGMENT_COUNT; i++) {
       const segStart = ((i + 0.5) / SEGMENT_COUNT) * 3;
-      // Use the user's rotations so the segment color matches what the
-      // gradient would actually look like just past the achromatic start.
-      // The cubehelix RGB coefficients are asymmetric (B has a 1.97 cos
-      // weight; R has a 1.78 sin weight), so even a small rotation drift
-      // flips which channel dominates — the abstract start-angle hue can
-      // differ markedly from the gradient's first visible color.
-      const segParams: CubehelixParams = shading
-        ? { ...params, start: segStart }
-        : neutralParamsFor(params.rotations, segStart);
-      const color = toCssRgb(cubehelix(REFERENCE_T, segParams));
+      const color = toCssRgb(cubehelix(REFERENCE_T, wheelParams(segStart)));
       const a0 = (i / SEGMENT_COUNT) * 2 * Math.PI;
       const a1 = ((i + 1) / SEGMENT_COUNT) * 2 * Math.PI;
       out.push({ path: arcSegmentPath(a0, a1), color });
     }
     return out;
-  }, [params, shading]);
+  }, []);
 
   const svgRef = useRef<SVGSVGElement>(null);
 
