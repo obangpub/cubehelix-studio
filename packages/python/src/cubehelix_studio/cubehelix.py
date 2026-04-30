@@ -6,6 +6,16 @@ import math
 from dataclasses import dataclass, field
 from typing import Union
 
+DEFAULT_CHROMA_PEAK = 0.5
+DEFAULT_CHROMA_WIDTH = 1.0
+DEFAULT_CHROMA_FLOOR = 0.0
+
+# Peak amplitude calibration: at (peak=0.5, width=1, floor=0) the chroma
+# envelope reduces to f * (1 - f) / 2 (the original cubehelix envelope).
+# The normalized shape peaks at 1 and the original envelope peaks at 0.125,
+# so the calibration constant is 0.125.
+_PEAK_AMPLITUDE = 0.125
+
 
 @dataclass(frozen=True)
 class PowerCurve:
@@ -106,6 +116,25 @@ def evaluate_lightness_curve(curve: LightnessCurve, t: float) -> float:
     raise TypeError(f"unsupported curve type: {type(curve).__name__}")
 
 
+def chroma_envelope(fraction: float, peak: float, width: float, floor: float) -> float:
+    """Multiplier of `saturation` that gives the chroma amplitude at `fraction`.
+
+    At defaults (peak=0.5, width=1, floor=0) this collapses to f * (1 - f) / 2.
+    """
+    if fraction <= 0.0 or fraction >= 1.0:
+        return floor * _PEAK_AMPLITUDE
+    total = 2.0 / width
+    a = peak * total
+    b = (1.0 - peak) * total
+    shape_at_peak = (peak**a) * ((1.0 - peak) ** b)
+    if shape_at_peak <= 0.0 or not math.isfinite(shape_at_peak):
+        return floor * _PEAK_AMPLITUDE
+    shape = (fraction**a) * ((1.0 - fraction) ** b)
+    normalized = shape / shape_at_peak
+    envelope = (1.0 - floor) * normalized + floor
+    return envelope * _PEAK_AMPLITUDE
+
+
 @dataclass(frozen=True)
 class CubehelixParams:
     start: float = 0.5
@@ -114,6 +143,9 @@ class CubehelixParams:
     lightness_curve: LightnessCurve = field(default_factory=PowerCurve)
     lightness_min: float = 0.0
     lightness_max: float = 1.0
+    chroma_peak: float = DEFAULT_CHROMA_PEAK
+    chroma_width: float = DEFAULT_CHROMA_WIDTH
+    chroma_floor: float = DEFAULT_CHROMA_FLOOR
     reverse: bool = False
 
 
@@ -132,7 +164,9 @@ def cubehelix_raw(t: float, params: CubehelixParams) -> tuple[float, float, floa
     # Angle parameterized by the user's visible position (t_eff), so `rotations`
     # means turns over the visible palette regardless of lightness range or curve.
     angle = 2.0 * math.pi * (params.start / 3.0 + params.rotations * t_eff + 1.0)
-    amp = (params.saturation * fraction * (1.0 - fraction)) / 2.0
+    amp = params.saturation * chroma_envelope(
+        fraction, params.chroma_peak, params.chroma_width, params.chroma_floor
+    )
     cos_a = math.cos(angle)
     sin_a = math.sin(angle)
     r = fraction + amp * (-0.14861 * cos_a + 1.78277 * sin_a)

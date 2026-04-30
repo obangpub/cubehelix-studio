@@ -1,4 +1,5 @@
 import { describe, expect, test } from "vitest";
+import { chromaEnvelope } from "../src/chroma-envelope";
 import { DEFAULT_CUBEHELIX_PARAMS, cubehelix, cubehelixRaw, saturationCap } from "../src/cubehelix";
 import { evaluateLightnessCurve } from "../src/lightness-curve";
 import type { CubehelixParams, LightnessCurve } from "../src/types";
@@ -230,5 +231,55 @@ describe("evaluateLightnessCurve", () => {
       expect(v).toBeGreaterThanOrEqual(prev - 1e-9);
       prev = v;
     }
+  });
+});
+
+describe("chromaEnvelope", () => {
+  const defaults = { chromaPeak: 0.5, chromaWidth: 1, chromaFloor: 0 };
+
+  test("collapses to f*(1-f)/2 at default params", () => {
+    for (let i = 0; i <= 20; i++) {
+      const f = i / 20;
+      const expected = (f * (1 - f)) / 2;
+      expect(chromaEnvelope(f, defaults)).toBeCloseTo(expected, 12);
+    }
+  });
+
+  test("peaks at chromaPeak with the calibrated peak amplitude", () => {
+    for (const peak of [0.2, 0.5, 0.7]) {
+      const params = { chromaPeak: peak, chromaWidth: 1, chromaFloor: 0 };
+      const envAt = chromaEnvelope(peak, params);
+      expect(envAt).toBeCloseTo(0.125, 9);
+      const before = chromaEnvelope(Math.max(0.001, peak - 0.05), params);
+      const after = chromaEnvelope(Math.min(0.999, peak + 0.05), params);
+      expect(envAt).toBeGreaterThan(before - 1e-12);
+      expect(envAt).toBeGreaterThan(after - 1e-12);
+    }
+  });
+
+  test("non-zero chromaFloor lifts the envelope at endpoints", () => {
+    const floor = 0.25;
+    const env = chromaEnvelope(0, { chromaPeak: 0.5, chromaWidth: 1, chromaFloor: floor });
+    expect(env).toBeCloseTo(floor * 0.125, 12);
+  });
+
+  test("narrowing chromaWidth concentrates the envelope near the peak", () => {
+    const wide = { chromaPeak: 0.5, chromaWidth: 2, chromaFloor: 0 };
+    const narrow = { chromaPeak: 0.5, chromaWidth: 0.5, chromaFloor: 0 };
+    const offPeak = 0.2;
+    expect(chromaEnvelope(offPeak, narrow)).toBeLessThan(chromaEnvelope(offPeak, wide));
+    expect(chromaEnvelope(0.5, narrow)).toBeCloseTo(0.125, 9);
+    expect(chromaEnvelope(0.5, wide)).toBeCloseTo(0.125, 9);
+  });
+
+  test("non-default chromaFloor + non-zero saturation gives endpoints non-zero chroma", () => {
+    const params: CubehelixParams = {
+      ...DEFAULT_CUBEHELIX_PARAMS,
+      saturation: 1,
+      chromaFloor: 0.5,
+    };
+    const c = cubehelix(0, params);
+    const allZero = c.r === 0 && c.g === 0 && c.b === 0;
+    expect(allZero).toBe(false);
   });
 });

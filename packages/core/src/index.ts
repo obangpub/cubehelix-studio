@@ -15,6 +15,13 @@ export {
   DEFAULT_SIGMOID_STEEPNESS,
   evaluateLightnessCurve,
 } from "./lightness-curve";
+export {
+  chromaEnvelope,
+  DEFAULT_CHROMA_FLOOR,
+  DEFAULT_CHROMA_PEAK,
+  DEFAULT_CHROMA_WIDTH,
+} from "./chroma-envelope";
+export type { ChromaEnvelopeParams } from "./chroma-envelope";
 export { sampleSequential } from "./sampling";
 export { toHex, toCssRgb } from "./format";
 export { contrastRatio, pickTextColor } from "./contrast";

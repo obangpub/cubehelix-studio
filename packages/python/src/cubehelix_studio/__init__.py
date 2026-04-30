@@ -2,11 +2,15 @@
 
 from .contrast import contrast_ratio, pick_text_color
 from .cubehelix import (
+    DEFAULT_CHROMA_FLOOR,
+    DEFAULT_CHROMA_PEAK,
+    DEFAULT_CHROMA_WIDTH,
     BezierCurve,
     CubehelixParams,
     LightnessCurve,
     PowerCurve,
     SigmoidCurve,
+    chroma_envelope,
     cubehelix,
     cubehelix_raw,
     evaluate_lightness_curve,
@@ -17,11 +21,15 @@ from .mpl import to_matplotlib_colormap
 from .sampling import sample_sequential
 
 __all__ = [
+    "DEFAULT_CHROMA_FLOOR",
+    "DEFAULT_CHROMA_PEAK",
+    "DEFAULT_CHROMA_WIDTH",
     "BezierCurve",
     "CubehelixParams",
     "LightnessCurve",
     "PowerCurve",
     "SigmoidCurve",
+    "chroma_envelope",
     "contrast_ratio",
     "cubehelix",
     "cubehelix_raw",

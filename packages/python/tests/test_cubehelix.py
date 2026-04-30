@@ -9,6 +9,7 @@ from cubehelix_studio import (
     CubehelixParams,
     PowerCurve,
     SigmoidCurve,
+    chroma_envelope,
     cubehelix,
     evaluate_lightness_curve,
 )
@@ -119,3 +120,28 @@ def test_lightness_range_endpoints_respected() -> None:
     assert r1 == pytest.approx(0.8, abs=1e-12)
     assert g1 == pytest.approx(0.8, abs=1e-12)
     assert b1 == pytest.approx(0.8, abs=1e-12)
+
+
+def test_chroma_envelope_default_collapses_to_classic() -> None:
+    for i in range(21):
+        f = i / 20
+        expected = (f * (1.0 - f)) / 2.0
+        assert chroma_envelope(f, 0.5, 1.0, 0.0) == pytest.approx(expected, abs=1e-12)
+
+
+def test_chroma_envelope_peak_amplitude_is_calibrated() -> None:
+    for peak in (0.2, 0.5, 0.7):
+        # Peak amplitude calibration constant: 0.125 regardless of shape.
+        assert chroma_envelope(peak, peak, 1.0, 0.0) == pytest.approx(0.125, abs=1e-9)
+
+
+def test_chroma_floor_lifts_endpoints() -> None:
+    floor = 0.25
+    assert chroma_envelope(0.0, 0.5, 1.0, floor) == pytest.approx(floor * 0.125, abs=1e-12)
+    assert chroma_envelope(1.0, 0.5, 1.0, floor) == pytest.approx(floor * 0.125, abs=1e-12)
+
+
+def test_chroma_width_narrows_envelope() -> None:
+    wide = chroma_envelope(0.2, 0.5, 2.0, 0.0)
+    narrow = chroma_envelope(0.2, 0.5, 0.5, 0.0)
+    assert narrow < wide

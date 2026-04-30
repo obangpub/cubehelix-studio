@@ -25,6 +25,14 @@ const BEZIER_PROBES: { p1: [number, number]; p2: [number, number] }[] = [
   { p1: [0.25, 0.1], p2: [0.25, 1.0] },
   { p1: [0.5, 0.05], p2: [0.5, 0.95] },
 ];
+const CHROMA_PROBES: { chromaPeak: number; chromaWidth: number; chromaFloor: number }[] = [
+  { chromaPeak: 0.3, chromaWidth: 1.0, chromaFloor: 0.0 },
+  { chromaPeak: 0.7, chromaWidth: 1.0, chromaFloor: 0.0 },
+  { chromaPeak: 0.5, chromaWidth: 0.5, chromaFloor: 0.0 },
+  { chromaPeak: 0.5, chromaWidth: 2.0, chromaFloor: 0.0 },
+  { chromaPeak: 0.5, chromaWidth: 1.0, chromaFloor: 0.25 },
+  { chromaPeak: 0.3, chromaWidth: 0.7, chromaFloor: 0.15 },
+];
 const LIGHTNESS_RANGE_PROBE: CubehelixParams = {
   start: 0.5,
   rotations: -1.5,
@@ -32,6 +40,9 @@ const LIGHTNESS_RANGE_PROBE: CubehelixParams = {
   lightnessCurve: { kind: "power", gamma: 1.0 },
   lightnessMin: 0.0,
   lightnessMax: 1.0,
+  chromaPeak: 0.5,
+  chromaWidth: 1.0,
+  chromaFloor: 0.0,
   reverse: false,
 };
 const T_COUNT = 21;
@@ -96,9 +107,17 @@ for (const bez of BEZIER_PROBES) {
     }),
   );
 }
+for (const chroma of CHROMA_PROBES) {
+  entries.push(
+    buildEntry({
+      ...LIGHTNESS_RANGE_PROBE,
+      ...chroma,
+    }),
+  );
+}
 
 const fixture = {
-  version: 5,
+  version: 6,
   generator: "cubehelix-studio/scripts/generate-parity-fixture.ts",
   parameterGrid: {
     start: STARTS,
@@ -108,6 +127,7 @@ const fixture = {
     lightnessRanges: LIGHTNESS_RANGES,
     sigmoidProbes: SIGMOID_PROBES,
     bezierProbes: BEZIER_PROBES,
+    chromaProbes: CHROMA_PROBES,
     tCount: T_COUNT,
   },
   entries,

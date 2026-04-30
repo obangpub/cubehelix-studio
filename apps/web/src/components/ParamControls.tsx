@@ -11,7 +11,12 @@ import {
   type CubehelixParams,
   type LightnessCurve,
 } from "@cubehelix-studio/core";
-import { SWATCH_COUNT_BOUNDS } from "../lib/url-state";
+import {
+  CHROMA_FLOOR_BOUNDS,
+  CHROMA_PEAK_BOUNDS,
+  CHROMA_WIDTH_BOUNDS,
+  SWATCH_COUNT_BOUNDS,
+} from "../lib/url-state";
 import { BezierEditor } from "./BezierEditor";
 import { RangeSlider } from "./RangeSlider";
 import { Slider } from "./Slider";
@@ -59,9 +64,11 @@ export function ParamControls({
   swatchCount,
   onSwatchCountChange,
 }: ParamControlsProps) {
-  const update = (key: "rotations" | "saturation") => (value: number) => {
-    onChange({ ...params, [key]: value });
-  };
+  const update =
+    (key: "rotations" | "saturation" | "chromaPeak" | "chromaWidth" | "chromaFloor") =>
+    (value: number) => {
+      onChange({ ...params, [key]: value });
+    };
   const minThumbColor = useMemo(() => toCssRgb(cubehelix(0, params)), [params]);
   const maxThumbColor = useMemo(() => toCssRgb(cubehelix(1, params)), [params]);
   const saturationMax = useMemo(() => {
@@ -78,6 +85,9 @@ export function ParamControls({
     params.lightnessCurve,
     params.lightnessMin,
     params.lightnessMax,
+    params.chromaPeak,
+    params.chromaWidth,
+    params.chromaFloor,
     params.reverse,
   ]);
   const [hueShading, setHueShading] = useState(true);
@@ -186,6 +196,34 @@ export function ParamControls({
         step={0.01}
         scaleExponent={3}
         onChange={update("saturation")}
+      />
+      <Slider
+        label="Chroma Peak"
+        technicalName="chromaPeak"
+        value={params.chromaPeak}
+        min={CHROMA_PEAK_BOUNDS.min}
+        max={CHROMA_PEAK_BOUNDS.max}
+        step={0.01}
+        onChange={update("chromaPeak")}
+      />
+      <Slider
+        label="Chroma Width"
+        technicalName="chromaWidth"
+        value={params.chromaWidth}
+        min={CHROMA_WIDTH_BOUNDS.min}
+        max={CHROMA_WIDTH_BOUNDS.max}
+        step={0.01}
+        scaleExponent={2}
+        onChange={update("chromaWidth")}
+      />
+      <Slider
+        label="Chroma Floor"
+        technicalName="chromaFloor"
+        value={params.chromaFloor}
+        min={CHROMA_FLOOR_BOUNDS.min}
+        max={CHROMA_FLOOR_BOUNDS.max}
+        step={0.01}
+        onChange={update("chromaFloor")}
       />
       <div className="curve-control">
         <div className="slider-titles">

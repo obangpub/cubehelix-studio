@@ -236,6 +236,7 @@ describe("decodeParams", () => {
 describe("round-trip", () => {
   test("encoded values decode back to themselves", () => {
     const original: CubehelixParams = {
+      ...DEFAULT_CUBEHELIX_PARAMS,
       start: 1.2,
       rotations: 0.5,
       saturation: 1.7,
@@ -265,6 +266,46 @@ describe("round-trip", () => {
       lightnessCurve: { kind: "bezier", p1: [0.4, 0.2], p2: [0.6, 0.8] },
     };
     expect(decodeParams(encodeParams(original))).toEqual(original);
+  });
+
+  test("chroma envelope params round-trip", () => {
+    const original: CubehelixParams = {
+      ...DEFAULT_CUBEHELIX_PARAMS,
+      chromaPeak: 0.3,
+      chromaWidth: 1.5,
+      chromaFloor: 0.2,
+    };
+    expect(decodeParams(encodeParams(original))).toEqual(original);
+  });
+});
+
+describe("chroma envelope params", () => {
+  test("non-default chromaPeak is encoded", () => {
+    const qs = encodeParams({ ...DEFAULT_CUBEHELIX_PARAMS, chromaPeak: 0.3 });
+    expect(qs).toBe("?chromaPeak=0.3");
+  });
+
+  test("non-default chromaWidth and chromaFloor are encoded", () => {
+    const qs = encodeParams({
+      ...DEFAULT_CUBEHELIX_PARAMS,
+      chromaWidth: 1.5,
+      chromaFloor: 0.25,
+    });
+    const parsed = new URLSearchParams(qs.slice(1));
+    expect(parsed.get("chromaWidth")).toBe("1.5");
+    expect(parsed.get("chromaFloor")).toBe("0.25");
+  });
+
+  test("chromaPeak and chromaFloor are clamped to [0, 1] on decode", () => {
+    const decoded = decodeParams("?chromaPeak=2&chromaFloor=-0.5");
+    expect(decoded.chromaPeak).toBe(1);
+    expect(decoded.chromaFloor).toBe(0);
+  });
+
+  test("chromaWidth is clamped to its safe range on decode", () => {
+    const decoded = decodeParams("?chromaWidth=99");
+    expect(decoded.chromaWidth).toBeLessThanOrEqual(5);
+    expect(decoded.chromaWidth).toBeGreaterThan(0);
   });
 });
 
@@ -305,6 +346,7 @@ describe("encodeAppState / decodeAppState", () => {
   test("encoded state round-trips", () => {
     const original = {
       params: {
+        ...DEFAULT_CUBEHELIX_PARAMS,
         start: 1.2,
         rotations: 0.5,
         saturation: 1.7,

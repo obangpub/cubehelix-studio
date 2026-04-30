@@ -28,6 +28,9 @@ function neutralParamsFor(rotations: number, start: number): CubehelixParams {
     lightnessCurve: DEFAULT_LIGHTNESS_CURVE,
     lightnessMin: 0,
     lightnessMax: 1,
+    chromaPeak: 0.5,
+    chromaWidth: 1,
+    chromaFloor: 0,
     reverse: false,
   };
 }

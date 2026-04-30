@@ -10,6 +10,9 @@ export interface CubehelixParams {
   lightnessCurve: LightnessCurve;
   lightnessMin: number;
   lightnessMax: number;
+  chromaPeak: number;
+  chromaWidth: number;
+  chromaFloor: number;
   reverse: boolean;
 }
 

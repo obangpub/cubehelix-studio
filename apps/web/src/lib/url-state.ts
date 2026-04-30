@@ -21,13 +21,24 @@ export const GAMMA_BOUNDS = { min: 0.5, max: 2 } as const;
 export const SIGMOID_STEEPNESS_BOUNDS = { min: 0, max: 12 } as const;
 export const SIGMOID_MIDPOINT_BOUNDS = { min: 0, max: 1 } as const;
 export const BEZIER_COMPONENT_BOUNDS = { min: 0, max: 1 } as const;
+export const CHROMA_PEAK_BOUNDS = { min: 0, max: 1 } as const;
+export const CHROMA_WIDTH_BOUNDS = { min: 0.1, max: 5 } as const;
+export const CHROMA_FLOOR_BOUNDS = { min: 0, max: 1 } as const;
 
 export const DEFAULT_APP_STATE: AppState = {
   params: DEFAULT_CUBEHELIX_PARAMS,
   swatchCount: DEFAULT_SWATCH_COUNT,
 };
 
-type SimpleNumericKey = "start" | "rotations" | "saturation" | "lightnessMin" | "lightnessMax";
+type SimpleNumericKey =
+  | "start"
+  | "rotations"
+  | "saturation"
+  | "lightnessMin"
+  | "lightnessMax"
+  | "chromaPeak"
+  | "chromaWidth"
+  | "chromaFloor";
 
 const NUMERIC_KEYS = [
   "start",
@@ -35,6 +46,9 @@ const NUMERIC_KEYS = [
   "saturation",
   "lightnessMin",
   "lightnessMax",
+  "chromaPeak",
+  "chromaWidth",
+  "chromaFloor",
 ] as const satisfies readonly SimpleNumericKey[];
 
 const PARAM_BOUNDS: Record<SimpleNumericKey, { min: number; max: number }> = {
@@ -43,6 +57,9 @@ const PARAM_BOUNDS: Record<SimpleNumericKey, { min: number; max: number }> = {
   saturation: { min: 0, max: Infinity },
   lightnessMin: { min: 0, max: 1 },
   lightnessMax: { min: 0, max: 1 },
+  chromaPeak: { min: 0, max: 1 },
+  chromaWidth: { min: 0.1, max: 5 },
+  chromaFloor: { min: 0, max: 1 },
 };
 
 const ENCODE_PRECISION = 4;
