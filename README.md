@@ -46,6 +46,8 @@ uv sync --all-extras
 uv run pytest
 ```
 
+See [CONTRIBUTING.md](CONTRIBUTING.md) for the parity-fixture workflow that keeps the TypeScript and Python implementations aligned, the full list of CI checks, and release tagging conventions.
+
 ## Citation
 
 The cubehelix scheme is from:
