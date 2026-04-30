@@ -12,10 +12,13 @@ Cubehelix Studio is a TypeScript + Python tool for designing cubehelix color pal
 
 ### Mental model
 
-- **The RGB cube is fixed.** Its black and white corners anchor lightness 0 and 1.
-- **The helix is a curve inside that cube**, parameterized by `u ∈ [0, 1]` along the diagonal from black to white. `start` is the hue offset at `u = 0`; `rotations` is the number of hue turns over the full axis; `saturation` and the chroma envelope (`chromaPeak`, `chromaWidth`, `chromaFloor`) determine how far the helix bulges away from the diagonal.
-- **The lightness curve reshapes the lightness profile along the helix** — power, sigmoid, or bezier — accelerating or decelerating how lightness rises with `u`. It does not change which colors lie on the helix, only how the parameter is paced.
-- **The lightness axis bounds clip the helix to a sub-arc.** `[lightnessAxisMin, lightnessAxisMax]` selects the portion of the helix whose lightness output falls inside that window. The visible palette traverses only the surviving sub-arc; narrower bounds expose fewer hue cycles.
+- **The RGB cube is the workspace.** `(0, 0, 0)` is black, `(1, 1, 1)` is white. Coordinate system; doesn't change.
+- **The helix's endpoints are anchored at the black and white corners.** Everything else about the helix is parameter-controlled:
+  - `start` — hue offset at the black anchor
+  - `rotations` — number of hue turns from black to white
+  - `saturation`, `chromaPeak`, `chromaWidth`, `chromaFloor` — how far the helix bulges from the cube diagonal at each point along it
+  - `lightnessCurve` (power / sigmoid / bezier) — how lightness rises along the curve, parameterized by `u ∈ [0, 1]`. It does not change which colors lie on the helix, only how the parameter is paced.
+- **The lightness axis bounds clip the helix to a sub-arc.** `[lightnessAxisMin, lightnessAxisMax]` selects the portion whose lightness output lies inside that window — they don't reshape the helix. The visible palette traverses only the surviving sub-arc, so narrower bounds expose fewer hue cycles.
 
 ### Math
 
