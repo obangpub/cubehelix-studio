@@ -18,12 +18,16 @@ const OUTER_RADIUS = 1;
 const INNER_RADIUS = 0.6;
 const POINTER_INNER = INNER_RADIUS - 0.04;
 const POINTER_OUTER = OUTER_RADIUS + 0.04;
-const REFERENCE_T = 0.5;
+// Sample early in the gradient so each segment shows the visible "starting" hue.
+// Picking t=0.5 (peak chroma) would show the gradient's middle hue; picking
+// t=0 gives black (no chroma). t=0.15 is far enough from the achromatic
+// endpoint to register a hue but still inside the visual "start" of the ramp.
+const REFERENCE_T = 0.15;
 
-function neutralParamsFor(start: number): CubehelixParams {
+function neutralParamsFor(rotations: number, start: number): CubehelixParams {
   return {
     start,
-    rotations: 0,
+    rotations,
     saturation: 1,
     lightnessCurve: DEFAULT_LIGHTNESS_CURVE,
     lightnessMin: 0,
@@ -60,13 +64,15 @@ export function StartingHueWheel({ value, onChange, params, shading }: StartingH
     const out: { path: string; color: string }[] = [];
     for (let i = 0; i < SEGMENT_COUNT; i++) {
       const segStart = ((i + 0.5) / SEGMENT_COUNT) * 3;
-      // Each segment shows the hue family at the start angle. We pin rotations
-      // to 0 so the angle at REFERENCE_T equals 2π·(start/3 + 1) regardless of
-      // the user's rotation count — otherwise the displayed hue drifts by
-      // rotations·π·REFERENCE_T from the actual start angle.
+      // Use the user's rotations so the segment color matches what the
+      // gradient would actually look like just past the achromatic start.
+      // The cubehelix RGB coefficients are asymmetric (B has a 1.97 cos
+      // weight; R has a 1.78 sin weight), so even a small rotation drift
+      // flips which channel dominates — the abstract start-angle hue can
+      // differ markedly from the gradient's first visible color.
       const segParams: CubehelixParams = shading
-        ? { ...params, start: segStart, rotations: 0 }
-        : neutralParamsFor(segStart);
+        ? { ...params, start: segStart }
+        : neutralParamsFor(params.rotations, segStart);
       const color = toCssRgb(cubehelix(REFERENCE_T, segParams));
       const a0 = (i / SEGMENT_COUNT) * 2 * Math.PI;
       const a1 = ((i + 1) / SEGMENT_COUNT) * 2 * Math.PI;
