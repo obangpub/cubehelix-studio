@@ -29,10 +29,10 @@ Default lightness `[0, 1]` and `gamma = 1` makes `u = tEff = fraction`, so all t
 
 ```ts
 interface CubehelixParams {
-  start: number;        // [0, 3], periodic
-  rotations: number;    // unbounded; visible turns over t ∈ [0, 1]
-  saturation: number;   // [0, ∞)
-  gamma: number;        // (0, ∞), slider range [0.5, 2]
+  start: number; // [0, 3], periodic
+  rotations: number; // unbounded; visible turns over t ∈ [0, 1]
+  saturation: number; // [0, ∞)
+  gamma: number; // (0, ∞), slider range [0.5, 2]
   lightnessMin: number; // [0, 1]
   lightnessMax: number; // [0, 1], must be ≥ lightnessMin
   reverse: boolean;
@@ -135,9 +135,9 @@ This is the peak-normalized approach the user previously approved. Numerically i
 ```ts
 interface CubehelixParams {
   // ...
-  chromaPeak: number;   // default 0.5
-  chromaWidth: number;  // default 1
-  chromaFloor: number;  // default 0
+  chromaPeak: number; // default 0.5
+  chromaWidth: number; // default 1
+  chromaFloor: number; // default 0
 }
 ```
 
@@ -258,8 +258,8 @@ Mode toggle preferred.
 
 ```ts
 interface Preset {
-  id: string;          // url-safe slug
-  name: string;        // display name
+  id: string; // url-safe slug
+  name: string; // display name
   description: string; // one short sentence
   params: CubehelixParams;
   mode: "sequential" | "diverging"; // for filtering once Stage 3 lands
@@ -366,13 +366,13 @@ For reverse divergence (peak in middle is dark, ends are light), simply swap whi
 interface CubehelixParams {
   // ...
   mode: "sequential" | "diverging";
-  pivot?: number;           // [0, 1], required when mode = "diverging"
-  rotationsLower?: number;  // when diverging
-  rotationsUpper?: number;  // when diverging
-  lightnessPeak?: number;   // when diverging
-  lightnessLower?: number;  // when diverging (renames lightnessMin)
-  lightnessUpper?: number;  // when diverging (renames lightnessMax)
-  startUpper?: number;      // when diverging; defaults to start + 0.5 (180° offset) if absent
+  pivot?: number; // [0, 1], required when mode = "diverging"
+  rotationsLower?: number; // when diverging
+  rotationsUpper?: number; // when diverging
+  lightnessPeak?: number; // when diverging
+  lightnessLower?: number; // when diverging (renames lightnessMin)
+  lightnessUpper?: number; // when diverging (renames lightnessMax)
+  startUpper?: number; // when diverging; defaults to start + 0.5 (180° offset) if absent
 }
 ```
 

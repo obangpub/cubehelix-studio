@@ -1,5 +1,10 @@
 import { useMemo, useRef } from "react";
-import { cubehelix, toCssRgb, type CubehelixParams } from "@cubehelix-studio/core";
+import {
+  cubehelix,
+  DEFAULT_LIGHTNESS_CURVE,
+  toCssRgb,
+  type CubehelixParams,
+} from "@cubehelix-studio/core";
 
 interface StartingHueWheelProps {
   value: number;
@@ -20,7 +25,7 @@ function neutralParamsFor(rotations: number, start: number): CubehelixParams {
     start,
     rotations,
     saturation: 1,
-    gamma: 1,
+    lightnessCurve: DEFAULT_LIGHTNESS_CURVE,
     lightnessMin: 0,
     lightnessMax: 1,
     reverse: false,
@@ -125,7 +130,14 @@ export function StartingHueWheel({ value, onChange, params, shading }: StartingH
         strokeWidth={0.04}
         strokeLinecap="round"
       />
-      <circle cx={pOuter.x} cy={pOuter.y} r={0.08} fill="var(--fg)" stroke="var(--surface)" strokeWidth={0.02} />
+      <circle
+        cx={pOuter.x}
+        cy={pOuter.y}
+        r={0.08}
+        fill="var(--fg)"
+        stroke="var(--surface)"
+        strokeWidth={0.02}
+      />
     </svg>
   );
 }

@@ -1,11 +1,18 @@
-import { useMemo, useState } from "react";
+import { useId, useMemo, useState } from "react";
 import {
   cubehelix,
+  DEFAULT_BEZIER_P1,
+  DEFAULT_BEZIER_P2,
+  DEFAULT_POWER_GAMMA,
+  DEFAULT_SIGMOID_MIDPOINT,
+  DEFAULT_SIGMOID_STEEPNESS,
   saturationCap,
   toCssRgb,
   type CubehelixParams,
+  type LightnessCurve,
 } from "@cubehelix-studio/core";
 import { SWATCH_COUNT_BOUNDS } from "../lib/url-state";
+import { BezierEditor } from "./BezierEditor";
 import { RangeSlider } from "./RangeSlider";
 import { Slider } from "./Slider";
 import { StartingHueWheel } from "./StartingHueWheel";
@@ -21,13 +28,38 @@ interface ParamControlsProps {
   onSwatchCountChange: (count: number) => void;
 }
 
+interface RememberedCurves {
+  power: { gamma: number };
+  sigmoid: { steepness: number; midpoint: number };
+  bezier: { p1: [number, number]; p2: [number, number] };
+}
+
+function curvesFromParams(curve: LightnessCurve): RememberedCurves {
+  return {
+    power: {
+      gamma: curve.kind === "power" ? curve.gamma : DEFAULT_POWER_GAMMA,
+    },
+    sigmoid:
+      curve.kind === "sigmoid"
+        ? { steepness: curve.steepness, midpoint: curve.midpoint }
+        : { steepness: DEFAULT_SIGMOID_STEEPNESS, midpoint: DEFAULT_SIGMOID_MIDPOINT },
+    bezier:
+      curve.kind === "bezier"
+        ? { p1: [...curve.p1] as [number, number], p2: [...curve.p2] as [number, number] }
+        : {
+            p1: [DEFAULT_BEZIER_P1[0], DEFAULT_BEZIER_P1[1]] as [number, number],
+            p2: [DEFAULT_BEZIER_P2[0], DEFAULT_BEZIER_P2[1]] as [number, number],
+          },
+  };
+}
+
 export function ParamControls({
   params,
   onChange,
   swatchCount,
   onSwatchCountChange,
 }: ParamControlsProps) {
-  const update = (key: keyof CubehelixParams) => (value: number) => {
+  const update = (key: "rotations" | "saturation") => (value: number) => {
     onChange({ ...params, [key]: value });
   };
   const minThumbColor = useMemo(() => toCssRgb(cubehelix(0, params)), [params]);
@@ -41,13 +73,66 @@ export function ParamControls({
       if (cap > max) max = cap;
     }
     return Number(max.toFixed(2));
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [params.rotations, params.gamma, params.lightnessMin, params.lightnessMax, params.reverse]);
+  }, [
+    params.rotations,
+    params.lightnessCurve,
+    params.lightnessMin,
+    params.lightnessMax,
+    params.reverse,
+  ]);
   const [hueShading, setHueShading] = useState(true);
   const setStart = (v: number) => {
     if (!Number.isFinite(v)) return;
     onChange({ ...params, start: mod3(v) });
   };
+
+  const [remembered, setRemembered] = useState<RememberedCurves>(() =>
+    curvesFromParams(params.lightnessCurve),
+  );
+  const setCurve = (curve: LightnessCurve) => {
+    setRemembered((prev) => {
+      switch (curve.kind) {
+        case "power":
+          return { ...prev, power: { gamma: curve.gamma } };
+        case "sigmoid":
+          return { ...prev, sigmoid: { steepness: curve.steepness, midpoint: curve.midpoint } };
+        case "bezier":
+          return {
+            ...prev,
+            bezier: {
+              p1: [curve.p1[0], curve.p1[1]] as [number, number],
+              p2: [curve.p2[0], curve.p2[1]] as [number, number],
+            },
+          };
+      }
+    });
+    onChange({ ...params, lightnessCurve: curve });
+  };
+  const switchKind = (kind: LightnessCurve["kind"]) => {
+    if (params.lightnessCurve.kind === kind) return;
+    switch (kind) {
+      case "power":
+        setCurve({ kind: "power", gamma: remembered.power.gamma });
+        break;
+      case "sigmoid":
+        setCurve({
+          kind: "sigmoid",
+          steepness: remembered.sigmoid.steepness,
+          midpoint: remembered.sigmoid.midpoint,
+        });
+        break;
+      case "bezier":
+        setCurve({
+          kind: "bezier",
+          p1: [remembered.bezier.p1[0], remembered.bezier.p1[1]],
+          p2: [remembered.bezier.p2[0], remembered.bezier.p2[1]],
+        });
+        break;
+    }
+  };
+
+  const radioName = useId();
+
   return (
     <section className="controls">
       <div className="hue-control">
@@ -102,15 +187,81 @@ export function ParamControls({
         scaleExponent={3}
         onChange={update("saturation")}
       />
-      <Slider
-        label="Lightness Curve"
-        technicalName="gamma"
-        value={params.gamma}
-        min={0.5}
-        max={2}
-        step={0.01}
-        onChange={update("gamma")}
-      />
+      <div className="curve-control">
+        <div className="slider-titles">
+          <span className="slider-label">Lightness Curve</span>
+          <span className="slider-technical">lightnessCurve</span>
+        </div>
+        <div className="curve-kind-selector" role="radiogroup" aria-label="Lightness curve type">
+          {(["power", "sigmoid", "bezier"] as const).map((k) => (
+            <label
+              key={k}
+              className={`curve-kind-option ${params.lightnessCurve.kind === k ? "is-active" : ""}`}
+            >
+              <input
+                type="radio"
+                name={radioName}
+                value={k}
+                checked={params.lightnessCurve.kind === k}
+                onChange={() => switchKind(k)}
+              />
+              <span>{k.charAt(0).toUpperCase() + k.slice(1)}</span>
+            </label>
+          ))}
+        </div>
+        {params.lightnessCurve.kind === "power" && (
+          <Slider
+            label="Gamma"
+            technicalName="gamma"
+            value={params.lightnessCurve.gamma}
+            min={0.5}
+            max={2}
+            step={0.01}
+            onChange={(v) => setCurve({ kind: "power", gamma: v })}
+          />
+        )}
+        {params.lightnessCurve.kind === "sigmoid" && (
+          <>
+            <Slider
+              label="Steepness"
+              technicalName="sigmoidSteepness"
+              value={params.lightnessCurve.steepness}
+              min={0}
+              max={12}
+              step={0.05}
+              onChange={(v) =>
+                setCurve({
+                  kind: "sigmoid",
+                  steepness: v,
+                  midpoint: (params.lightnessCurve as { midpoint: number }).midpoint,
+                })
+              }
+            />
+            <Slider
+              label="Midpoint"
+              technicalName="sigmoidMidpoint"
+              value={params.lightnessCurve.midpoint}
+              min={0}
+              max={1}
+              step={0.01}
+              onChange={(v) =>
+                setCurve({
+                  kind: "sigmoid",
+                  steepness: (params.lightnessCurve as { steepness: number }).steepness,
+                  midpoint: v,
+                })
+              }
+            />
+          </>
+        )}
+        {params.lightnessCurve.kind === "bezier" && (
+          <BezierEditor
+            p1={params.lightnessCurve.p1}
+            p2={params.lightnessCurve.p2}
+            onChange={(p1, p2) => setCurve({ kind: "bezier", p1, p2 })}
+          />
+        )}
+      </div>
       <RangeSlider
         label="Lightness Range"
         technicalNameMin="lightnessMin"

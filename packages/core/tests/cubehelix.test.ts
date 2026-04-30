@@ -1,11 +1,7 @@
 import { describe, expect, test } from "vitest";
-import {
-  DEFAULT_CUBEHELIX_PARAMS,
-  cubehelix,
-  cubehelixRaw,
-  saturationCap,
-} from "../src/cubehelix";
-import type { CubehelixParams } from "../src/types";
+import { DEFAULT_CUBEHELIX_PARAMS, cubehelix, cubehelixRaw, saturationCap } from "../src/cubehelix";
+import { evaluateLightnessCurve } from "../src/lightness-curve";
+import type { CubehelixParams, LightnessCurve } from "../src/types";
 
 describe("cubehelix", () => {
   test("at t=0 with default params returns black", () => {
@@ -28,7 +24,6 @@ describe("cubehelix", () => {
       start: 0,
       rotations: 5,
       saturation: 5,
-      gamma: 1,
     };
     for (let i = 0; i <= 50; i++) {
       const c = cubehelix(i / 50, params);
@@ -58,7 +53,6 @@ describe("cubehelix", () => {
       start: 0,
       rotations: 0,
       saturation: 0,
-      gamma: 1,
     };
     for (let i = 0; i <= 10; i++) {
       const t = i / 10;
@@ -87,7 +81,6 @@ describe("cubehelix", () => {
       start: 0,
       rotations: 1,
       saturation: 4,
-      gamma: 1,
     };
     let sawOutOfGamut = false;
     for (let i = 0; i <= 50; i++) {
@@ -107,7 +100,6 @@ describe("cubehelix", () => {
       start: 0,
       rotations: 1,
       saturation: 4,
-      gamma: 1,
     };
     for (let i = 0; i <= 50; i++) {
       const t = i / 50;
@@ -117,6 +109,23 @@ describe("cubehelix", () => {
       expect(clamped.g).toBeCloseTo(Math.min(1, Math.max(0, raw.g)), 12);
       expect(clamped.b).toBeCloseTo(Math.min(1, Math.max(0, raw.b)), 12);
     }
+  });
+
+  test("lightnessMin and lightnessMax bound the achromatic ramp endpoints", () => {
+    const params: CubehelixParams = {
+      ...DEFAULT_CUBEHELIX_PARAMS,
+      saturation: 0,
+      lightnessMin: 0.2,
+      lightnessMax: 0.8,
+    };
+    const lo = cubehelix(0, params);
+    const hi = cubehelix(1, params);
+    expect(lo.r).toBeCloseTo(0.2, 12);
+    expect(lo.g).toBeCloseTo(0.2, 12);
+    expect(lo.b).toBeCloseTo(0.2, 12);
+    expect(hi.r).toBeCloseTo(0.8, 12);
+    expect(hi.g).toBeCloseTo(0.8, 12);
+    expect(hi.b).toBeCloseTo(0.8, 12);
   });
 });
 
@@ -159,5 +168,67 @@ describe("saturationCap", () => {
     const a = saturationCap(DEFAULT_CUBEHELIX_PARAMS);
     const b = saturationCap({ ...DEFAULT_CUBEHELIX_PARAMS, reverse: true });
     expect(a).toBeCloseTo(b, 9);
+  });
+});
+
+describe("evaluateLightnessCurve", () => {
+  test("power(gamma=1) is the identity map", () => {
+    const curve: LightnessCurve = { kind: "power", gamma: 1 };
+    for (let i = 0; i <= 10; i++) {
+      const t = i / 10;
+      expect(evaluateLightnessCurve(curve, t)).toBeCloseTo(t, 12);
+    }
+  });
+
+  test("every curve kind maps endpoints to 0 and 1", () => {
+    const curves: LightnessCurve[] = [
+      { kind: "power", gamma: 0.7 },
+      { kind: "sigmoid", steepness: 6, midpoint: 0.3 },
+      { kind: "bezier", p1: [0.3, 0.1], p2: [0.7, 0.9] },
+    ];
+    for (const curve of curves) {
+      expect(evaluateLightnessCurve(curve, 0)).toBe(0);
+      expect(evaluateLightnessCurve(curve, 1)).toBe(1);
+    }
+  });
+
+  test("sigmoid is monotonically non-decreasing", () => {
+    const curve: LightnessCurve = { kind: "sigmoid", steepness: 8, midpoint: 0.4 };
+    let prev = -Infinity;
+    for (let i = 0; i <= 100; i++) {
+      const v = evaluateLightnessCurve(curve, i / 100);
+      expect(v).toBeGreaterThanOrEqual(prev - 1e-12);
+      prev = v;
+    }
+  });
+
+  test("sigmoid steepness=0 collapses to linear", () => {
+    const curve: LightnessCurve = { kind: "sigmoid", steepness: 0, midpoint: 0.5 };
+    for (let i = 0; i <= 10; i++) {
+      const t = i / 10;
+      expect(evaluateLightnessCurve(curve, t)).toBeCloseTo(t, 12);
+    }
+  });
+
+  test("bezier with default handles is the identity map", () => {
+    const curve: LightnessCurve = {
+      kind: "bezier",
+      p1: [1 / 3, 1 / 3],
+      p2: [2 / 3, 2 / 3],
+    };
+    for (let i = 0; i <= 10; i++) {
+      const t = i / 10;
+      expect(evaluateLightnessCurve(curve, t)).toBeCloseTo(t, 9);
+    }
+  });
+
+  test("bezier with monotonic-x handles is monotonically non-decreasing", () => {
+    const curve: LightnessCurve = { kind: "bezier", p1: [0.4, 0.0], p2: [0.6, 1.0] };
+    let prev = -Infinity;
+    for (let i = 0; i <= 100; i++) {
+      const v = evaluateLightnessCurve(curve, i / 100);
+      expect(v).toBeGreaterThanOrEqual(prev - 1e-9);
+      prev = v;
+    }
   });
 });

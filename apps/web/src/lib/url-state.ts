@@ -1,4 +1,14 @@
-import { DEFAULT_CUBEHELIX_PARAMS, type CubehelixParams } from "@cubehelix-studio/core";
+import {
+  DEFAULT_BEZIER_P1,
+  DEFAULT_BEZIER_P2,
+  DEFAULT_CUBEHELIX_PARAMS,
+  DEFAULT_LIGHTNESS_CURVE,
+  DEFAULT_POWER_GAMMA,
+  DEFAULT_SIGMOID_MIDPOINT,
+  DEFAULT_SIGMOID_STEEPNESS,
+  type CubehelixParams,
+  type LightnessCurve,
+} from "@cubehelix-studio/core";
 
 export interface AppState {
   params: CubehelixParams;
@@ -7,34 +17,30 @@ export interface AppState {
 
 export const DEFAULT_SWATCH_COUNT = 9;
 export const SWATCH_COUNT_BOUNDS = { min: 2, max: 20 } as const;
+export const GAMMA_BOUNDS = { min: 0.5, max: 2 } as const;
+export const SIGMOID_STEEPNESS_BOUNDS = { min: 0, max: 12 } as const;
+export const SIGMOID_MIDPOINT_BOUNDS = { min: 0, max: 1 } as const;
+export const BEZIER_COMPONENT_BOUNDS = { min: 0, max: 1 } as const;
 
 export const DEFAULT_APP_STATE: AppState = {
   params: DEFAULT_CUBEHELIX_PARAMS,
   swatchCount: DEFAULT_SWATCH_COUNT,
 };
 
-type NumericKey =
-  | "start"
-  | "rotations"
-  | "saturation"
-  | "gamma"
-  | "lightnessMin"
-  | "lightnessMax";
+type SimpleNumericKey = "start" | "rotations" | "saturation" | "lightnessMin" | "lightnessMax";
 
 const NUMERIC_KEYS = [
   "start",
   "rotations",
   "saturation",
-  "gamma",
   "lightnessMin",
   "lightnessMax",
-] as const satisfies readonly NumericKey[];
+] as const satisfies readonly SimpleNumericKey[];
 
-const PARAM_BOUNDS: Record<NumericKey, { min: number; max: number }> = {
+const PARAM_BOUNDS: Record<SimpleNumericKey, { min: number; max: number }> = {
   start: { min: 0, max: 3 },
   rotations: { min: -Infinity, max: Infinity },
   saturation: { min: 0, max: Infinity },
-  gamma: { min: 0.5, max: 2 },
   lightnessMin: { min: 0, max: 1 },
   lightnessMax: { min: 0, max: 1 },
 };
@@ -52,6 +58,114 @@ function clamp(value: number, min: number, max: number): number {
   return value;
 }
 
+function parseNumOr(raw: string | null, fallback: number): number {
+  if (raw === null) return fallback;
+  const num = Number(raw);
+  return Number.isFinite(num) ? num : fallback;
+}
+
+function readPairXY(
+  search: URLSearchParams,
+  xKey: string,
+  yKey: string,
+  fallback: readonly [number, number],
+  bounds: { min: number; max: number },
+): [number, number] {
+  const x = parseNumOr(search.get(xKey), fallback[0]);
+  const y = parseNumOr(search.get(yKey), fallback[1]);
+  return [clamp(x, bounds.min, bounds.max), clamp(y, bounds.min, bounds.max)];
+}
+
+function writePairComponent(
+  search: URLSearchParams,
+  key: string,
+  value: number,
+  defaultValue: number,
+): void {
+  const rounded = roundTo(value, ENCODE_PRECISION);
+  if (rounded !== roundTo(defaultValue, ENCODE_PRECISION)) {
+    search.set(key, String(rounded));
+  }
+}
+
+function appendCurveToSearch(search: URLSearchParams, curve: LightnessCurve): void {
+  if (curve.kind !== DEFAULT_LIGHTNESS_CURVE.kind) {
+    search.set("lightnessCurve", curve.kind);
+  }
+  switch (curve.kind) {
+    case "power": {
+      const rounded = roundTo(curve.gamma, ENCODE_PRECISION);
+      if (rounded !== roundTo(DEFAULT_POWER_GAMMA, ENCODE_PRECISION)) {
+        search.set("gamma", String(rounded));
+      }
+      break;
+    }
+    case "sigmoid": {
+      const s = roundTo(curve.steepness, ENCODE_PRECISION);
+      if (s !== roundTo(DEFAULT_SIGMOID_STEEPNESS, ENCODE_PRECISION)) {
+        search.set("sigmoidSteepness", String(s));
+      }
+      const m = roundTo(curve.midpoint, ENCODE_PRECISION);
+      if (m !== roundTo(DEFAULT_SIGMOID_MIDPOINT, ENCODE_PRECISION)) {
+        search.set("sigmoidMidpoint", String(m));
+      }
+      break;
+    }
+    case "bezier": {
+      writePairComponent(search, "bezier1x", curve.p1[0], DEFAULT_BEZIER_P1[0]);
+      writePairComponent(search, "bezier1y", curve.p1[1], DEFAULT_BEZIER_P1[1]);
+      writePairComponent(search, "bezier2x", curve.p2[0], DEFAULT_BEZIER_P2[0]);
+      writePairComponent(search, "bezier2y", curve.p2[1], DEFAULT_BEZIER_P2[1]);
+      break;
+    }
+  }
+}
+
+function readCurveFromSearch(search: URLSearchParams): LightnessCurve {
+  const kindRaw = search.get("lightnessCurve");
+  const kind = kindRaw === "sigmoid" || kindRaw === "bezier" ? kindRaw : "power";
+  switch (kind) {
+    case "power": {
+      const gamma = clamp(
+        parseNumOr(search.get("gamma"), DEFAULT_POWER_GAMMA),
+        GAMMA_BOUNDS.min,
+        GAMMA_BOUNDS.max,
+      );
+      return { kind: "power", gamma };
+    }
+    case "sigmoid": {
+      const steepness = clamp(
+        parseNumOr(search.get("sigmoidSteepness"), DEFAULT_SIGMOID_STEEPNESS),
+        SIGMOID_STEEPNESS_BOUNDS.min,
+        SIGMOID_STEEPNESS_BOUNDS.max,
+      );
+      const midpoint = clamp(
+        parseNumOr(search.get("sigmoidMidpoint"), DEFAULT_SIGMOID_MIDPOINT),
+        SIGMOID_MIDPOINT_BOUNDS.min,
+        SIGMOID_MIDPOINT_BOUNDS.max,
+      );
+      return { kind: "sigmoid", steepness, midpoint };
+    }
+    case "bezier": {
+      const p1 = readPairXY(
+        search,
+        "bezier1x",
+        "bezier1y",
+        DEFAULT_BEZIER_P1,
+        BEZIER_COMPONENT_BOUNDS,
+      );
+      const p2 = readPairXY(
+        search,
+        "bezier2x",
+        "bezier2y",
+        DEFAULT_BEZIER_P2,
+        BEZIER_COMPONENT_BOUNDS,
+      );
+      return { kind: "bezier", p1, p2 };
+    }
+  }
+}
+
 function appendParamsToSearch(search: URLSearchParams, params: CubehelixParams): void {
   for (const key of NUMERIC_KEYS) {
     const rounded = roundTo(params[key], ENCODE_PRECISION);
@@ -60,6 +174,7 @@ function appendParamsToSearch(search: URLSearchParams, params: CubehelixParams):
       search.set(key, String(rounded));
     }
   }
+  appendCurveToSearch(search, params.lightnessCurve);
   if (params.reverse !== DEFAULT_CUBEHELIX_PARAMS.reverse) {
     search.set("reverse", params.reverse ? "1" : "0");
   }
@@ -75,6 +190,7 @@ function readParamsFromSearch(search: URLSearchParams): CubehelixParams {
     const { min, max } = PARAM_BOUNDS[key];
     result[key] = clamp(num, min, max);
   }
+  result.lightnessCurve = readCurveFromSearch(search);
   const rawReverse = search.get("reverse");
   if (rawReverse !== null) {
     result.reverse = rawReverse === "1" || rawReverse === "true";

@@ -94,9 +94,7 @@ export function RangeSlider({
           min={min}
           max={max}
           step={step}
-          style={
-            thumbMinColor ? ({ "--thumb-color": thumbMinColor } as CSSProperties) : undefined
-          }
+          style={thumbMinColor ? ({ "--thumb-color": thumbMinColor } as CSSProperties) : undefined}
           onChange={(e) => commitMin(Number(e.target.value))}
           aria-label={`${label} minimum`}
         />
@@ -108,9 +106,7 @@ export function RangeSlider({
           min={min}
           max={max}
           step={step}
-          style={
-            thumbMaxColor ? ({ "--thumb-color": thumbMaxColor } as CSSProperties) : undefined
-          }
+          style={thumbMaxColor ? ({ "--thumb-color": thumbMaxColor } as CSSProperties) : undefined}
           onChange={(e) => commitMax(Number(e.target.value))}
           aria-label={`${label} maximum`}
         />

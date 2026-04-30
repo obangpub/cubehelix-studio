@@ -1,4 +1,4 @@
-export type { CubehelixParams, RGB } from "./types";
+export type { CubehelixParams, LightnessCurve, RGB } from "./types";
 export {
   cubehelix,
   cubehelixRaw,
@@ -6,6 +6,15 @@ export {
   saturationCap,
   wasClamped,
 } from "./cubehelix";
+export {
+  DEFAULT_BEZIER_P1,
+  DEFAULT_BEZIER_P2,
+  DEFAULT_LIGHTNESS_CURVE,
+  DEFAULT_POWER_GAMMA,
+  DEFAULT_SIGMOID_MIDPOINT,
+  DEFAULT_SIGMOID_STEEPNESS,
+  evaluateLightnessCurve,
+} from "./lightness-curve";
 export { sampleSequential } from "./sampling";
 export { toHex, toCssRgb } from "./format";
 export { contrastRatio, pickTextColor } from "./contrast";

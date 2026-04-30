@@ -2,7 +2,13 @@ import { useEffect, useMemo, useRef, type ComponentRef } from "react";
 import { Canvas } from "@react-three/fiber";
 import { OrbitControls } from "@react-three/drei";
 import * as THREE from "three";
-import { cubehelixRaw, type CubehelixParams, type RGB } from "@cubehelix-studio/core";
+import {
+  cubehelixRaw,
+  evaluateLightnessCurve,
+  type CubehelixParams,
+  type LightnessCurve,
+  type RGB,
+} from "@cubehelix-studio/core";
 
 interface CubeVisualizationProps {
   params: CubehelixParams;
@@ -48,32 +54,44 @@ function bisectCrossing(uLo: number, uHi: number, inLo: boolean, params: Cubehel
   return (lo + hi) / 2;
 }
 
+function findCurveCrossing(curve: LightnessCurve, target: number): number {
+  let lo = 0;
+  let hi = 1;
+  for (let i = 0; i < 40; i++) {
+    const mid = (lo + hi) / 2;
+    const v = evaluateLightnessCurve(curve, mid);
+    if (v < target) lo = mid;
+    else hi = mid;
+  }
+  return (lo + hi) / 2;
+}
+
 function buildSamples(params: CubehelixParams, n: number): Sample[] {
-  // Cube viz renders the full underlying helix (u in [0,1] of the canonical
-  // cubehelix curve), then marks which segments fall in the user's visible
-  // window. The full-helix params must therefore strip lightness-range AND
-  // reverse, since both are user-visible-window concerns, not curve-shape
-  // concerns. Keeping reverse here would double-reverse and paint mismatched
-  // hues against the swatches.
+  // Cube viz renders the full underlying helix (parameterized over u in [0,1]
+  // of the canonical cubehelix curve, where u is tEff with lightness-range
+  // and reverse stripped), then marks which segments fall in the user's
+  // visible window. Stripping lightness-range AND reverse is required, since
+  // both are user-visible-window concerns rather than curve-shape concerns.
+  // Keeping reverse here would double-reverse and paint mismatched hues
+  // against the swatches.
   const fullHelixParams: CubehelixParams = {
     ...params,
     lightnessMin: 0,
     lightnessMax: 1,
     reverse: false,
   };
-  const invGamma = 1 / params.gamma;
-  const uMin = Math.pow(params.lightnessMin, invGamma);
-  const uMax = Math.pow(params.lightnessMax, invGamma);
+  const { lightnessCurve, lightnessMin, lightnessMax } = params;
 
   const makeAt = (u: number): Sample => {
     const raw = cubehelixRaw(u, fullHelixParams);
     const clamped = { r: clamp01(raw.r), g: clamp01(raw.g), b: clamp01(raw.b) };
+    const lightness = evaluateLightnessCurve(lightnessCurve, u);
     return {
       u,
       raw,
       clamped,
       inGamut: isInGamut(raw),
-      inRange: u >= uMin && u <= uMax,
+      inRange: lightness >= lightnessMin && lightness <= lightnessMax,
     };
   };
 
@@ -83,9 +101,10 @@ function buildSamples(params: CubehelixParams, n: number): Sample[] {
   }
 
   const breakpoints: number[] = [];
-  if (uMin > 0 && uMin < 1) breakpoints.push(uMin);
-  if (uMax > uMin && uMax > 0 && uMax < 1) breakpoints.push(uMax);
+  if (lightnessMin > 0) breakpoints.push(findCurveCrossing(lightnessCurve, lightnessMin));
+  if (lightnessMax < 1) breakpoints.push(findCurveCrossing(lightnessCurve, lightnessMax));
   for (const u of breakpoints) {
+    if (u <= 0 || u >= 1) continue;
     const idx = base.findIndex((s) => s.u >= u);
     if (idx === -1) base.push(makeAt(u));
     else if (base[idx]!.u !== u) base.splice(idx, 0, makeAt(u));

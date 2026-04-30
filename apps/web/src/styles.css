@@ -270,6 +270,57 @@ header p {
   margin: 0;
 }
 
+.curve-control {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.curve-kind-selector {
+  display: inline-flex;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  align-self: flex-start;
+}
+
+.curve-kind-option {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.625rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: var(--muted);
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  user-select: none;
+}
+
+.curve-kind-option:last-child {
+  border-right: none;
+}
+
+.curve-kind-option.is-active {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+.curve-kind-option input[type="radio"] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.bezier-editor {
+  width: 100%;
+  max-width: 240px;
+  height: 240px;
+  align-self: center;
+  touch-action: none;
+}
+
 .range-slider {
   display: flex;
   flex-direction: column;

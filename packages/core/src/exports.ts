@@ -1,6 +1,6 @@
 import { toHex } from "./format";
 import { resolveRoles, type RolePalette } from "./roles";
-import type { CubehelixParams } from "./types";
+import type { CubehelixParams, LightnessCurve } from "./types";
 
 export type ExportFormat = "css" | "tailwind" | "scss" | "json" | "python";
 
@@ -62,8 +62,40 @@ function camelToSnake(key: string): string {
   return key.replace(/([a-z0-9])([A-Z])/g, "$1_$2").toLowerCase();
 }
 
+function curveClassName(curve: LightnessCurve): string {
+  switch (curve.kind) {
+    case "power":
+      return "PowerCurve";
+    case "sigmoid":
+      return "SigmoidCurve";
+    case "bezier":
+      return "BezierCurve";
+  }
+}
+
+function formatCurvePython(curve: LightnessCurve): string {
+  switch (curve.kind) {
+    case "power":
+      return `PowerCurve(gamma=${formatNumber(curve.gamma)})`;
+    case "sigmoid":
+      return `SigmoidCurve(steepness=${formatNumber(curve.steepness)}, midpoint=${formatNumber(curve.midpoint)})`;
+    case "bezier":
+      return `BezierCurve(p1=(${formatNumber(curve.p1[0])}, ${formatNumber(curve.p1[1])}), p2=(${formatNumber(curve.p2[0])}, ${formatNumber(curve.p2[1])}))`;
+  }
+}
+
+function isLightnessCurve(value: unknown): value is LightnessCurve {
+  return (
+    typeof value === "object" &&
+    value !== null &&
+    "kind" in value &&
+    typeof (value as { kind: unknown }).kind === "string"
+  );
+}
+
 function formatPythonValue(v: unknown): string {
   if (typeof v === "boolean") return v ? "True" : "False";
+  if (isLightnessCurve(v)) return formatCurvePython(v);
   return formatNumber(v as number);
 }
 
@@ -75,7 +107,12 @@ function serializePython(palette: RolePalette): string {
   const roleLines = resolved.map(
     (r) => `    "${r.name}": (${r.r.toFixed(6)}, ${r.g.toFixed(6)}, ${r.b.toFixed(6)}),`,
   );
-  return `from cubehelix_studio import CubehelixParams, to_matplotlib_colormap
+  const importNames = [
+    "CubehelixParams",
+    curveClassName(palette.params.lightnessCurve),
+    "to_matplotlib_colormap",
+  ];
+  return `from cubehelix_studio import ${importNames.join(", ")}
 
 params = CubehelixParams(
 ${paramLines.join("\n")}
@@ -113,6 +150,26 @@ export function serialize(
 
 export function paramsToString(params: CubehelixParams): string {
   return Object.entries(params)
-    .map(([k, v]) => `${k}=${v as number}`)
+    .map(([k, v]) => `${k}=${formatParamValue(v)}`)
     .join(", ");
+}
+
+function formatParamValue(v: unknown): string {
+  if (typeof v === "boolean") return String(v);
+  if (isLightnessCurve(v)) {
+    const args = curveArgsString(v);
+    return `${v.kind}(${args})`;
+  }
+  return String(v);
+}
+
+function curveArgsString(curve: LightnessCurve): string {
+  switch (curve.kind) {
+    case "power":
+      return `gamma=${curve.gamma}`;
+    case "sigmoid":
+      return `steepness=${curve.steepness}, midpoint=${curve.midpoint}`;
+    case "bezier":
+      return `p1=[${curve.p1[0]},${curve.p1[1]}], p2=[${curve.p2[0]},${curve.p2[1]}]`;
+  }
 }

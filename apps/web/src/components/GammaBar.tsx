@@ -1,5 +1,5 @@
 import { useId, useMemo } from "react";
-import type { CubehelixParams } from "@cubehelix-studio/core";
+import { evaluateLightnessCurve, type CubehelixParams } from "@cubehelix-studio/core";
 
 interface GammaBarProps {
   params: CubehelixParams;
@@ -13,17 +13,17 @@ export function GammaBar({ params, height = 60 }: GammaBarProps) {
   const stops = useMemo(() => {
     return Array.from({ length: STOP_COUNT + 1 }, (_, i) => {
       const t = i / STOP_COUNT;
-      const l = Math.pow(t, params.gamma);
+      const l = evaluateLightnessCurve(params.lightnessCurve, t);
       const v = Math.round(l * 255);
       return { offset: t, color: `rgb(${v} ${v} ${v})` };
     });
-  }, [params.gamma]);
+  }, [params.lightnessCurve]);
 
   return (
     <svg
       className="gamma-bar"
       role="img"
-      aria-label="Lightness ramp shaped by gamma"
+      aria-label="Lightness ramp shaped by the lightness curve"
       width="100%"
       height={height}
       preserveAspectRatio="none"

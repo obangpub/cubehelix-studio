@@ -1,25 +1,24 @@
+import { DEFAULT_LIGHTNESS_CURVE, evaluateLightnessCurve } from "./lightness-curve";
 import type { CubehelixParams, RGB } from "./types";
 
 export const DEFAULT_CUBEHELIX_PARAMS: CubehelixParams = {
   start: 0.5,
   rotations: -1.5,
   saturation: 1.0,
-  gamma: 1.0,
+  lightnessCurve: DEFAULT_LIGHTNESS_CURVE,
   lightnessMin: 0.0,
   lightnessMax: 1.0,
   reverse: false,
 };
 
 export function cubehelixRaw(t: number, params: CubehelixParams): RGB {
-  const { start, rotations, saturation, gamma, lightnessMin, lightnessMax, reverse } = params;
+  const { start, rotations, saturation, lightnessCurve, lightnessMin, lightnessMax, reverse } =
+    params;
   const tEff = reverse ? 1 - t : t;
-  const invGamma = 1 / gamma;
-  const uMin = Math.pow(lightnessMin, invGamma);
-  const uMax = Math.pow(lightnessMax, invGamma);
-  const u = uMin + (uMax - uMin) * tEff;
-  const fraction = Math.pow(u, gamma);
-  // Angle is parameterized by the user's visible position (tEff), so `rotations`
-  // means "turns over the visible palette" regardless of lightness range.
+  const curveT = evaluateLightnessCurve(lightnessCurve, tEff);
+  const fraction = lightnessMin + (lightnessMax - lightnessMin) * curveT;
+  // Angle is parameterized by tEff (the user's visible position), so `rotations`
+  // means turns over the visible palette regardless of lightness range or curve.
   const angle = 2 * Math.PI * (start / 3 + rotations * tEff + 1);
   const amp = (saturation * fraction * (1 - fraction)) / 2;
   const cosA = Math.cos(angle);
@@ -43,15 +42,12 @@ const SATURATION_CAP_SAMPLES = 256;
 const SATURATION_CAP_PERCENTILE = 0.95;
 
 export function saturationCap(params: CubehelixParams): number {
-  const { start, rotations, gamma, lightnessMin, lightnessMax } = params;
-  const invGamma = 1 / gamma;
-  const uMin = Math.pow(lightnessMin, invGamma);
-  const uMax = Math.pow(lightnessMax, invGamma);
+  const { start, rotations, lightnessCurve, lightnessMin, lightnessMax } = params;
   const exitSaturations: number[] = [];
   for (let i = 0; i <= SATURATION_CAP_SAMPLES; i++) {
     const tEff = i / SATURATION_CAP_SAMPLES;
-    const u = uMin + (uMax - uMin) * tEff;
-    const fraction = Math.pow(u, gamma);
+    const curveT = evaluateLightnessCurve(lightnessCurve, tEff);
+    const fraction = lightnessMin + (lightnessMax - lightnessMin) * curveT;
     const envelope = (fraction * (1 - fraction)) / 2;
     if (envelope === 0) continue;
     const angle = 2 * Math.PI * (start / 3 + rotations * tEff + 1);

@@ -25,7 +25,7 @@ describe("encodeParams", () => {
       start: 1.0,
       rotations: 0.5,
       saturation: 1.5,
-      gamma: 0.8,
+      lightnessCurve: { kind: "power", gamma: 0.8 },
     });
     const parsed = new URLSearchParams(qs.slice(1));
     expect(parsed.get("start")).toBe("1");
@@ -51,8 +51,77 @@ describe("encodeParams", () => {
   });
 
   test("rounds to four decimal places", () => {
-    const qs = encodeParams({ ...DEFAULT_CUBEHELIX_PARAMS, gamma: 0.123456789 });
+    const qs = encodeParams({
+      ...DEFAULT_CUBEHELIX_PARAMS,
+      lightnessCurve: { kind: "power", gamma: 0.123456789 },
+    });
     expect(qs).toBe("?gamma=0.1235");
+  });
+
+  test("default power curve omits both lightnessCurve and gamma", () => {
+    const qs = encodeParams({
+      ...DEFAULT_CUBEHELIX_PARAMS,
+      lightnessCurve: { kind: "power", gamma: 1 },
+    });
+    expect(qs).toBe("");
+  });
+
+  test("non-default power gamma is encoded without lightnessCurve key", () => {
+    const qs = encodeParams({
+      ...DEFAULT_CUBEHELIX_PARAMS,
+      lightnessCurve: { kind: "power", gamma: 1.5 },
+    });
+    expect(qs).toBe("?gamma=1.5");
+  });
+
+  test("sigmoid curve emits lightnessCurve and only non-default sigmoid params", () => {
+    const qs = encodeParams({
+      ...DEFAULT_CUBEHELIX_PARAMS,
+      lightnessCurve: { kind: "sigmoid", steepness: 4, midpoint: 0.5 },
+    });
+    expect(qs).toBe("?lightnessCurve=sigmoid");
+  });
+
+  test("non-default sigmoid params appear", () => {
+    const qs = encodeParams({
+      ...DEFAULT_CUBEHELIX_PARAMS,
+      lightnessCurve: { kind: "sigmoid", steepness: 6, midpoint: 0.3 },
+    });
+    const parsed = new URLSearchParams(qs.slice(1));
+    expect(parsed.get("lightnessCurve")).toBe("sigmoid");
+    expect(parsed.get("sigmoidSteepness")).toBe("6");
+    expect(parsed.get("sigmoidMidpoint")).toBe("0.3");
+  });
+
+  test("default bezier curve emits only the lightnessCurve key", () => {
+    const qs = encodeParams({
+      ...DEFAULT_CUBEHELIX_PARAMS,
+      lightnessCurve: { kind: "bezier", p1: [1 / 3, 1 / 3], p2: [2 / 3, 2 / 3] },
+    });
+    expect(qs).toBe("?lightnessCurve=bezier");
+  });
+
+  test("non-default bezier handles are encoded as separate x/y components", () => {
+    const qs = encodeParams({
+      ...DEFAULT_CUBEHELIX_PARAMS,
+      lightnessCurve: { kind: "bezier", p1: [0.4, 0.2], p2: [0.6, 0.8] },
+    });
+    const parsed = new URLSearchParams(qs.slice(1));
+    expect(parsed.get("lightnessCurve")).toBe("bezier");
+    expect(parsed.get("bezier1x")).toBe("0.4");
+    expect(parsed.get("bezier1y")).toBe("0.2");
+    expect(parsed.get("bezier2x")).toBe("0.6");
+    expect(parsed.get("bezier2y")).toBe("0.8");
+  });
+
+  test("sigmoid params are not emitted when curve is power", () => {
+    const qs = encodeParams({
+      ...DEFAULT_CUBEHELIX_PARAMS,
+      lightnessCurve: { kind: "power", gamma: 1.4 },
+    });
+    const parsed = new URLSearchParams(qs.slice(1));
+    expect(parsed.has("sigmoidSteepness")).toBe(false);
+    expect(parsed.has("bezier1x")).toBe(false);
   });
 });
 
@@ -66,7 +135,7 @@ describe("decodeParams", () => {
     expect(decoded.start).toBe(DEFAULT_CUBEHELIX_PARAMS.start);
     expect(decoded.rotations).toBe(DEFAULT_CUBEHELIX_PARAMS.rotations);
     expect(decoded.saturation).toBe(1.5);
-    expect(decoded.gamma).toBe(DEFAULT_CUBEHELIX_PARAMS.gamma);
+    expect(decoded.lightnessCurve).toEqual({ kind: "power", gamma: 1 });
   });
 
   test("invalid values fall back to defaults", () => {
@@ -79,7 +148,7 @@ describe("decodeParams", () => {
     const decoded = decodeParams("?start=999&saturation=-5&gamma=99");
     expect(decoded.start).toBe(3);
     expect(decoded.saturation).toBe(0);
-    expect(decoded.gamma).toBe(2);
+    expect(decoded.lightnessCurve).toEqual({ kind: "power", gamma: 2 });
   });
 
   test("rotations is uncapped on decode", () => {
@@ -115,6 +184,53 @@ describe("decodeParams", () => {
     expect(decodeParams("?saturation=1.5").saturation).toBe(1.5);
     expect(decodeParams("saturation=1.5").saturation).toBe(1.5);
   });
+
+  test("legacy gamma-only URLs decode as power curve", () => {
+    const decoded = decodeParams("?gamma=1.5");
+    expect(decoded.lightnessCurve).toEqual({ kind: "power", gamma: 1.5 });
+  });
+
+  test("sigmoid curve decodes with given steepness and midpoint", () => {
+    const decoded = decodeParams("?lightnessCurve=sigmoid&sigmoidSteepness=6&sigmoidMidpoint=0.3");
+    expect(decoded.lightnessCurve).toEqual({ kind: "sigmoid", steepness: 6, midpoint: 0.3 });
+  });
+
+  test("sigmoid curve falls back to defaults when its params are missing", () => {
+    const decoded = decodeParams("?lightnessCurve=sigmoid");
+    expect(decoded.lightnessCurve).toEqual({ kind: "sigmoid", steepness: 4, midpoint: 0.5 });
+  });
+
+  test("bezier curve decodes with given handles", () => {
+    const decoded = decodeParams(
+      "?lightnessCurve=bezier&bezier1x=0.4&bezier1y=0.2&bezier2x=0.6&bezier2y=0.8",
+    );
+    expect(decoded.lightnessCurve).toEqual({
+      kind: "bezier",
+      p1: [0.4, 0.2],
+      p2: [0.6, 0.8],
+    });
+  });
+
+  test("bezier handle components are clamped to [0, 1]", () => {
+    const decoded = decodeParams(
+      "?lightnessCurve=bezier&bezier1x=-1&bezier1y=2&bezier2x=99&bezier2y=-99",
+    );
+    expect(decoded.lightnessCurve).toEqual({
+      kind: "bezier",
+      p1: [0, 1],
+      p2: [1, 0],
+    });
+  });
+
+  test("unknown lightnessCurve value falls back to power", () => {
+    const decoded = decodeParams("?lightnessCurve=cosmic");
+    expect(decoded.lightnessCurve).toEqual({ kind: "power", gamma: 1 });
+  });
+
+  test("bezier params are ignored when curve kind is power", () => {
+    const decoded = decodeParams("?bezier1x=0.4&gamma=1.3");
+    expect(decoded.lightnessCurve).toEqual({ kind: "power", gamma: 1.3 });
+  });
 });
 
 describe("round-trip", () => {
@@ -123,7 +239,7 @@ describe("round-trip", () => {
       start: 1.2,
       rotations: 0.5,
       saturation: 1.7,
-      gamma: 0.9,
+      lightnessCurve: { kind: "power", gamma: 0.9 },
       lightnessMin: 0.1,
       lightnessMax: 0.9,
       reverse: true,
@@ -133,6 +249,22 @@ describe("round-trip", () => {
 
   test("default params survive a round trip", () => {
     expect(decodeParams(encodeParams(DEFAULT_CUBEHELIX_PARAMS))).toEqual(DEFAULT_CUBEHELIX_PARAMS);
+  });
+
+  test("sigmoid curve round-trips", () => {
+    const original: CubehelixParams = {
+      ...DEFAULT_CUBEHELIX_PARAMS,
+      lightnessCurve: { kind: "sigmoid", steepness: 6, midpoint: 0.3 },
+    };
+    expect(decodeParams(encodeParams(original))).toEqual(original);
+  });
+
+  test("bezier curve round-trips", () => {
+    const original: CubehelixParams = {
+      ...DEFAULT_CUBEHELIX_PARAMS,
+      lightnessCurve: { kind: "bezier", p1: [0.4, 0.2], p2: [0.6, 0.8] },
+    };
+    expect(decodeParams(encodeParams(original))).toEqual(original);
   });
 });
 
@@ -176,7 +308,7 @@ describe("encodeAppState / decodeAppState", () => {
         start: 1.2,
         rotations: 0.5,
         saturation: 1.7,
-        gamma: 0.9,
+        lightnessCurve: { kind: "power", gamma: 0.9 },
         lightnessMin: 0.1,
         lightnessMax: 0.9,
         reverse: true,
