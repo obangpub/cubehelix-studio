@@ -6,7 +6,6 @@ import {
   DEFAULT_POWER_GAMMA,
   DEFAULT_SIGMOID_MIDPOINT,
   DEFAULT_SIGMOID_STEEPNESS,
-  saturationCap,
   toCssRgb,
   type CubehelixParams,
   type LightnessCurve,
@@ -21,6 +20,12 @@ import { BezierEditor } from "./BezierEditor";
 import { RangeSlider } from "./RangeSlider";
 import { Slider } from "./Slider";
 import { StartingHueWheel } from "./StartingHueWheel";
+
+// Saturation slider tops out well past full-gamut so users can intentionally
+// crank past the in-gamut range. The cubic slider scale (scaleExponent=3 on
+// the Slider) puts the most-used 0..2 range across the lower ~76% of travel,
+// leaving the upper portion for the rare 2..4.5 territory.
+const SATURATION_SLIDER_MAX = 4.5;
 
 function mod3(v: number): number {
   return ((v % 3) + 3) % 3;
@@ -71,25 +76,6 @@ export function ParamControls({
     };
   const minThumbColor = useMemo(() => toCssRgb(cubehelix(0, params)), [params]);
   const maxThumbColor = useMemo(() => toCssRgb(cubehelix(1, params)), [params]);
-  const saturationMax = useMemo(() => {
-    const SAMPLES = 24;
-    let max = 0;
-    for (let i = 0; i < SAMPLES; i++) {
-      const start = (i / SAMPLES) * 3;
-      const cap = saturationCap({ ...params, start });
-      if (cap > max) max = cap;
-    }
-    return Number(max.toFixed(2));
-  }, [
-    params.rotations,
-    params.lightnessCurve,
-    params.lightnessAxisMin,
-    params.lightnessAxisMax,
-    params.chromaPeak,
-    params.chromaWidth,
-    params.chromaFloor,
-    params.reverse,
-  ]);
   const setStart = (v: number) => {
     if (!Number.isFinite(v)) return;
     onChange({ ...params, start: mod3(v) });
@@ -317,7 +303,7 @@ export function ParamControls({
             technicalName="saturation"
             value={params.saturation}
             min={0}
-            max={saturationMax}
+            max={SATURATION_SLIDER_MAX}
             step={0.01}
             scaleExponent={3}
             onChange={update("saturation")}
