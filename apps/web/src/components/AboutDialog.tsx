@@ -18,7 +18,7 @@ export function AboutDialog() {
 
   return (
     <>
-      <button type="button" className="share-link" onClick={() => setOpen(true)}>
+      <button type="button" className="header-button" onClick={() => setOpen(true)}>
         About
       </button>
       <dialog

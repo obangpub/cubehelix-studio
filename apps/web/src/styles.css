@@ -133,8 +133,8 @@ header p {
   gap: 0.5rem;
 }
 
-.share-link,
-.header-button {
+.header-button,
+.header-icon-button {
   flex-shrink: 0;
   font: inherit;
   font-size: 0.875rem;
@@ -142,21 +142,45 @@ header p {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 6px;
-  padding: 0.4rem 0.75rem;
   cursor: pointer;
   white-space: nowrap;
   transition: background 120ms ease;
 }
 
-.share-link:hover,
-.header-button:hover {
+.header-button {
+  padding: 0.4rem 0.75rem;
+}
+
+.header-icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
+}
+
+.header-button:hover,
+.header-icon-button:hover {
   background: var(--bg);
 }
 
-.share-link:focus-visible,
-.header-button:focus-visible {
+.header-button:focus-visible,
+.header-icon-button:focus-visible {
   outline: 2px solid var(--fg);
   outline-offset: 2px;
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
 }
 
 .controls {
