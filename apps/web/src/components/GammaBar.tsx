@@ -1,5 +1,9 @@
 import { useId, useMemo } from "react";
-import { evaluateLightnessCurve, type CubehelixParams } from "@cubehelix-studio/core";
+import {
+  evaluateLightnessCurve,
+  invertLightnessCurve,
+  type CubehelixParams,
+} from "@cubehelix-studio/core";
 
 interface GammaBarProps {
   params: CubehelixParams;
@@ -11,13 +15,18 @@ const STOP_COUNT = 64;
 export function GammaBar({ params, height = 60 }: GammaBarProps) {
   const gradientId = useId();
   const stops = useMemo(() => {
+    const { lightnessCurve, lightnessAxisMin, lightnessAxisMax, reverse } = params;
+    const uMin = invertLightnessCurve(lightnessCurve, lightnessAxisMin);
+    const uMax = invertLightnessCurve(lightnessCurve, lightnessAxisMax);
     return Array.from({ length: STOP_COUNT + 1 }, (_, i) => {
       const t = i / STOP_COUNT;
-      const l = evaluateLightnessCurve(params.lightnessCurve, t);
+      const tEff = reverse ? 1 - t : t;
+      const u = uMin + (uMax - uMin) * tEff;
+      const l = evaluateLightnessCurve(lightnessCurve, u);
       const v = Math.round(l * 255);
       return { offset: t, color: `rgb(${v} ${v} ${v})` };
     });
-  }, [params.lightnessCurve]);
+  }, [params.lightnessCurve, params.lightnessAxisMin, params.lightnessAxisMax, params.reverse]);
 
   return (
     <svg

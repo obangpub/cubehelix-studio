@@ -112,12 +112,12 @@ describe("cubehelix", () => {
     }
   });
 
-  test("lightnessMin and lightnessMax bound the achromatic ramp endpoints", () => {
+  test("lightnessAxisMin and lightnessAxisMax bound the achromatic ramp endpoints", () => {
     const params: CubehelixParams = {
       ...DEFAULT_CUBEHELIX_PARAMS,
       saturation: 0,
-      lightnessMin: 0.2,
-      lightnessMax: 0.8,
+      lightnessAxisMin: 0.2,
+      lightnessAxisMax: 0.8,
     };
     const lo = cubehelix(0, params);
     const hi = cubehelix(1, params);

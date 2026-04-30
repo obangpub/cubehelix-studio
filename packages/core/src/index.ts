@@ -14,6 +14,7 @@ export {
   DEFAULT_SIGMOID_MIDPOINT,
   DEFAULT_SIGMOID_STEEPNESS,
   evaluateLightnessCurve,
+  invertLightnessCurve,
 } from "./lightness-curve";
 export {
   chromaEnvelope,

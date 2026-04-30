@@ -62,15 +62,15 @@ describe("serialize: python", () => {
   });
 
   test("converts camelCase param keys to snake_case for Python", () => {
-    // Force a camelCase key onto params via cast — guards against future
-    // additions like lightnessMin without depending on the current shape.
+    // Force a camelCase key onto params via cast — guards the serializer's
+    // case-conversion behavior without depending on the current shape.
     const camelPalette: RolePalette = {
-      params: { ...DEFAULT_CUBEHELIX_PARAMS, lightnessMin: 0.15 } as RolePalette["params"],
+      params: { ...DEFAULT_CUBEHELIX_PARAMS, lightnessAxisMin: 0.15 } as RolePalette["params"],
       roles: palette.roles,
     };
     const out = serialize(camelPalette, "python");
-    expect(out).toContain("lightness_min=0.15");
-    expect(out).not.toContain("lightnessMin=");
+    expect(out).toContain("lightness_axis_min=0.15");
+    expect(out).not.toContain("lightnessAxisMin=");
   });
 
   test("produces six-digit role rgb tuples", () => {

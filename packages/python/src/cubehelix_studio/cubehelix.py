@@ -116,6 +116,27 @@ def evaluate_lightness_curve(curve: LightnessCurve, t: float) -> float:
     raise TypeError(f"unsupported curve type: {type(curve).__name__}")
 
 
+def invert_lightness_curve(curve: LightnessCurve, target: float) -> float:
+    """Inverse of evaluate_lightness_curve.
+
+    Returns u in [0, 1] such that evaluate_lightness_curve(curve, u) == target.
+    Assumes curves are monotonic non-decreasing.
+    """
+    if target <= 0.0:
+        return 0.0
+    if target >= 1.0:
+        return 1.0
+    lo = 0.0
+    hi = 1.0
+    for _ in range(40):
+        mid = (lo + hi) / 2.0
+        if evaluate_lightness_curve(curve, mid) < target:
+            lo = mid
+        else:
+            hi = mid
+    return (lo + hi) / 2.0
+
+
 def chroma_envelope(fraction: float, peak: float, width: float, floor: float) -> float:
     """Multiplier of `saturation` that gives the chroma amplitude at `fraction`.
 
@@ -141,8 +162,8 @@ class CubehelixParams:
     rotations: float = -1.5
     saturation: float = 1.0
     lightness_curve: LightnessCurve = field(default_factory=PowerCurve)
-    lightness_min: float = 0.0
-    lightness_max: float = 1.0
+    lightness_axis_min: float = 0.0
+    lightness_axis_max: float = 1.0
     chroma_peak: float = DEFAULT_CHROMA_PEAK
     chroma_width: float = DEFAULT_CHROMA_WIDTH
     chroma_floor: float = DEFAULT_CHROMA_FLOOR
@@ -159,11 +180,17 @@ def _clamp01(x: float) -> float:
 
 def cubehelix_raw(t: float, params: CubehelixParams) -> tuple[float, float, float]:
     t_eff = 1.0 - t if params.reverse else t
-    curve_t = evaluate_lightness_curve(params.lightness_curve, t_eff)
-    fraction = params.lightness_min + (params.lightness_max - params.lightness_min) * curve_t
-    # Angle parameterized by the user's visible position (t_eff), so `rotations`
-    # means turns over the visible palette regardless of lightness range or curve.
-    angle = 2.0 * math.pi * (params.start / 3.0 + params.rotations * t_eff + 1.0)
+    # The cubehelix is a fixed curve in cube space, parameterized by u in [0,1]
+    # along the lightness axis from black to white. `rotations` is the number
+    # of hue turns over that full axis. The lightness range clips the helix to
+    # the sub-arc where the curve output lies in [lightness_axis_min, lightness_axis_max];
+    # the visible palette traverses that sub-arc, so a narrower range exposes
+    # fewer hue rotations.
+    u_min = invert_lightness_curve(params.lightness_curve, params.lightness_axis_min)
+    u_max = invert_lightness_curve(params.lightness_curve, params.lightness_axis_max)
+    u = u_min + (u_max - u_min) * t_eff
+    fraction = evaluate_lightness_curve(params.lightness_curve, u)
+    angle = 2.0 * math.pi * (params.start / 3.0 + params.rotations * u + 1.0)
     amp = params.saturation * chroma_envelope(
         fraction, params.chroma_peak, params.chroma_width, params.chroma_floor
     )

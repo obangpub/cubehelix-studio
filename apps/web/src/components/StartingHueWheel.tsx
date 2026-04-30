@@ -17,10 +17,10 @@ const INNER_RADIUS = 0.6;
 const POINTER_INNER = INNER_RADIUS - 0.04;
 const POINTER_OUTER = OUTER_RADIUS + 0.04;
 
-// Pin sampling so each segment shows the abstract hue at t=0 of a gradient
-// with that start. Rotations=0 makes the angle equal to 2π·(start/3 + 1)
-// regardless of t; a fixed fraction of 0.5 (set via the collapsed lightness
-// range) puts the sample at peak chroma so the wheel is vivid. Together,
+// Pin sampling so each segment shows the abstract hue for that start.
+// Rotations=0 makes the angle equal to 2π·(start/3 + 1) regardless of
+// helix position; sampling at t=0.5 with the default identity curve puts
+// the lightness fraction at 0.5, where the chroma envelope peaks. Together,
 // the pointer color is the mathematically pure starting hue at maximum
 // visible chroma — it does not depend on the user's rotation count.
 const REFERENCE_T = 0.5;
@@ -38,8 +38,8 @@ function wheelParams(start: number): CubehelixParams {
     rotations: 0,
     saturation: WHEEL_SATURATION,
     lightnessCurve: DEFAULT_LIGHTNESS_CURVE,
-    lightnessMin: 0,
-    lightnessMax: 1,
+    lightnessAxisMin: 0,
+    lightnessAxisMax: 1,
     chromaPeak: 0.5,
     chromaWidth: 1,
     chromaFloor: 0,

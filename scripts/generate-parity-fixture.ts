@@ -8,10 +8,10 @@ const STARTS = [0.0, 0.5, 1.0, 2.5];
 const ROTATIONS = [-2.0, -1.5, 0.0, 1.5];
 const SATURATIONS = [0.5, 1.0, 1.5];
 const GAMMAS = [0.7, 1.0, 1.4];
-const LIGHTNESS_RANGES: { lightnessMin: number; lightnessMax: number }[] = [
-  { lightnessMin: 0.15, lightnessMax: 0.85 },
-  { lightnessMin: 0.0, lightnessMax: 0.6 },
-  { lightnessMin: 0.4, lightnessMax: 1.0 },
+const LIGHTNESS_RANGES: { lightnessAxisMin: number; lightnessAxisMax: number }[] = [
+  { lightnessAxisMin: 0.15, lightnessAxisMax: 0.85 },
+  { lightnessAxisMin: 0.0, lightnessAxisMax: 0.6 },
+  { lightnessAxisMin: 0.4, lightnessAxisMax: 1.0 },
 ];
 const SIGMOID_PROBES: { steepness: number; midpoint: number }[] = [
   { steepness: 4, midpoint: 0.5 },
@@ -38,8 +38,8 @@ const LIGHTNESS_RANGE_PROBE: CubehelixParams = {
   rotations: -1.5,
   saturation: 1.0,
   lightnessCurve: { kind: "power", gamma: 1.0 },
-  lightnessMin: 0.0,
-  lightnessMax: 1.0,
+  lightnessAxisMin: 0.0,
+  lightnessAxisMax: 1.0,
   chromaPeak: 0.5,
   chromaWidth: 1.0,
   chromaFloor: 0.0,
@@ -89,7 +89,12 @@ for (const range of LIGHTNESS_RANGES) {
 }
 entries.push(buildEntry({ ...LIGHTNESS_RANGE_PROBE, reverse: true }));
 entries.push(
-  buildEntry({ ...LIGHTNESS_RANGE_PROBE, reverse: true, lightnessMin: 0.2, lightnessMax: 0.8 }),
+  buildEntry({
+    ...LIGHTNESS_RANGE_PROBE,
+    reverse: true,
+    lightnessAxisMin: 0.2,
+    lightnessAxisMax: 0.8,
+  }),
 );
 for (const sig of SIGMOID_PROBES) {
   entries.push(
@@ -117,7 +122,7 @@ for (const chroma of CHROMA_PROBES) {
 }
 
 const fixture = {
-  version: 6,
+  version: 8,
   generator: "cubehelix-studio/scripts/generate-parity-fixture.ts",
   parameterGrid: {
     start: STARTS,

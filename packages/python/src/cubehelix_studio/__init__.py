@@ -14,6 +14,7 @@ from .cubehelix import (
     cubehelix,
     cubehelix_raw,
     evaluate_lightness_curve,
+    invert_lightness_curve,
     was_clamped,
 )
 from .format import to_hex, to_rgb_255
@@ -34,6 +35,7 @@ __all__ = [
     "cubehelix",
     "cubehelix_raw",
     "evaluate_lightness_curve",
+    "invert_lightness_curve",
     "pick_text_color",
     "sample_sequential",
     "to_hex",

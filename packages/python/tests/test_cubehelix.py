@@ -111,7 +111,7 @@ def test_bezier_curve_endpoints_and_monotonic() -> None:
 
 
 def test_lightness_range_endpoints_respected() -> None:
-    params = CubehelixParams(lightness_min=0.2, lightness_max=0.8, saturation=0.0)
+    params = CubehelixParams(lightness_axis_min=0.2, lightness_axis_max=0.8, saturation=0.0)
     r0, g0, b0 = cubehelix(0.0, params)
     r1, g1, b1 = cubehelix(1.0, params)
     assert r0 == pytest.approx(0.2, abs=1e-12)

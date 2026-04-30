@@ -8,8 +8,8 @@ export interface CubehelixParams {
   rotations: number;
   saturation: number;
   lightnessCurve: LightnessCurve;
-  lightnessMin: number;
-  lightnessMax: number;
+  lightnessAxisMin: number;
+  lightnessAxisMax: number;
   chromaPeak: number;
   chromaWidth: number;
   chromaFloor: number;

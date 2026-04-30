@@ -34,8 +34,8 @@ type SimpleNumericKey =
   | "start"
   | "rotations"
   | "saturation"
-  | "lightnessMin"
-  | "lightnessMax"
+  | "lightnessAxisMin"
+  | "lightnessAxisMax"
   | "chromaPeak"
   | "chromaWidth"
   | "chromaFloor";
@@ -44,8 +44,8 @@ const NUMERIC_KEYS = [
   "start",
   "rotations",
   "saturation",
-  "lightnessMin",
-  "lightnessMax",
+  "lightnessAxisMin",
+  "lightnessAxisMax",
   "chromaPeak",
   "chromaWidth",
   "chromaFloor",
@@ -55,8 +55,8 @@ const PARAM_BOUNDS: Record<SimpleNumericKey, { min: number; max: number }> = {
   start: { min: 0, max: 3 },
   rotations: { min: -Infinity, max: Infinity },
   saturation: { min: 0, max: Infinity },
-  lightnessMin: { min: 0, max: 1 },
-  lightnessMax: { min: 0, max: 1 },
+  lightnessAxisMin: { min: 0, max: 1 },
+  lightnessAxisMax: { min: 0, max: 1 },
   chromaPeak: { min: 0, max: 1 },
   chromaWidth: { min: 0.1, max: 5 },
   chromaFloor: { min: 0, max: 1 },
@@ -212,11 +212,11 @@ function readParamsFromSearch(search: URLSearchParams): CubehelixParams {
   if (rawReverse !== null) {
     result.reverse = rawReverse === "1" || rawReverse === "true";
   }
-  if (result.lightnessMin > result.lightnessMax) {
-    const lo = result.lightnessMax;
-    const hi = result.lightnessMin;
-    result.lightnessMin = lo;
-    result.lightnessMax = hi;
+  if (result.lightnessAxisMin > result.lightnessAxisMax) {
+    const lo = result.lightnessAxisMax;
+    const hi = result.lightnessAxisMin;
+    result.lightnessAxisMin = lo;
+    result.lightnessAxisMax = hi;
   }
   return result;
 }

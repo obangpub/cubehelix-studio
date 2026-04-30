@@ -24,6 +24,22 @@ export function evaluateLightnessCurve(curve: LightnessCurve, t: number): number
   }
 }
 
+// Inverse of evaluateLightnessCurve: returns u in [0,1] such that
+// evaluateLightnessCurve(curve, u) ≈ target. Assumes curves are monotonic
+// non-decreasing (true for power gamma>0, sigmoid, and bezier with valid p1/p2).
+export function invertLightnessCurve(curve: LightnessCurve, target: number): number {
+  if (target <= 0) return 0;
+  if (target >= 1) return 1;
+  let lo = 0;
+  let hi = 1;
+  for (let i = 0; i < 40; i++) {
+    const mid = (lo + hi) / 2;
+    if (evaluateLightnessCurve(curve, mid) < target) lo = mid;
+    else hi = mid;
+  }
+  return (lo + hi) / 2;
+}
+
 function logistic(x: number): number {
   return 1 / (1 + Math.exp(-x));
 }

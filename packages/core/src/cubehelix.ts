@@ -4,7 +4,11 @@ import {
   DEFAULT_CHROMA_PEAK,
   DEFAULT_CHROMA_WIDTH,
 } from "./chroma-envelope";
-import { DEFAULT_LIGHTNESS_CURVE, evaluateLightnessCurve } from "./lightness-curve";
+import {
+  DEFAULT_LIGHTNESS_CURVE,
+  evaluateLightnessCurve,
+  invertLightnessCurve,
+} from "./lightness-curve";
 import type { CubehelixParams, RGB } from "./types";
 
 export const DEFAULT_CUBEHELIX_PARAMS: CubehelixParams = {
@@ -12,8 +16,8 @@ export const DEFAULT_CUBEHELIX_PARAMS: CubehelixParams = {
   rotations: -1.5,
   saturation: 1.0,
   lightnessCurve: DEFAULT_LIGHTNESS_CURVE,
-  lightnessMin: 0.0,
-  lightnessMax: 1.0,
+  lightnessAxisMin: 0.0,
+  lightnessAxisMax: 1.0,
   chromaPeak: DEFAULT_CHROMA_PEAK,
   chromaWidth: DEFAULT_CHROMA_WIDTH,
   chromaFloor: DEFAULT_CHROMA_FLOOR,
@@ -21,14 +25,27 @@ export const DEFAULT_CUBEHELIX_PARAMS: CubehelixParams = {
 };
 
 export function cubehelixRaw(t: number, params: CubehelixParams): RGB {
-  const { start, rotations, saturation, lightnessCurve, lightnessMin, lightnessMax, reverse } =
-    params;
+  const {
+    start,
+    rotations,
+    saturation,
+    lightnessCurve,
+    lightnessAxisMin,
+    lightnessAxisMax,
+    reverse,
+  } = params;
   const tEff = reverse ? 1 - t : t;
-  const curveT = evaluateLightnessCurve(lightnessCurve, tEff);
-  const fraction = lightnessMin + (lightnessMax - lightnessMin) * curveT;
-  // Angle is parameterized by tEff (the user's visible position), so `rotations`
-  // means turns over the visible palette regardless of lightness range or curve.
-  const angle = 2 * Math.PI * (start / 3 + rotations * tEff + 1);
+  // The cubehelix is a fixed curve in cube space, parameterized by u in [0,1]
+  // along the lightness axis from black to white. `rotations` is the number of
+  // hue turns over that full axis. The lightness axis bounds clip the helix to
+  // the sub-arc where the curve output lies in [lightnessAxisMin,
+  // lightnessAxisMax]; the visible palette traverses that sub-arc, so a
+  // narrower axis window exposes fewer hue rotations.
+  const uMin = invertLightnessCurve(lightnessCurve, lightnessAxisMin);
+  const uMax = invertLightnessCurve(lightnessCurve, lightnessAxisMax);
+  const u = uMin + (uMax - uMin) * tEff;
+  const fraction = evaluateLightnessCurve(lightnessCurve, u);
+  const angle = 2 * Math.PI * (start / 3 + rotations * u + 1);
   const amp = saturation * chromaEnvelope(fraction, params);
   const cosA = Math.cos(angle);
   const sinA = Math.sin(angle);
@@ -51,15 +68,17 @@ const SATURATION_CAP_SAMPLES = 256;
 const SATURATION_CAP_PERCENTILE = 0.95;
 
 export function saturationCap(params: CubehelixParams): number {
-  const { start, rotations, lightnessCurve, lightnessMin, lightnessMax } = params;
+  const { start, rotations, lightnessCurve, lightnessAxisMin, lightnessAxisMax } = params;
+  const uMin = invertLightnessCurve(lightnessCurve, lightnessAxisMin);
+  const uMax = invertLightnessCurve(lightnessCurve, lightnessAxisMax);
   const exitSaturations: number[] = [];
   for (let i = 0; i <= SATURATION_CAP_SAMPLES; i++) {
     const tEff = i / SATURATION_CAP_SAMPLES;
-    const curveT = evaluateLightnessCurve(lightnessCurve, tEff);
-    const fraction = lightnessMin + (lightnessMax - lightnessMin) * curveT;
+    const u = uMin + (uMax - uMin) * tEff;
+    const fraction = evaluateLightnessCurve(lightnessCurve, u);
     const envelope = chromaEnvelope(fraction, params);
     if (envelope === 0) continue;
-    const angle = 2 * Math.PI * (start / 3 + rotations * tEff + 1);
+    const angle = 2 * Math.PI * (start / 3 + rotations * u + 1);
     const cosA = Math.cos(angle);
     const sinA = Math.sin(angle);
     const dirs = [

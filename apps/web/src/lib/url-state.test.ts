@@ -37,12 +37,12 @@ describe("encodeParams", () => {
   test("non-default lightness range is encoded", () => {
     const qs = encodeParams({
       ...DEFAULT_CUBEHELIX_PARAMS,
-      lightnessMin: 0.15,
-      lightnessMax: 0.85,
+      lightnessAxisMin: 0.15,
+      lightnessAxisMax: 0.85,
     });
     const parsed = new URLSearchParams(qs.slice(1));
-    expect(parsed.get("lightnessMin")).toBe("0.15");
-    expect(parsed.get("lightnessMax")).toBe("0.85");
+    expect(parsed.get("lightnessAxisMin")).toBe("0.15");
+    expect(parsed.get("lightnessAxisMax")).toBe("0.85");
   });
 
   test("reverse=true is encoded as 1; default false is omitted", () => {
@@ -162,15 +162,15 @@ describe("decodeParams", () => {
   });
 
   test("lightness range is clamped to [0, 1]", () => {
-    const decoded = decodeParams("?lightnessMin=-0.5&lightnessMax=2");
-    expect(decoded.lightnessMin).toBe(0);
-    expect(decoded.lightnessMax).toBe(1);
+    const decoded = decodeParams("?lightnessAxisMin=-0.5&lightnessAxisMax=2");
+    expect(decoded.lightnessAxisMin).toBe(0);
+    expect(decoded.lightnessAxisMax).toBe(1);
   });
 
   test("inverted lightness range is normalized to ascending order", () => {
-    const decoded = decodeParams("?lightnessMin=0.8&lightnessMax=0.3");
-    expect(decoded.lightnessMin).toBe(0.3);
-    expect(decoded.lightnessMax).toBe(0.8);
+    const decoded = decodeParams("?lightnessAxisMin=0.8&lightnessAxisMax=0.3");
+    expect(decoded.lightnessAxisMin).toBe(0.3);
+    expect(decoded.lightnessAxisMax).toBe(0.8);
   });
 
   test("reverse decodes from 1 or true; absence yields default", () => {
@@ -241,8 +241,8 @@ describe("round-trip", () => {
       rotations: 0.5,
       saturation: 1.7,
       lightnessCurve: { kind: "power", gamma: 0.9 },
-      lightnessMin: 0.1,
-      lightnessMax: 0.9,
+      lightnessAxisMin: 0.1,
+      lightnessAxisMax: 0.9,
       reverse: true,
     };
     expect(decodeParams(encodeParams(original))).toEqual(original);
@@ -351,8 +351,8 @@ describe("encodeAppState / decodeAppState", () => {
         rotations: 0.5,
         saturation: 1.7,
         lightnessCurve: { kind: "power", gamma: 0.9 },
-        lightnessMin: 0.1,
-        lightnessMax: 0.9,
+        lightnessAxisMin: 0.1,
+        lightnessAxisMax: 0.9,
         reverse: true,
       } satisfies CubehelixParams,
       swatchCount: 14,

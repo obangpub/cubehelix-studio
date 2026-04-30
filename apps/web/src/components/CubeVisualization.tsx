@@ -5,8 +5,8 @@ import * as THREE from "three";
 import {
   cubehelixRaw,
   evaluateLightnessCurve,
+  invertLightnessCurve,
   type CubehelixParams,
-  type LightnessCurve,
   type RGB,
 } from "@cubehelix-studio/core";
 
@@ -55,33 +55,22 @@ function bisectCrossing(uLo: number, uHi: number, inLo: boolean, params: Cubehel
   return (lo + hi) / 2;
 }
 
-function findCurveCrossing(curve: LightnessCurve, target: number): number {
-  let lo = 0;
-  let hi = 1;
-  for (let i = 0; i < 40; i++) {
-    const mid = (lo + hi) / 2;
-    const v = evaluateLightnessCurve(curve, mid);
-    if (v < target) lo = mid;
-    else hi = mid;
-  }
-  return (lo + hi) / 2;
-}
-
 function buildSamples(params: CubehelixParams, n: number): Sample[] {
-  // Cube viz renders the full underlying helix (parameterized over u in [0,1]
-  // of the canonical cubehelix curve, where u is tEff with lightness-range
-  // and reverse stripped), then marks which segments fall in the user's
-  // visible window. Stripping lightness-range AND reverse is required, since
-  // both are user-visible-window concerns rather than curve-shape concerns.
-  // Keeping reverse here would double-reverse and paint mismatched hues
-  // against the swatches.
+  // Cube viz renders the full underlying helix as a fixed object in cube
+  // space, parameterized over u in [0,1] from black to white, then marks
+  // which segments fall in the user's visible lightness range. The visible
+  // palette is the sub-arc where the curve output lies in [lightnessAxisMin,
+  // lightnessAxisMax]. Stripping lightness-range AND reverse here lets cubehelixRaw
+  // return colors at the helix parameter u directly: with range [0,1] and
+  // reverse=false, the function's input t maps 1:1 to u. Keeping reverse here
+  // would double-reverse and paint mismatched hues against the swatches.
   const fullHelixParams: CubehelixParams = {
     ...params,
-    lightnessMin: 0,
-    lightnessMax: 1,
+    lightnessAxisMin: 0,
+    lightnessAxisMax: 1,
     reverse: false,
   };
-  const { lightnessCurve, lightnessMin, lightnessMax } = params;
+  const { lightnessCurve, lightnessAxisMin, lightnessAxisMax } = params;
 
   const makeAt = (u: number): Sample => {
     const raw = cubehelixRaw(u, fullHelixParams);
@@ -92,7 +81,7 @@ function buildSamples(params: CubehelixParams, n: number): Sample[] {
       raw,
       clamped,
       inGamut: isInGamut(raw),
-      inRange: lightness >= lightnessMin && lightness <= lightnessMax,
+      inRange: lightness >= lightnessAxisMin && lightness <= lightnessAxisMax,
     };
   };
 
@@ -102,8 +91,10 @@ function buildSamples(params: CubehelixParams, n: number): Sample[] {
   }
 
   const breakpoints: number[] = [];
-  if (lightnessMin > 0) breakpoints.push(findCurveCrossing(lightnessCurve, lightnessMin));
-  if (lightnessMax < 1) breakpoints.push(findCurveCrossing(lightnessCurve, lightnessMax));
+  if (lightnessAxisMin > 0)
+    breakpoints.push(invertLightnessCurve(lightnessCurve, lightnessAxisMin));
+  if (lightnessAxisMax < 1)
+    breakpoints.push(invertLightnessCurve(lightnessCurve, lightnessAxisMax));
   for (const u of breakpoints) {
     if (u <= 0 || u >= 1) continue;
     const idx = base.findIndex((s) => s.u >= u);
@@ -299,18 +290,77 @@ function CubeWireframe() {
   );
 }
 
-function GrayDiagonal() {
-  const geom = useMemo(() => {
-    const g = new THREE.BufferGeometry();
-    g.setAttribute("position", new THREE.Float32BufferAttribute([0, 0, 0, 1, 1, 1], 3));
-    return g;
-  }, []);
-  useEffect(() => () => geom.dispose(), [geom]);
+const AXIS_COLOR = 0x666666;
+const AXIS_DASH_SIZE = 0.05;
+const AXIS_GAP_SIZE = 0.03;
+const AXIS_THUMB_RADIUS = 0.03;
+
+function LightnessAxis({
+  lightnessAxisMin,
+  lightnessAxisMax,
+}: {
+  lightnessAxisMin: number;
+  lightnessAxisMax: number;
+}) {
+  const lines = useMemo(() => {
+    const segments: { from: number; to: number; dashed: boolean }[] = [];
+    if (lightnessAxisMin > 0) {
+      segments.push({ from: 0, to: lightnessAxisMin, dashed: true });
+    }
+    if (lightnessAxisMax > lightnessAxisMin) {
+      segments.push({ from: lightnessAxisMin, to: lightnessAxisMax, dashed: false });
+    }
+    if (lightnessAxisMax < 1) {
+      segments.push({ from: lightnessAxisMax, to: 1, dashed: true });
+    }
+    return segments.map((seg) => {
+      const geometry = new THREE.BufferGeometry().setFromPoints([
+        new THREE.Vector3(seg.from, seg.from, seg.from),
+        new THREE.Vector3(seg.to, seg.to, seg.to),
+      ]);
+      const material = seg.dashed
+        ? new THREE.LineDashedMaterial({
+            color: AXIS_COLOR,
+            dashSize: AXIS_DASH_SIZE,
+            gapSize: AXIS_GAP_SIZE,
+          })
+        : new THREE.LineBasicMaterial({ color: AXIS_COLOR });
+      const line = new THREE.Line(geometry, material);
+      if (seg.dashed) line.computeLineDistances();
+      return line;
+    });
+  }, [lightnessAxisMin, lightnessAxisMax]);
+
+  useEffect(() => {
+    return () => {
+      for (const line of lines) {
+        line.geometry.dispose();
+        if (Array.isArray(line.material)) {
+          for (const m of line.material) m.dispose();
+        } else {
+          line.material.dispose();
+        }
+      }
+    };
+  }, [lines]);
+
+  const vMin = Math.round(lightnessAxisMin * 255);
+  const vMax = Math.round(lightnessAxisMax * 255);
+
   return (
-    <line>
-      <primitive attach="geometry" object={geom} />
-      <lineDashedMaterial color="#666666" dashSize={0.05} gapSize={0.03} />
-    </line>
+    <>
+      {lines.map((line, i) => (
+        <primitive key={`axis-${i}`} object={line} />
+      ))}
+      <mesh position={[lightnessAxisMin, lightnessAxisMin, lightnessAxisMin]}>
+        <sphereGeometry args={[AXIS_THUMB_RADIUS, 16, 16]} />
+        <meshBasicMaterial color={`rgb(${vMin}, ${vMin}, ${vMin})`} />
+      </mesh>
+      <mesh position={[lightnessAxisMax, lightnessAxisMax, lightnessAxisMax]}>
+        <sphereGeometry args={[AXIS_THUMB_RADIUS, 16, 16]} />
+        <meshBasicMaterial color={`rgb(${vMax}, ${vMax}, ${vMax})`} />
+      </mesh>
+    </>
   );
 }
 
@@ -415,7 +465,10 @@ export function CubeVisualization({ params, samples, resetSignal }: CubeVisualiz
         <color attach="background" args={["#1a1a1a"]} />
         <group position={[-0.5, -0.5, -0.5]}>
           <CubeWireframe />
-          <GrayDiagonal />
+          <LightnessAxis
+            lightnessAxisMin={params.lightnessAxisMin}
+            lightnessAxisMax={params.lightnessAxisMax}
+          />
           <CornerMarkers />
           <Helix params={params} samples={effectiveSamples} />
         </group>
