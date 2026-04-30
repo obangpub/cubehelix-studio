@@ -22,3 +22,7 @@
 - Native desktop app via Tauri, reusing the web frontend.
 - Figma plugin for inline palette picking.
 - VS Code extension.
+
+## Detailed backlog
+
+Stage-level math, type, URL-state, and test specs for the next round of work (lightness curve generalization, chroma shaping, saturation range, hue waypoints, preset gallery, perceptual previews, diverging cubehelix) live in [BACKLOG.md](BACKLOG.md).
