@@ -181,6 +181,7 @@ header p {
   font-size: 0.95rem;
   font-weight: 600;
   color: var(--fg);
+  background: var(--bg);
   user-select: none;
   list-style: none;
 }
@@ -190,12 +191,13 @@ header p {
 }
 
 .control-section-header:hover {
-  background: var(--bg);
+  background: var(--border);
 }
 
 .control-section-chevron {
   color: var(--muted);
-  font-size: 0.875rem;
+  font-size: 1.25rem;
+  line-height: 1;
   transition: transform 150ms ease;
 }
 
