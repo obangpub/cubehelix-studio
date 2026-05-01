@@ -835,8 +835,6 @@ function CubeToolbar({
         >
           <AutoRotateIcon />
         </button>
-      </div>
-      <div className="cube-toolbar-group">
         <button
           type="button"
           className={`cube-icon-button ${activePanel === "snaps" ? "is-active" : ""}`}
