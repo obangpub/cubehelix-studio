@@ -14,6 +14,8 @@ interface CubeVisualizationProps {
   params: CubehelixParams;
   samples?: number;
   resetSignal?: number;
+  cubeTheme: "light" | "dark";
+  onCubeThemeChange: (next: "light" | "dark") => void;
 }
 
 interface Sample {
@@ -219,10 +221,10 @@ function forEachRun(
   }
 }
 
-function buildGhostLine(positions: THREE.Vector3[]): THREE.Line {
+function buildGhostLine(positions: THREE.Vector3[], color: number): THREE.Line {
   const geometry = new THREE.BufferGeometry().setFromPoints(positions);
   const material = new THREE.LineDashedMaterial({
-    color: 0xffffff,
+    color,
     dashSize: GHOST_DASH_SIZE,
     gapSize: GHOST_GAP_SIZE,
     transparent: true,
@@ -233,7 +235,7 @@ function buildGhostLine(positions: THREE.Vector3[]): THREE.Line {
   return line;
 }
 
-function buildScene(samples: Sample[]): ScenePieces {
+function buildScene(samples: Sample[], ghostColor: number): ScenePieces {
   const colored: THREE.BufferGeometry[] = [];
   const ghosts: THREE.Line[] = [];
   if (samples.length < 2) return { colored, ghosts };
@@ -257,7 +259,7 @@ function buildScene(samples: Sample[]): ScenePieces {
     (run) => {
       if (run.length < 2) return;
       const positions = run.map((s) => sampleToVec(s.raw));
-      ghosts.push(buildGhostLine(positions));
+      ghosts.push(buildGhostLine(positions, ghostColor));
     },
   );
 
@@ -396,13 +398,14 @@ interface HelixProps {
   params: CubehelixParams;
   samples: number;
   showGhost: boolean;
+  ghostColor: number;
 }
 
-function Helix({ params, samples, showGhost }: HelixProps) {
+function Helix({ params, samples, showGhost, ghostColor }: HelixProps) {
   const { colored, ghosts } = useMemo(() => {
     const s = buildSamples(params, samples);
-    return buildScene(s);
-  }, [params, samples]);
+    return buildScene(s, ghostColor);
+  }, [params, samples, ghostColor]);
 
   useEffect(() => {
     return () => {
@@ -629,6 +632,21 @@ function CubeIcon() {
   );
 }
 
+function PowerIcon() {
+  return (
+    <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+      <path
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.4"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M8 2.5v5M4.4 4.5a4.5 4.5 0 1 0 7.2 0"
+      />
+    </svg>
+  );
+}
+
 type PanelId = "snaps" | "settings";
 
 interface SnapPanelProps {
@@ -720,14 +738,6 @@ function SettingsPanel({ view, onChange }: SettingsPanelProps) {
           <label className="toggle">
             <input
               type="checkbox"
-              checked={view.showCanvas}
-              onChange={(e) => onChange({ ...view, showCanvas: e.currentTarget.checked })}
-            />
-            <span>Cube visualizer</span>
-          </label>
-          <label className="toggle">
-            <input
-              type="checkbox"
               checked={view.showWireframe}
               onChange={(e) => onChange({ ...view, showWireframe: e.currentTarget.checked })}
             />
@@ -781,7 +791,10 @@ function SettingsPanel({ view, onChange }: SettingsPanelProps) {
 
 interface ToolbarProps {
   view: ViewSettings;
+  cubeTheme: "light" | "dark";
   onAutoRotateToggle: () => void;
+  onCanvasToggle: () => void;
+  onCubeThemeToggle: () => void;
   activePanel: PanelId | null;
   onTogglePanel: (panel: PanelId) => void;
   onReset: () => void;
@@ -789,13 +802,28 @@ interface ToolbarProps {
 
 function CubeToolbar({
   view,
+  cubeTheme,
   onAutoRotateToggle,
+  onCanvasToggle,
+  onCubeThemeToggle,
   activePanel,
   onTogglePanel,
   onReset,
 }: ToolbarProps) {
   return (
     <div className="cube-toolbar">
+      <div className="cube-toolbar-group">
+        <button
+          type="button"
+          className={`cube-icon-button ${view.showCanvas ? "is-active" : ""}`}
+          onClick={onCanvasToggle}
+          aria-pressed={view.showCanvas}
+          aria-label={view.showCanvas ? "Hide cube visualizer" : "Show cube visualizer"}
+          title={view.showCanvas ? "Hide cube visualizer" : "Show cube visualizer"}
+        >
+          <PowerIcon />
+        </button>
+      </div>
       <div className="cube-toolbar-group">
         <button
           type="button"
@@ -834,6 +862,17 @@ function CubeToolbar({
         <button
           type="button"
           className="cube-icon-button"
+          onClick={onCubeThemeToggle}
+          aria-label={
+            cubeTheme === "dark" ? "Use light cube background" : "Use dark cube background"
+          }
+          title={cubeTheme === "dark" ? "Use light cube background" : "Use dark cube background"}
+        >
+          {cubeTheme === "dark" ? <SunIcon /> : <MoonIcon />}
+        </button>
+        <button
+          type="button"
+          className="cube-icon-button"
           onClick={onReset}
           title="Reset view"
           aria-label="Reset view"
@@ -845,7 +884,44 @@ function CubeToolbar({
   );
 }
 
-export function CubeVisualization({ params, samples, resetSignal }: CubeVisualizationProps) {
+function MoonIcon() {
+  return (
+    <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+      <path fill="currentColor" d="M14 8.5A6 6 0 1 1 7.5 2a4.667 4.667 0 0 0 6.5 6.5z" />
+    </svg>
+  );
+}
+
+function SunIcon() {
+  return (
+    <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+      <circle cx="8" cy="8" r="2.6" fill="currentColor" />
+      <g stroke="currentColor" strokeWidth="1.4" strokeLinecap="round" fill="none">
+        <line x1="8" y1="1.5" x2="8" y2="3.4" />
+        <line x1="8" y1="12.6" x2="8" y2="14.5" />
+        <line x1="1.5" y1="8" x2="3.4" y2="8" />
+        <line x1="12.6" y1="8" x2="14.5" y2="8" />
+        <line x1="3.39" y1="3.39" x2="4.74" y2="4.74" />
+        <line x1="11.26" y1="11.26" x2="12.61" y2="12.61" />
+        <line x1="3.39" y1="12.61" x2="4.74" y2="11.26" />
+        <line x1="11.26" y1="4.74" x2="12.61" y2="3.39" />
+      </g>
+    </svg>
+  );
+}
+
+const CUBE_BG_DARK = "#1a1a1a";
+const CUBE_BG_LIGHT = "#f5f5f5";
+const GHOST_COLOR_DARK = 0xffffff;
+const GHOST_COLOR_LIGHT = 0x222222;
+
+export function CubeVisualization({
+  params,
+  samples,
+  resetSignal,
+  cubeTheme,
+  onCubeThemeChange,
+}: CubeVisualizationProps) {
   const effectiveSamples = useMemo(() => {
     if (samples != null) return samples;
     const absR = Math.abs(params.rotations);
@@ -900,20 +976,31 @@ export function CubeVisualization({ params, samples, resetSignal }: CubeVisualiz
   const toggleAutoRotate = () => {
     setView((prev) => ({ ...prev, autoRotate: !prev.autoRotate }));
   };
+  const toggleCanvas = () => {
+    setView((prev) => ({ ...prev, showCanvas: !prev.showCanvas }));
+  };
+  const toggleCubeTheme = () => {
+    onCubeThemeChange(cubeTheme === "light" ? "dark" : "light");
+  };
+  const cubeBg = cubeTheme === "dark" ? CUBE_BG_DARK : CUBE_BG_LIGHT;
+  const ghostColor = cubeTheme === "dark" ? GHOST_COLOR_DARK : GHOST_COLOR_LIGHT;
 
   return (
     <div className="cube-area">
       <CubeToolbar
         view={view}
+        cubeTheme={cubeTheme}
         onAutoRotateToggle={toggleAutoRotate}
+        onCanvasToggle={toggleCanvas}
+        onCubeThemeToggle={toggleCubeTheme}
         activePanel={activePanel}
         onTogglePanel={togglePanel}
         onReset={handleReset}
       />
       {view.showCanvas && (
-        <div className="cube-visualization">
+        <div className="cube-visualization" style={{ background: cubeBg }}>
           <Canvas gl={{ toneMapping: THREE.NoToneMapping, outputColorSpace: THREE.SRGBColorSpace }}>
-            <color attach="background" args={["#1a1a1a"]} />
+            <color attach="background" args={[cubeBg]} />
             <CameraRig projection={view.projection} controlsRef={controlsRef} snap={snap} />
             <group position={[-0.5, -0.5, -0.5]}>
               {view.showWireframe && <CubeWireframe />}
@@ -925,7 +1012,12 @@ export function CubeVisualization({ params, samples, resetSignal }: CubeVisualiz
                 showHandles={view.showAxisHandles}
               />
               {view.showVertices && <CornerMarkers />}
-              <Helix params={params} samples={effectiveSamples} showGhost={view.showGhostHelix} />
+              <Helix
+                params={params}
+                samples={effectiveSamples}
+                showGhost={view.showGhostHelix}
+                ghostColor={ghostColor}
+              />
             </group>
             <OrbitControls
               ref={controlsRef}
