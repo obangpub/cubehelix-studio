@@ -12,7 +12,7 @@ interface GammaBarProps {
 
 const STOP_COUNT = 64;
 
-export function GammaBar({ params, height = 60 }: GammaBarProps) {
+export function GammaBar({ params, height = 20 }: GammaBarProps) {
   const gradientId = useId();
   const stops = useMemo(() => {
     const { lightnessCurve, lightnessAxisMin, lightnessAxisMax, reverse } = params;
