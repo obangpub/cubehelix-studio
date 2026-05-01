@@ -81,6 +81,13 @@ export function StartingHueWheel({ value, onChange }: StartingHueWheelProps) {
   }, []);
 
   const svgRef = useRef<SVGSVGElement>(null);
+  // Track drag state in a ref rather than gating on `hasPointerCapture` in the
+  // move handler. The browser can drop pointer capture mid-drag (focus loss,
+  // capture stolen by another element, React reconciliation race), which left
+  // the wheel feeling stuck even though the pointer was still down. The ref
+  // survives all of that; we still call setPointerCapture so events keep
+  // routing to the SVG when the cursor leaves its bounding box.
+  const draggingRef = useRef(false);
 
   const updateFromPointer = (clientX: number, clientY: number) => {
     const svg = svgRef.current;
@@ -97,14 +104,21 @@ export function StartingHueWheel({ value, onChange }: StartingHueWheelProps) {
   };
 
   const onPointerDown = (e: React.PointerEvent<SVGSVGElement>) => {
-    e.currentTarget.setPointerCapture(e.pointerId);
+    draggingRef.current = true;
+    try {
+      e.currentTarget.setPointerCapture(e.pointerId);
+    } catch {
+      // Capture can fail in odd states (already captured by a different
+      // element, etc.); the ref-based gate keeps the drag working anyway.
+    }
     updateFromPointer(e.clientX, e.clientY);
   };
   const onPointerMove = (e: React.PointerEvent<SVGSVGElement>) => {
-    if (!e.currentTarget.hasPointerCapture(e.pointerId)) return;
+    if (!draggingRef.current) return;
     updateFromPointer(e.clientX, e.clientY);
   };
   const onPointerUp = (e: React.PointerEvent<SVGSVGElement>) => {
+    draggingRef.current = false;
     if (e.currentTarget.hasPointerCapture(e.pointerId)) {
       e.currentTarget.releasePointerCapture(e.pointerId);
     }
