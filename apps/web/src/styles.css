@@ -318,7 +318,11 @@ header p {
 }
 
 .header-button {
-  padding: 0.4rem 0.75rem;
+  display: inline-flex;
+  align-items: center;
+  height: 2rem;
+  padding: 0 0.75rem;
+  line-height: 1;
 }
 
 .header-icon-button {
