@@ -1,6 +1,6 @@
-import { useEffect, useMemo, useRef, type ComponentRef } from "react";
-import { Canvas } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
+import { useEffect, useMemo, useRef, useState, type ComponentRef } from "react";
+import { Canvas, useFrame, useThree } from "@react-three/fiber";
+import { OrbitControls, OrthographicCamera, PerspectiveCamera } from "@react-three/drei";
 import * as THREE from "three";
 import {
   cubehelixRaw,
@@ -293,15 +293,25 @@ function CubeWireframe() {
 const AXIS_COLOR = 0x666666;
 const AXIS_DASH_SIZE = 0.05;
 const AXIS_GAP_SIZE = 0.03;
-const AXIS_THUMB_RADIUS = 0.03;
+// Cube edge sized to sit fully inside the 0.025-radius corner spheres
+// (cube diagonal = edge·√3, so edge < 2·0.025/√3 ≈ 0.029 fits entirely).
+const AXIS_THUMB_SIZE = 0.025;
+
+interface LightnessAxisProps {
+  lightnessAxisMin: number;
+  lightnessAxisMax: number;
+  showAxis: boolean;
+  showGhost: boolean;
+  showHandles: boolean;
+}
 
 function LightnessAxis({
   lightnessAxisMin,
   lightnessAxisMax,
-}: {
-  lightnessAxisMin: number;
-  lightnessAxisMax: number;
-}) {
+  showAxis,
+  showGhost,
+  showHandles,
+}: LightnessAxisProps) {
   const lines = useMemo(() => {
     const segments: { from: number; to: number; dashed: boolean }[] = [];
     if (lightnessAxisMin > 0) {
@@ -327,13 +337,13 @@ function LightnessAxis({
         : new THREE.LineBasicMaterial({ color: AXIS_COLOR });
       const line = new THREE.Line(geometry, material);
       if (seg.dashed) line.computeLineDistances();
-      return line;
+      return { line, dashed: seg.dashed };
     });
   }, [lightnessAxisMin, lightnessAxisMax]);
 
   useEffect(() => {
     return () => {
-      for (const line of lines) {
+      for (const { line } of lines) {
         line.geometry.dispose();
         if (Array.isArray(line.material)) {
           for (const m of line.material) m.dispose();
@@ -349,17 +359,22 @@ function LightnessAxis({
 
   return (
     <>
-      {lines.map((line, i) => (
-        <primitive key={`axis-${i}`} object={line} />
-      ))}
-      <mesh position={[lightnessAxisMin, lightnessAxisMin, lightnessAxisMin]}>
-        <sphereGeometry args={[AXIS_THUMB_RADIUS, 16, 16]} />
-        <meshBasicMaterial color={`rgb(${vMin}, ${vMin}, ${vMin})`} />
-      </mesh>
-      <mesh position={[lightnessAxisMax, lightnessAxisMax, lightnessAxisMax]}>
-        <sphereGeometry args={[AXIS_THUMB_RADIUS, 16, 16]} />
-        <meshBasicMaterial color={`rgb(${vMax}, ${vMax}, ${vMax})`} />
-      </mesh>
+      {lines.map(({ line, dashed }, i) => {
+        if (dashed ? !showGhost : !showAxis) return null;
+        return <primitive key={`axis-${i}`} object={line} />;
+      })}
+      {showHandles && (
+        <>
+          <mesh position={[lightnessAxisMin, lightnessAxisMin, lightnessAxisMin]}>
+            <boxGeometry args={[AXIS_THUMB_SIZE, AXIS_THUMB_SIZE, AXIS_THUMB_SIZE]} />
+            <meshBasicMaterial color={`rgb(${vMin}, ${vMin}, ${vMin})`} />
+          </mesh>
+          <mesh position={[lightnessAxisMax, lightnessAxisMax, lightnessAxisMax]}>
+            <boxGeometry args={[AXIS_THUMB_SIZE, AXIS_THUMB_SIZE, AXIS_THUMB_SIZE]} />
+            <meshBasicMaterial color={`rgb(${vMax}, ${vMax}, ${vMax})`} />
+          </mesh>
+        </>
+      )}
     </>
   );
 }
@@ -380,9 +395,10 @@ function CornerMarkers() {
 interface HelixProps {
   params: CubehelixParams;
   samples: number;
+  showGhost: boolean;
 }
 
-function Helix({ params, samples }: HelixProps) {
+function Helix({ params, samples, showGhost }: HelixProps) {
   const { colored, ghosts } = useMemo(() => {
     const s = buildSamples(params, samples);
     return buildScene(s);
@@ -410,17 +426,424 @@ function Helix({ params, samples }: HelixProps) {
           <meshBasicMaterial vertexColors />
         </mesh>
       ))}
-      {ghosts.map((line, i) => (
-        <primitive key={`ghost-${i}`} object={line} />
-      ))}
+      {showGhost && ghosts.map((line, i) => <primitive key={`ghost-${i}`} object={line} />)}
     </>
   );
 }
 
-const CUBE_CAMERA: [number, number, number] = [1.3, 0.9, 1.7];
+const DEFAULT_CAMERA_POSITION: [number, number, number] = [1.3, 0.9, 1.7];
+const ORTHO_ZOOM = 280;
+const SNAP_DISTANCE = 2.5;
 
 const SAMPLES_PER_ROTATION = 96;
 const MIN_SAMPLES = 256;
+
+type SnapId =
+  | "k"
+  | "r"
+  | "g"
+  | "b"
+  | "c"
+  | "m"
+  | "y"
+  | "w"
+  | "+r"
+  | "-r"
+  | "+g"
+  | "-g"
+  | "+b"
+  | "-b";
+
+interface Snap {
+  id: SnapId;
+  label: string;
+  group: "corner" | "face";
+  dir: [number, number, number];
+  up: [number, number, number];
+  swatch: string;
+}
+
+const SNAPS: Snap[] = [
+  { id: "k", label: "Black", group: "corner", dir: [-1, -1, -1], up: [0, 1, 0], swatch: "#000000" },
+  { id: "r", label: "Red", group: "corner", dir: [1, -1, -1], up: [0, 1, 0], swatch: "#ff0000" },
+  { id: "g", label: "Green", group: "corner", dir: [-1, 1, -1], up: [0, 1, 0], swatch: "#00ff00" },
+  { id: "b", label: "Blue", group: "corner", dir: [-1, -1, 1], up: [0, 1, 0], swatch: "#0000ff" },
+  { id: "c", label: "Cyan", group: "corner", dir: [-1, 1, 1], up: [0, 1, 0], swatch: "#00ffff" },
+  { id: "m", label: "Magenta", group: "corner", dir: [1, -1, 1], up: [0, 1, 0], swatch: "#ff00ff" },
+  { id: "y", label: "Yellow", group: "corner", dir: [1, 1, -1], up: [0, 1, 0], swatch: "#ffff00" },
+  { id: "w", label: "White", group: "corner", dir: [1, 1, 1], up: [0, 1, 0], swatch: "#ffffff" },
+  { id: "+r", label: "Red", group: "face", dir: [1, 0, 0], up: [0, 1, 0], swatch: "#ff0000" },
+  { id: "-r", label: "Cyan", group: "face", dir: [-1, 0, 0], up: [0, 1, 0], swatch: "#00ffff" },
+  { id: "+g", label: "Green", group: "face", dir: [0, 1, 0], up: [0, 0, 1], swatch: "#00ff00" },
+  { id: "-g", label: "Magenta", group: "face", dir: [0, -1, 0], up: [0, 0, 1], swatch: "#ff00ff" },
+  { id: "+b", label: "Blue", group: "face", dir: [0, 0, 1], up: [0, 1, 0], swatch: "#0000ff" },
+  { id: "-b", label: "Yellow", group: "face", dir: [0, 0, -1], up: [0, 1, 0], swatch: "#ffff00" },
+];
+
+interface ViewSettings {
+  projection: "perspective" | "orthographic";
+  autoRotate: boolean;
+  showCanvas: boolean;
+  showWireframe: boolean;
+  showVertices: boolean;
+  showAxis: boolean;
+  showAxisHandles: boolean;
+  showGhostAxis: boolean;
+  showGhostHelix: boolean;
+}
+
+const DEFAULT_VIEW: ViewSettings = {
+  projection: "perspective",
+  autoRotate: false,
+  showCanvas: true,
+  showWireframe: true,
+  showVertices: true,
+  showAxis: true,
+  showAxisHandles: true,
+  showGhostAxis: true,
+  showGhostHelix: true,
+};
+
+const VISIBILITY_KEYS = [
+  "showCanvas",
+  "showWireframe",
+  "showVertices",
+  "showAxis",
+  "showAxisHandles",
+  "showGhostAxis",
+  "showGhostHelix",
+] as const satisfies readonly (keyof ViewSettings)[];
+
+function allVisible(view: ViewSettings): boolean {
+  return VISIBILITY_KEYS.every((k) => view[k]);
+}
+
+function setAllVisibility(view: ViewSettings, value: boolean): ViewSettings {
+  const next = { ...view };
+  for (const k of VISIBILITY_KEYS) next[k] = value;
+  return next;
+}
+
+interface CameraRigProps {
+  projection: "perspective" | "orthographic";
+  controlsRef: React.RefObject<ComponentRef<typeof OrbitControls> | null>;
+  snap: { id: SnapId; signal: number } | null;
+}
+
+// Tracks the current camera position so projection switches preserve the view,
+// and applies imperative snap-to-axis moves.
+function CameraRig({ projection, controlsRef, snap }: CameraRigProps) {
+  const positionRef = useRef<[number, number, number]>(DEFAULT_CAMERA_POSITION);
+  const { camera } = useThree();
+
+  useFrame(() => {
+    positionRef.current = [camera.position.x, camera.position.y, camera.position.z];
+  });
+
+  useEffect(() => {
+    if (!snap) return;
+    const def = SNAPS.find((s) => s.id === snap.id);
+    if (!def) return;
+    const [dx, dy, dz] = def.dir;
+    const norm = Math.hypot(dx, dy, dz);
+    camera.position.set(
+      (dx / norm) * SNAP_DISTANCE,
+      (dy / norm) * SNAP_DISTANCE,
+      (dz / norm) * SNAP_DISTANCE,
+    );
+    camera.up.set(def.up[0], def.up[1], def.up[2]);
+    camera.lookAt(0, 0, 0);
+    controlsRef.current?.update();
+  }, [snap, camera, controlsRef]);
+
+  // Re-apply position after a projection change so the new camera mounts at
+  // the position the previous camera was looking from.
+  const initialPosRef = useRef(DEFAULT_CAMERA_POSITION);
+  initialPosRef.current = positionRef.current;
+
+  if (projection === "perspective") {
+    return (
+      <PerspectiveCamera key="perspective" makeDefault position={initialPosRef.current} fov={45} />
+    );
+  }
+  return (
+    <OrthographicCamera
+      key="orthographic"
+      makeDefault
+      position={initialPosRef.current}
+      zoom={ORTHO_ZOOM}
+      near={0.1}
+      far={100}
+    />
+  );
+}
+
+function ResetIcon() {
+  return (
+    <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+      <path
+        fill="currentColor"
+        d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.42A6 6 0 1 1 8 2v1z"
+      />
+      <path
+        fill="currentColor"
+        d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"
+      />
+    </svg>
+  );
+}
+
+function CogIcon() {
+  return (
+    <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+      <path
+        fill="currentColor"
+        d="M9.405 1.05c-.413-1.4-2.397-1.4-2.81 0l-.1.34a1.464 1.464 0 0 1-2.105.872l-.31-.17c-1.283-.698-2.686.705-1.987 1.987l.169.311a1.464 1.464 0 0 1-.872 2.105l-.34.1c-1.4.413-1.4 2.397 0 2.81l.34.1a1.464 1.464 0 0 1 .872 2.105l-.17.31c-.698 1.283.705 2.686 1.987 1.987l.311-.169a1.464 1.464 0 0 1 2.105.872l.1.34c.413 1.4 2.397 1.4 2.81 0l.1-.34a1.464 1.464 0 0 1 2.105-.872l.31.17c1.283.698 2.686-.705 1.987-1.987l-.169-.311a1.464 1.464 0 0 1 .872-2.105l.34-.1c1.4-.413 1.4-2.397 0-2.81l-.34-.1a1.464 1.464 0 0 1-.872-2.105l.17-.31c.698-1.283-.705-2.686-1.987-1.987l-.311.169a1.464 1.464 0 0 1-2.105-.872l-.1-.34zM8 10.93a2.929 2.929 0 1 1 0-5.858 2.929 2.929 0 0 1 0 5.858z"
+      />
+    </svg>
+  );
+}
+
+function AutoRotateIcon() {
+  return (
+    <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+      <path
+        fill="currentColor"
+        d="M8 2.5a5.5 5.5 0 0 1 5.477 5h-1.51l2.017 2.5L16 7.5h-1.508a6.5 6.5 0 0 0-12.713-1.5h1.022A5.503 5.503 0 0 1 8 2.5zM8 13.5a5.5 5.5 0 0 1-5.477-5h1.51L2.016 6 0 8.5h1.508a6.5 6.5 0 0 0 12.713 1.5h-1.022A5.503 5.503 0 0 1 8 13.5z"
+      />
+    </svg>
+  );
+}
+
+function CubeIcon() {
+  return (
+    <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
+      <path
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.2"
+        strokeLinejoin="round"
+        d="M8 1.5 14 4.5v7L8 14.5 2 11.5v-7zM8 1.5v6.5M8 8v6.5M8 8 2 4.5M8 8l6-3.5"
+      />
+    </svg>
+  );
+}
+
+type PanelId = "snaps" | "settings";
+
+interface SnapPanelProps {
+  onSnap: (id: SnapId) => void;
+}
+
+function SnapPanel({ onSnap }: SnapPanelProps) {
+  const corners = SNAPS.filter((s) => s.group === "corner");
+  const faces = SNAPS.filter((s) => s.group === "face");
+  return (
+    <div className="cube-panel" role="group" aria-label="Snap camera to view">
+      <div className="cube-panel-row">
+        <span className="cube-panel-label">Corners</span>
+        <div className="cube-snap-grid">
+          {corners.map((s) => (
+            <button
+              key={s.id}
+              type="button"
+              className="cube-snap-button"
+              onClick={() => onSnap(s.id)}
+            >
+              <span className="cube-snap-swatch" style={{ background: s.swatch }} aria-hidden />
+              <span>{s.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+      <div className="cube-panel-row">
+        <span className="cube-panel-label">Faces</span>
+        <div className="cube-snap-grid">
+          {faces.map((s) => (
+            <button
+              key={s.id}
+              type="button"
+              className="cube-snap-button"
+              onClick={() => onSnap(s.id)}
+            >
+              <span className="cube-snap-swatch" style={{ background: s.swatch }} aria-hidden />
+              <span>{s.label}</span>
+            </button>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+interface SettingsPanelProps {
+  view: ViewSettings;
+  onChange: (next: ViewSettings) => void;
+}
+
+function SettingsPanel({ view, onChange }: SettingsPanelProps) {
+  const allOn = allVisible(view);
+  return (
+    <div className="cube-panel" role="group" aria-label="Cube view settings">
+      <div className="cube-panel-row">
+        <span className="cube-panel-label">Projection</span>
+        <div className="cube-segmented">
+          {(["perspective", "orthographic"] as const).map((p) => (
+            <label
+              key={p}
+              className={`cube-segmented-option ${view.projection === p ? "is-active" : ""}`}
+            >
+              <input
+                type="radio"
+                name="cube-projection"
+                value={p}
+                checked={view.projection === p}
+                onChange={() => onChange({ ...view, projection: p })}
+              />
+              <span>{p === "perspective" ? "Perspective" : "Orthographic"}</span>
+            </label>
+          ))}
+        </div>
+      </div>
+      <div className="cube-panel-row">
+        <div className="cube-panel-label-row">
+          <span className="cube-panel-label">Visibility</span>
+          <button
+            type="button"
+            className="cube-panel-button"
+            onClick={() => onChange(setAllVisibility(view, !allOn))}
+          >
+            {allOn ? "Hide all" : "Show all"}
+          </button>
+        </div>
+        <div className="cube-visibility-grid">
+          <label className="toggle">
+            <input
+              type="checkbox"
+              checked={view.showCanvas}
+              onChange={(e) => onChange({ ...view, showCanvas: e.currentTarget.checked })}
+            />
+            <span>Cube visualizer</span>
+          </label>
+          <label className="toggle">
+            <input
+              type="checkbox"
+              checked={view.showWireframe}
+              onChange={(e) => onChange({ ...view, showWireframe: e.currentTarget.checked })}
+            />
+            <span>Cube wireframe</span>
+          </label>
+          <label className="toggle">
+            <input
+              type="checkbox"
+              checked={view.showVertices}
+              onChange={(e) => onChange({ ...view, showVertices: e.currentTarget.checked })}
+            />
+            <span>Cube vertices</span>
+          </label>
+          <label className="toggle">
+            <input
+              type="checkbox"
+              checked={view.showAxis}
+              onChange={(e) => onChange({ ...view, showAxis: e.currentTarget.checked })}
+            />
+            <span>Lightness axis</span>
+          </label>
+          <label className="toggle">
+            <input
+              type="checkbox"
+              checked={view.showAxisHandles}
+              onChange={(e) => onChange({ ...view, showAxisHandles: e.currentTarget.checked })}
+            />
+            <span>Lightness axis handles</span>
+          </label>
+          <label className="toggle">
+            <input
+              type="checkbox"
+              checked={view.showGhostAxis}
+              onChange={(e) => onChange({ ...view, showGhostAxis: e.currentTarget.checked })}
+            />
+            <span>Ghost lightness axis</span>
+          </label>
+          <label className="toggle">
+            <input
+              type="checkbox"
+              checked={view.showGhostHelix}
+              onChange={(e) => onChange({ ...view, showGhostHelix: e.currentTarget.checked })}
+            />
+            <span>Ghost helix</span>
+          </label>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+interface ToolbarProps {
+  view: ViewSettings;
+  onAutoRotateToggle: () => void;
+  activePanel: PanelId | null;
+  onTogglePanel: (panel: PanelId) => void;
+  onReset: () => void;
+}
+
+function CubeToolbar({
+  view,
+  onAutoRotateToggle,
+  activePanel,
+  onTogglePanel,
+  onReset,
+}: ToolbarProps) {
+  return (
+    <div className="cube-toolbar">
+      <div className="cube-toolbar-group">
+        <button
+          type="button"
+          className={`cube-icon-button ${view.autoRotate ? "is-active" : ""}`}
+          onClick={onAutoRotateToggle}
+          aria-pressed={view.autoRotate}
+          aria-label="Auto-rotate"
+          title={view.autoRotate ? "Stop auto-rotate" : "Auto-rotate"}
+        >
+          <AutoRotateIcon />
+        </button>
+      </div>
+      <div className="cube-toolbar-group">
+        <button
+          type="button"
+          className={`cube-icon-button ${activePanel === "snaps" ? "is-active" : ""}`}
+          onClick={() => onTogglePanel("snaps")}
+          aria-pressed={activePanel === "snaps"}
+          aria-expanded={activePanel === "snaps"}
+          aria-label="Snap to view"
+          title="Snap to view"
+        >
+          <CubeIcon />
+        </button>
+        <button
+          type="button"
+          className={`cube-icon-button ${activePanel === "settings" ? "is-active" : ""}`}
+          onClick={() => onTogglePanel("settings")}
+          aria-pressed={activePanel === "settings"}
+          aria-expanded={activePanel === "settings"}
+          aria-label="View settings"
+          title="View settings"
+        >
+          <CogIcon />
+        </button>
+        <button
+          type="button"
+          className="cube-icon-button"
+          onClick={onReset}
+          title="Reset view"
+          aria-label="Reset view"
+        >
+          <ResetIcon />
+        </button>
+      </div>
+    </div>
+  );
+}
 
 export function CubeVisualization({ params, samples, resetSignal }: CubeVisualizationProps) {
   const effectiveSamples = useMemo(() => {
@@ -431,49 +854,90 @@ export function CubeVisualization({ params, samples, resetSignal }: CubeVisualiz
     return Math.ceil(absR) * perRotation;
   }, [samples, params.rotations]);
   const controlsRef = useRef<ComponentRef<typeof OrbitControls>>(null);
-  const handleReset = () => {
-    controlsRef.current?.reset();
+  const [view, setView] = useState<ViewSettings>(DEFAULT_VIEW);
+  const [snap, setSnap] = useState<{ id: SnapId; signal: number } | null>(null);
+  const [activePanel, setActivePanel] = useState<PanelId | null>(null);
+
+  // Set view back to the original default explicitly rather than via
+  // controls.reset(). drei re-binds OrbitControls to a new camera instance on
+  // each projection swap, which re-captures the saved-state pose at swap time
+  // — so reset() would restore whatever the camera happened to be at then,
+  // not the original default. Setting all the state by hand makes reset
+  // deterministic across projection switches.
+  const resetViewRef = useRef<() => void>(() => {});
+  resetViewRef.current = () => {
+    const controls = controlsRef.current;
+    if (!controls) return;
+    const cam = controls.object;
+    cam.position.set(
+      DEFAULT_CAMERA_POSITION[0],
+      DEFAULT_CAMERA_POSITION[1],
+      DEFAULT_CAMERA_POSITION[2],
+    );
+    cam.up.set(0, 1, 0);
+    controls.target.set(0, 0, 0);
+    if (cam instanceof THREE.OrthographicCamera) {
+      cam.zoom = ORTHO_ZOOM;
+      cam.updateProjectionMatrix();
+    } else if (cam instanceof THREE.PerspectiveCamera) {
+      cam.zoom = 1;
+      cam.updateProjectionMatrix();
+    }
+    cam.lookAt(0, 0, 0);
+    controls.update();
   };
+  const handleReset = () => resetViewRef.current();
   useEffect(() => {
     if (resetSignal === undefined) return;
-    controlsRef.current?.reset();
+    resetViewRef.current();
   }, [resetSignal]);
+  const handleSnap = (id: SnapId) => {
+    setSnap((prev) => ({ id, signal: (prev?.signal ?? 0) + 1 }));
+  };
+  const togglePanel = (panel: PanelId) => {
+    setActivePanel((prev) => (prev === panel ? null : panel));
+  };
+  const toggleAutoRotate = () => {
+    setView((prev) => ({ ...prev, autoRotate: !prev.autoRotate }));
+  };
+
   return (
-    <div className="cube-visualization">
-      <button
-        type="button"
-        className="cube-reset"
-        onClick={handleReset}
-        title="Reset view"
-        aria-label="Reset view"
-      >
-        <svg viewBox="0 0 16 16" width="14" height="14" aria-hidden="true">
-          <path
-            fill="currentColor"
-            d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.42A6 6 0 1 1 8 2v1z"
-          />
-          <path
-            fill="currentColor"
-            d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466z"
-          />
-        </svg>
-      </button>
-      <Canvas
-        camera={{ position: CUBE_CAMERA, fov: 45 }}
-        gl={{ toneMapping: THREE.NoToneMapping, outputColorSpace: THREE.SRGBColorSpace }}
-      >
-        <color attach="background" args={["#1a1a1a"]} />
-        <group position={[-0.5, -0.5, -0.5]}>
-          <CubeWireframe />
-          <LightnessAxis
-            lightnessAxisMin={params.lightnessAxisMin}
-            lightnessAxisMax={params.lightnessAxisMax}
-          />
-          <CornerMarkers />
-          <Helix params={params} samples={effectiveSamples} />
-        </group>
-        <OrbitControls ref={controlsRef} enableDamping />
-      </Canvas>
+    <div className="cube-area">
+      <CubeToolbar
+        view={view}
+        onAutoRotateToggle={toggleAutoRotate}
+        activePanel={activePanel}
+        onTogglePanel={togglePanel}
+        onReset={handleReset}
+      />
+      {view.showCanvas && (
+        <div className="cube-visualization">
+          <Canvas gl={{ toneMapping: THREE.NoToneMapping, outputColorSpace: THREE.SRGBColorSpace }}>
+            <color attach="background" args={["#1a1a1a"]} />
+            <CameraRig projection={view.projection} controlsRef={controlsRef} snap={snap} />
+            <group position={[-0.5, -0.5, -0.5]}>
+              {view.showWireframe && <CubeWireframe />}
+              <LightnessAxis
+                lightnessAxisMin={params.lightnessAxisMin}
+                lightnessAxisMax={params.lightnessAxisMax}
+                showAxis={view.showAxis}
+                showGhost={view.showGhostAxis}
+                showHandles={view.showAxisHandles}
+              />
+              {view.showVertices && <CornerMarkers />}
+              <Helix params={params} samples={effectiveSamples} showGhost={view.showGhostHelix} />
+            </group>
+            <OrbitControls
+              ref={controlsRef}
+              makeDefault
+              enableDamping
+              autoRotate={view.autoRotate}
+            />
+          </Canvas>
+        </div>
+      )}
+      {activePanel === "snaps" && <SnapPanel onSnap={handleSnap} />}
+      {activePanel === "settings" && <SettingsPanel view={view} onChange={setView} />}
     </div>
   );
 }
