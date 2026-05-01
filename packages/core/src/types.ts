@@ -6,7 +6,8 @@ export type LightnessCurve =
 export interface CubehelixParams {
   start: number;
   rotations: number;
-  saturation: number;
+  saturationMin: number;
+  saturationMax: number;
   lightnessCurve: LightnessCurve;
   lightnessAxisMin: number;
   lightnessAxisMax: number;

@@ -160,7 +160,8 @@ def chroma_envelope(fraction: float, peak: float, width: float, floor: float) ->
 class CubehelixParams:
     start: float = 0.5
     rotations: float = -1.5
-    saturation: float = 1.0
+    saturation_min: float = 1.0
+    saturation_max: float = 1.0
     lightness_curve: LightnessCurve = field(default_factory=PowerCurve)
     lightness_axis_min: float = 0.0
     lightness_axis_max: float = 1.0
@@ -191,7 +192,10 @@ def cubehelix_raw(t: float, params: CubehelixParams) -> tuple[float, float, floa
     u = u_min + (u_max - u_min) * t_eff
     fraction = evaluate_lightness_curve(params.lightness_curve, u)
     angle = 2.0 * math.pi * (params.start / 3.0 + params.rotations * u + 1.0)
-    amp = params.saturation * chroma_envelope(
+    # Saturation interpolates linearly along the visible window so users can
+    # fade chroma toward one end. Collapses to a single value when min == max.
+    saturation = params.saturation_min + (params.saturation_max - params.saturation_min) * t_eff
+    amp = saturation * chroma_envelope(
         fraction, params.chroma_peak, params.chroma_width, params.chroma_floor
     )
     cos_a = math.cos(angle)

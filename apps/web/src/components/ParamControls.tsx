@@ -70,10 +70,33 @@ export function ParamControls({
   onSwatchCountChange,
 }: ParamControlsProps) {
   const update =
-    (key: "rotations" | "saturation" | "chromaPeak" | "chromaWidth" | "chromaFloor") =>
-    (value: number) => {
+    (key: "rotations" | "chromaPeak" | "chromaWidth" | "chromaFloor") => (value: number) => {
       onChange({ ...params, [key]: value });
     };
+  const setSaturation = (v: number) => {
+    onChange({ ...params, saturationMin: v, saturationMax: v });
+  };
+  const setSaturationMin = (v: number) => {
+    onChange({ ...params, saturationMin: v });
+  };
+  const setSaturationMax = (v: number) => {
+    onChange({ ...params, saturationMax: v });
+  };
+  const isSplitFromParams = params.saturationMin !== params.saturationMax;
+  const [saturationSplit, setSaturationSplit] = useState(isSplitFromParams);
+  // If the params arrive split (e.g. via URL), reveal the split UI even if
+  // local state hadn't been toggled yet.
+  const showSplit = saturationSplit || isSplitFromParams;
+  const toggleSaturationSplit = () => {
+    if (showSplit) {
+      // Collapse: average the two values into a unified saturation.
+      const avg = (params.saturationMin + params.saturationMax) / 2;
+      onChange({ ...params, saturationMin: avg, saturationMax: avg });
+      setSaturationSplit(false);
+    } else {
+      setSaturationSplit(true);
+    }
+  };
   const minThumbColor = useMemo(() => toCssRgb(cubehelix(0, params)), [params]);
   const maxThumbColor = useMemo(() => toCssRgb(cubehelix(1, params)), [params]);
   const setStart = (v: number) => {
@@ -298,16 +321,66 @@ export function ParamControls({
           </span>
         </summary>
         <div className="control-section-body">
-          <Slider
-            label="Saturation"
-            technicalName="saturation"
-            value={params.saturation}
-            min={0}
-            max={SATURATION_SLIDER_MAX}
-            step={0.01}
-            scaleExponent={3}
-            onChange={update("saturation")}
-          />
+          <div className="saturation-block">
+            {showSplit ? (
+              <>
+                <div className="saturation-block-header">
+                  <span className="saturation-block-label">Saturation</span>
+                  <button
+                    type="button"
+                    className="saturation-split-toggle"
+                    onClick={toggleSaturationSplit}
+                    aria-pressed={showSplit}
+                    title="Collapse to a single saturation"
+                  >
+                    Unify
+                  </button>
+                </div>
+                <Slider
+                  label="Saturation Min"
+                  technicalName="saturationMin"
+                  value={params.saturationMin}
+                  min={0}
+                  max={SATURATION_SLIDER_MAX}
+                  step={0.01}
+                  scaleExponent={3}
+                  onChange={setSaturationMin}
+                />
+                <Slider
+                  label="Saturation Max"
+                  technicalName="saturationMax"
+                  value={params.saturationMax}
+                  min={0}
+                  max={SATURATION_SLIDER_MAX}
+                  step={0.01}
+                  scaleExponent={3}
+                  onChange={setSaturationMax}
+                />
+              </>
+            ) : (
+              <div className="saturation-unified">
+                <Slider
+                  label="Saturation"
+                  technicalName="saturation"
+                  value={params.saturationMin}
+                  min={0}
+                  max={SATURATION_SLIDER_MAX}
+                  step={0.01}
+                  scaleExponent={3}
+                  onChange={setSaturation}
+                />
+                <button
+                  type="button"
+                  className="saturation-split-toggle"
+                  onClick={toggleSaturationSplit}
+                  aria-pressed={showSplit}
+                  title="Vary saturation across the curve"
+                >
+                  Split
+                </button>
+              </div>
+            )}
+          </div>
           <Slider
             label="Peak Position"
             technicalName="chromaPeak"

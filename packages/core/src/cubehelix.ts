@@ -14,7 +14,8 @@ import type { CubehelixParams, RGB } from "./types";
 export const DEFAULT_CUBEHELIX_PARAMS: CubehelixParams = {
   start: 0.5,
   rotations: -1.5,
-  saturation: 1.0,
+  saturationMin: 1.0,
+  saturationMax: 1.0,
   lightnessCurve: DEFAULT_LIGHTNESS_CURVE,
   lightnessAxisMin: 0.0,
   lightnessAxisMax: 1.0,
@@ -28,7 +29,8 @@ export function cubehelixRaw(t: number, params: CubehelixParams): RGB {
   const {
     start,
     rotations,
-    saturation,
+    saturationMin,
+    saturationMax,
     lightnessCurve,
     lightnessAxisMin,
     lightnessAxisMax,
@@ -46,6 +48,10 @@ export function cubehelixRaw(t: number, params: CubehelixParams): RGB {
   const u = uMin + (uMax - uMin) * tEff;
   const fraction = evaluateLightnessCurve(lightnessCurve, u);
   const angle = 2 * Math.PI * (start / 3 + rotations * u + 1);
+  // Saturation interpolates linearly along the user's visible window so users
+  // can fade chroma toward one end. When saturationMin === saturationMax this
+  // collapses to the original single-saturation form.
+  const saturation = saturationMin + (saturationMax - saturationMin) * tEff;
   const amp = saturation * chromaEnvelope(fraction, params);
   const cosA = Math.cos(angle);
   const sinA = Math.sin(angle);

@@ -35,7 +35,9 @@ from cubehelix_studio import CubehelixParams, to_matplotlib_colormap
 import matplotlib.pyplot as plt
 import numpy as np
 
-cmap = to_matplotlib_colormap(CubehelixParams(rotations=-2.0, saturation=1.2))
+cmap = to_matplotlib_colormap(
+    CubehelixParams(rotations=-2.0, saturation_min=1.2, saturation_max=1.2)
+)
 plt.imshow(np.random.rand(64, 64), cmap=cmap)
 plt.colorbar()
 plt.show()
@@ -49,10 +51,11 @@ Frozen dataclass with fields:
 
 - `start: float = 0.5` - starting hue position
 - `rotations: float = -1.5` - rotations through the color wheel
-- `saturation: float = 1.0` - chromatic amplitude
+- `saturation_min: float = 1.0` - chromatic amplitude at `t = 0` (start of the curve)
+- `saturation_max: float = 1.0` - chromatic amplitude at `t = 1` (end of the curve); collapses to a single saturation when equal to `saturation_min`
 - `gamma: float = 1.0` - gamma correction
 
-> Note: matplotlib's `cubehelix_palette` and Dave Green's 2011 paper call the `saturation` field `hue`. It controls chromatic amplitude — when zero, the output is a pure greyscale ramp — so `saturation` is more accurate.
+> Note: matplotlib's `cubehelix_palette` and Dave Green's 2011 paper call the saturation field `hue`. It controls chromatic amplitude — when zero, the output is a pure greyscale ramp — so `saturation_min` / `saturation_max` is more accurate. The split form lets the chroma fade toward one end of the palette.
 
 ### `cubehelix(t, params) -> tuple[float, float, float]`
 

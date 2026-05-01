@@ -52,7 +52,7 @@ describe("resolveRoles", () => {
 
   test("custom roles work with non-default params", () => {
     const custom: RolePalette = {
-      params: { ...DEFAULT_CUBEHELIX_PARAMS, saturation: 1.5 },
+      params: { ...DEFAULT_CUBEHELIX_PARAMS, saturationMin: 1.5, saturationMax: 1.5 },
       roles: [{ name: "only", t: 0.5 }],
     };
     const resolved = resolveRoles(custom);

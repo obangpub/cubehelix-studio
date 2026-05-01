@@ -463,6 +463,57 @@ header p {
   margin: 0;
 }
 
+.saturation-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.saturation-block-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.saturation-block-label {
+  font-weight: 500;
+}
+
+.saturation-unified {
+  position: relative;
+}
+
+.saturation-unified .saturation-split-toggle {
+  position: absolute;
+  top: 0;
+  right: 6rem;
+}
+
+.saturation-split-toggle {
+  font: inherit;
+  font-size: 0.75rem;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 0.15rem 0.5rem;
+  cursor: pointer;
+  transition:
+    color 120ms ease,
+    border-color 120ms ease;
+}
+
+.saturation-split-toggle:hover {
+  color: var(--fg);
+  border-color: var(--fg);
+}
+
+.saturation-split-toggle:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 2px;
+}
+
 .hue-control {
   display: flex;
   flex-direction: column;

@@ -36,7 +36,8 @@ function wheelParams(start: number): CubehelixParams {
   return {
     start,
     rotations: 0,
-    saturation: WHEEL_SATURATION,
+    saturationMin: WHEEL_SATURATION,
+    saturationMax: WHEEL_SATURATION,
     lightnessCurve: DEFAULT_LIGHTNESS_CURVE,
     lightnessAxisMin: 0,
     lightnessAxisMax: 1,

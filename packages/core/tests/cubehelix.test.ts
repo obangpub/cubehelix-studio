@@ -24,7 +24,8 @@ describe("cubehelix", () => {
       ...DEFAULT_CUBEHELIX_PARAMS,
       start: 0,
       rotations: 5,
-      saturation: 5,
+      saturationMin: 5,
+      saturationMax: 5,
     };
     for (let i = 0; i <= 50; i++) {
       const c = cubehelix(i / 50, params);
@@ -53,7 +54,8 @@ describe("cubehelix", () => {
       ...DEFAULT_CUBEHELIX_PARAMS,
       start: 0,
       rotations: 0,
-      saturation: 0,
+      saturationMin: 0,
+      saturationMax: 0,
     };
     for (let i = 0; i <= 10; i++) {
       const t = i / 10;
@@ -81,7 +83,8 @@ describe("cubehelix", () => {
       ...DEFAULT_CUBEHELIX_PARAMS,
       start: 0,
       rotations: 1,
-      saturation: 4,
+      saturationMin: 4,
+      saturationMax: 4,
     };
     let sawOutOfGamut = false;
     for (let i = 0; i <= 50; i++) {
@@ -100,7 +103,8 @@ describe("cubehelix", () => {
       ...DEFAULT_CUBEHELIX_PARAMS,
       start: 0,
       rotations: 1,
-      saturation: 4,
+      saturationMin: 4,
+      saturationMax: 4,
     };
     for (let i = 0; i <= 50; i++) {
       const t = i / 50;
@@ -112,10 +116,41 @@ describe("cubehelix", () => {
     }
   });
 
+  test("saturation interpolates linearly from saturationMin at t=0 to saturationMax at t=1", () => {
+    const half: CubehelixParams = {
+      ...DEFAULT_CUBEHELIX_PARAMS,
+      saturationMin: 0,
+      saturationMax: 1,
+    };
+    const full: CubehelixParams = {
+      ...DEFAULT_CUBEHELIX_PARAMS,
+      saturationMin: 1,
+      saturationMax: 1,
+    };
+    const zero: CubehelixParams = {
+      ...DEFAULT_CUBEHELIX_PARAMS,
+      saturationMin: 0,
+      saturationMax: 0,
+    };
+    // At t=0, half should match the zero-saturation ramp (greyscale).
+    const halfStart = cubehelix(0, half);
+    const zeroStart = cubehelix(0, zero);
+    expect(halfStart.r).toBeCloseTo(zeroStart.r, 12);
+    expect(halfStart.g).toBeCloseTo(zeroStart.g, 12);
+    expect(halfStart.b).toBeCloseTo(zeroStart.b, 12);
+    // At t=1, half should match full saturation.
+    const halfEnd = cubehelix(1, half);
+    const fullEnd = cubehelix(1, full);
+    expect(halfEnd.r).toBeCloseTo(fullEnd.r, 12);
+    expect(halfEnd.g).toBeCloseTo(fullEnd.g, 12);
+    expect(halfEnd.b).toBeCloseTo(fullEnd.b, 12);
+  });
+
   test("lightnessAxisMin and lightnessAxisMax bound the achromatic ramp endpoints", () => {
     const params: CubehelixParams = {
       ...DEFAULT_CUBEHELIX_PARAMS,
-      saturation: 0,
+      saturationMin: 0,
+      saturationMax: 0,
       lightnessAxisMin: 0.2,
       lightnessAxisMax: 0.8,
     };
@@ -139,7 +174,11 @@ describe("saturationCap", () => {
 
   test("at sat=cap, at least 95% of samples have a channel out of gamut", () => {
     const cap = saturationCap(DEFAULT_CUBEHELIX_PARAMS);
-    const params: CubehelixParams = { ...DEFAULT_CUBEHELIX_PARAMS, saturation: cap };
+    const params: CubehelixParams = {
+      ...DEFAULT_CUBEHELIX_PARAMS,
+      saturationMin: cap,
+      saturationMax: cap,
+    };
     let outCount = 0;
     let total = 0;
     for (let i = 0; i <= 256; i++) {
@@ -153,7 +192,11 @@ describe("saturationCap", () => {
 
   test("at sat=0.5*cap, the fraction out of gamut is meaningfully smaller", () => {
     const cap = saturationCap(DEFAULT_CUBEHELIX_PARAMS);
-    const params: CubehelixParams = { ...DEFAULT_CUBEHELIX_PARAMS, saturation: cap * 0.5 };
+    const params: CubehelixParams = {
+      ...DEFAULT_CUBEHELIX_PARAMS,
+      saturationMin: cap * 0.5,
+      saturationMax: cap * 0.5,
+    };
     let outCount = 0;
     let total = 0;
     for (let i = 0; i <= 256; i++) {
@@ -275,7 +318,8 @@ describe("chromaEnvelope", () => {
   test("non-default chromaFloor + non-zero saturation gives endpoints non-zero chroma", () => {
     const params: CubehelixParams = {
       ...DEFAULT_CUBEHELIX_PARAMS,
-      saturation: 1,
+      saturationMin: 1,
+      saturationMax: 1,
       chromaFloor: 0.5,
     };
     const c = cubehelix(0, params);

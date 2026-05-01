@@ -1,5 +1,5 @@
 {
-  "version": 8,
+  "version": 9,
   "generator": "cubehelix-studio/scripts/generate-parity-fixture.ts",
   "parameterGrid": {
     "start": [
@@ -130,6 +130,20 @@
         "chromaFloor": 0.15
       }
     ],
+    "saturationProbes": [
+      {
+        "saturationMin": 0,
+        "saturationMax": 1.5
+      },
+      {
+        "saturationMin": 1.5,
+        "saturationMax": 0
+      },
+      {
+        "saturationMin": 0.5,
+        "saturationMax": 1.5
+      }
+    ],
     "tCount": 21
   },
   "entries": [
@@ -137,7 +151,8 @@
       "params": {
         "start": 0,
         "rotations": -2,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -282,7 +297,8 @@
       "params": {
         "start": 0,
         "rotations": -2,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -427,7 +443,8 @@
       "params": {
         "start": 0,
         "rotations": -2,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -572,7 +589,8 @@
       "params": {
         "start": 0,
         "rotations": -2,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -717,7 +735,8 @@
       "params": {
         "start": 0,
         "rotations": -2,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -862,7 +881,8 @@
       "params": {
         "start": 0,
         "rotations": -2,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -1007,7 +1027,8 @@
       "params": {
         "start": 0,
         "rotations": -2,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -1152,7 +1173,8 @@
       "params": {
         "start": 0,
         "rotations": -2,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -1297,7 +1319,8 @@
       "params": {
         "start": 0,
         "rotations": -2,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -1442,7 +1465,8 @@
       "params": {
         "start": 0,
         "rotations": -1.5,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -1587,7 +1611,8 @@
       "params": {
         "start": 0,
         "rotations": -1.5,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -1732,7 +1757,8 @@
       "params": {
         "start": 0,
         "rotations": -1.5,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -1877,7 +1903,8 @@
       "params": {
         "start": 0,
         "rotations": -1.5,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -2022,7 +2049,8 @@
       "params": {
         "start": 0,
         "rotations": -1.5,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -2167,7 +2195,8 @@
       "params": {
         "start": 0,
         "rotations": -1.5,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -2312,7 +2341,8 @@
       "params": {
         "start": 0,
         "rotations": -1.5,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -2457,7 +2487,8 @@
       "params": {
         "start": 0,
         "rotations": -1.5,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -2602,7 +2633,8 @@
       "params": {
         "start": 0,
         "rotations": -1.5,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -2747,7 +2779,8 @@
       "params": {
         "start": 0,
         "rotations": 0,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -2892,7 +2925,8 @@
       "params": {
         "start": 0,
         "rotations": 0,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -3037,7 +3071,8 @@
       "params": {
         "start": 0,
         "rotations": 0,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -3182,7 +3217,8 @@
       "params": {
         "start": 0,
         "rotations": 0,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -3327,7 +3363,8 @@
       "params": {
         "start": 0,
         "rotations": 0,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -3472,7 +3509,8 @@
       "params": {
         "start": 0,
         "rotations": 0,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -3617,7 +3655,8 @@
       "params": {
         "start": 0,
         "rotations": 0,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -3762,7 +3801,8 @@
       "params": {
         "start": 0,
         "rotations": 0,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -3907,7 +3947,8 @@
       "params": {
         "start": 0,
         "rotations": 0,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -4052,7 +4093,8 @@
       "params": {
         "start": 0,
         "rotations": 1.5,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -4197,7 +4239,8 @@
       "params": {
         "start": 0,
         "rotations": 1.5,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -4342,7 +4385,8 @@
       "params": {
         "start": 0,
         "rotations": 1.5,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -4487,7 +4531,8 @@
       "params": {
         "start": 0,
         "rotations": 1.5,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -4632,7 +4677,8 @@
       "params": {
         "start": 0,
         "rotations": 1.5,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -4777,7 +4823,8 @@
       "params": {
         "start": 0,
         "rotations": 1.5,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -4922,7 +4969,8 @@
       "params": {
         "start": 0,
         "rotations": 1.5,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -5067,7 +5115,8 @@
       "params": {
         "start": 0,
         "rotations": 1.5,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -5212,7 +5261,8 @@
       "params": {
         "start": 0,
         "rotations": 1.5,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -5357,7 +5407,8 @@
       "params": {
         "start": 0.5,
         "rotations": -2,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -5502,7 +5553,8 @@
       "params": {
         "start": 0.5,
         "rotations": -2,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -5647,7 +5699,8 @@
       "params": {
         "start": 0.5,
         "rotations": -2,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -5792,7 +5845,8 @@
       "params": {
         "start": 0.5,
         "rotations": -2,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -5937,7 +5991,8 @@
       "params": {
         "start": 0.5,
         "rotations": -2,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -6082,7 +6137,8 @@
       "params": {
         "start": 0.5,
         "rotations": -2,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -6227,7 +6283,8 @@
       "params": {
         "start": 0.5,
         "rotations": -2,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -6372,7 +6429,8 @@
       "params": {
         "start": 0.5,
         "rotations": -2,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -6517,7 +6575,8 @@
       "params": {
         "start": 0.5,
         "rotations": -2,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -6662,7 +6721,8 @@
       "params": {
         "start": 0.5,
         "rotations": -1.5,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -6807,7 +6867,8 @@
       "params": {
         "start": 0.5,
         "rotations": -1.5,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -6952,7 +7013,8 @@
       "params": {
         "start": 0.5,
         "rotations": -1.5,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -7097,7 +7159,8 @@
       "params": {
         "start": 0.5,
         "rotations": -1.5,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -7242,7 +7305,8 @@
       "params": {
         "start": 0.5,
         "rotations": -1.5,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -7387,7 +7451,8 @@
       "params": {
         "start": 0.5,
         "rotations": -1.5,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -7532,7 +7597,8 @@
       "params": {
         "start": 0.5,
         "rotations": -1.5,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -7677,7 +7743,8 @@
       "params": {
         "start": 0.5,
         "rotations": -1.5,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -7822,7 +7889,8 @@
       "params": {
         "start": 0.5,
         "rotations": -1.5,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -7967,7 +8035,8 @@
       "params": {
         "start": 0.5,
         "rotations": 0,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -8112,7 +8181,8 @@
       "params": {
         "start": 0.5,
         "rotations": 0,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -8257,7 +8327,8 @@
       "params": {
         "start": 0.5,
         "rotations": 0,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -8402,7 +8473,8 @@
       "params": {
         "start": 0.5,
         "rotations": 0,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -8547,7 +8619,8 @@
       "params": {
         "start": 0.5,
         "rotations": 0,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -8692,7 +8765,8 @@
       "params": {
         "start": 0.5,
         "rotations": 0,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -8837,7 +8911,8 @@
       "params": {
         "start": 0.5,
         "rotations": 0,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -8982,7 +9057,8 @@
       "params": {
         "start": 0.5,
         "rotations": 0,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -9127,7 +9203,8 @@
       "params": {
         "start": 0.5,
         "rotations": 0,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -9272,7 +9349,8 @@
       "params": {
         "start": 0.5,
         "rotations": 1.5,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -9417,7 +9495,8 @@
       "params": {
         "start": 0.5,
         "rotations": 1.5,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -9562,7 +9641,8 @@
       "params": {
         "start": 0.5,
         "rotations": 1.5,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -9707,7 +9787,8 @@
       "params": {
         "start": 0.5,
         "rotations": 1.5,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -9852,7 +9933,8 @@
       "params": {
         "start": 0.5,
         "rotations": 1.5,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -9997,7 +10079,8 @@
       "params": {
         "start": 0.5,
         "rotations": 1.5,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -10142,7 +10225,8 @@
       "params": {
         "start": 0.5,
         "rotations": 1.5,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -10287,7 +10371,8 @@
       "params": {
         "start": 0.5,
         "rotations": 1.5,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -10432,7 +10517,8 @@
       "params": {
         "start": 0.5,
         "rotations": 1.5,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -10577,7 +10663,8 @@
       "params": {
         "start": 1,
         "rotations": -2,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -10722,7 +10809,8 @@
       "params": {
         "start": 1,
         "rotations": -2,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -10867,7 +10955,8 @@
       "params": {
         "start": 1,
         "rotations": -2,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -11012,7 +11101,8 @@
       "params": {
         "start": 1,
         "rotations": -2,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -11157,7 +11247,8 @@
       "params": {
         "start": 1,
         "rotations": -2,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -11302,7 +11393,8 @@
       "params": {
         "start": 1,
         "rotations": -2,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -11447,7 +11539,8 @@
       "params": {
         "start": 1,
         "rotations": -2,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -11592,7 +11685,8 @@
       "params": {
         "start": 1,
         "rotations": -2,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -11737,7 +11831,8 @@
       "params": {
         "start": 1,
         "rotations": -2,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -11882,7 +11977,8 @@
       "params": {
         "start": 1,
         "rotations": -1.5,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -12027,7 +12123,8 @@
       "params": {
         "start": 1,
         "rotations": -1.5,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -12172,7 +12269,8 @@
       "params": {
         "start": 1,
         "rotations": -1.5,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -12317,7 +12415,8 @@
       "params": {
         "start": 1,
         "rotations": -1.5,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -12462,7 +12561,8 @@
       "params": {
         "start": 1,
         "rotations": -1.5,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -12607,7 +12707,8 @@
       "params": {
         "start": 1,
         "rotations": -1.5,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -12752,7 +12853,8 @@
       "params": {
         "start": 1,
         "rotations": -1.5,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -12897,7 +12999,8 @@
       "params": {
         "start": 1,
         "rotations": -1.5,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -13042,7 +13145,8 @@
       "params": {
         "start": 1,
         "rotations": -1.5,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -13187,7 +13291,8 @@
       "params": {
         "start": 1,
         "rotations": 0,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -13332,7 +13437,8 @@
       "params": {
         "start": 1,
         "rotations": 0,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -13477,7 +13583,8 @@
       "params": {
         "start": 1,
         "rotations": 0,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -13622,7 +13729,8 @@
       "params": {
         "start": 1,
         "rotations": 0,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -13767,7 +13875,8 @@
       "params": {
         "start": 1,
         "rotations": 0,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -13912,7 +14021,8 @@
       "params": {
         "start": 1,
         "rotations": 0,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -14057,7 +14167,8 @@
       "params": {
         "start": 1,
         "rotations": 0,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -14202,7 +14313,8 @@
       "params": {
         "start": 1,
         "rotations": 0,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -14347,7 +14459,8 @@
       "params": {
         "start": 1,
         "rotations": 0,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -14492,7 +14605,8 @@
       "params": {
         "start": 1,
         "rotations": 1.5,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -14637,7 +14751,8 @@
       "params": {
         "start": 1,
         "rotations": 1.5,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -14782,7 +14897,8 @@
       "params": {
         "start": 1,
         "rotations": 1.5,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -14927,7 +15043,8 @@
       "params": {
         "start": 1,
         "rotations": 1.5,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -15072,7 +15189,8 @@
       "params": {
         "start": 1,
         "rotations": 1.5,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -15217,7 +15335,8 @@
       "params": {
         "start": 1,
         "rotations": 1.5,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -15362,7 +15481,8 @@
       "params": {
         "start": 1,
         "rotations": 1.5,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -15507,7 +15627,8 @@
       "params": {
         "start": 1,
         "rotations": 1.5,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -15652,7 +15773,8 @@
       "params": {
         "start": 1,
         "rotations": 1.5,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -15797,7 +15919,8 @@
       "params": {
         "start": 2.5,
         "rotations": -2,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -15942,7 +16065,8 @@
       "params": {
         "start": 2.5,
         "rotations": -2,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -16087,7 +16211,8 @@
       "params": {
         "start": 2.5,
         "rotations": -2,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -16232,7 +16357,8 @@
       "params": {
         "start": 2.5,
         "rotations": -2,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -16377,7 +16503,8 @@
       "params": {
         "start": 2.5,
         "rotations": -2,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -16522,7 +16649,8 @@
       "params": {
         "start": 2.5,
         "rotations": -2,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -16667,7 +16795,8 @@
       "params": {
         "start": 2.5,
         "rotations": -2,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -16812,7 +16941,8 @@
       "params": {
         "start": 2.5,
         "rotations": -2,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -16957,7 +17087,8 @@
       "params": {
         "start": 2.5,
         "rotations": -2,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -17102,7 +17233,8 @@
       "params": {
         "start": 2.5,
         "rotations": -1.5,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -17247,7 +17379,8 @@
       "params": {
         "start": 2.5,
         "rotations": -1.5,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -17392,7 +17525,8 @@
       "params": {
         "start": 2.5,
         "rotations": -1.5,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -17537,7 +17671,8 @@
       "params": {
         "start": 2.5,
         "rotations": -1.5,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -17682,7 +17817,8 @@
       "params": {
         "start": 2.5,
         "rotations": -1.5,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -17827,7 +17963,8 @@
       "params": {
         "start": 2.5,
         "rotations": -1.5,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -17972,7 +18109,8 @@
       "params": {
         "start": 2.5,
         "rotations": -1.5,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -18117,7 +18255,8 @@
       "params": {
         "start": 2.5,
         "rotations": -1.5,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -18262,7 +18401,8 @@
       "params": {
         "start": 2.5,
         "rotations": -1.5,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -18407,7 +18547,8 @@
       "params": {
         "start": 2.5,
         "rotations": 0,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -18552,7 +18693,8 @@
       "params": {
         "start": 2.5,
         "rotations": 0,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -18697,7 +18839,8 @@
       "params": {
         "start": 2.5,
         "rotations": 0,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -18842,7 +18985,8 @@
       "params": {
         "start": 2.5,
         "rotations": 0,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -18987,7 +19131,8 @@
       "params": {
         "start": 2.5,
         "rotations": 0,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -19132,7 +19277,8 @@
       "params": {
         "start": 2.5,
         "rotations": 0,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -19277,7 +19423,8 @@
       "params": {
         "start": 2.5,
         "rotations": 0,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -19422,7 +19569,8 @@
       "params": {
         "start": 2.5,
         "rotations": 0,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -19567,7 +19715,8 @@
       "params": {
         "start": 2.5,
         "rotations": 0,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -19712,7 +19861,8 @@
       "params": {
         "start": 2.5,
         "rotations": 1.5,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -19857,7 +20007,8 @@
       "params": {
         "start": 2.5,
         "rotations": 1.5,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -20002,7 +20153,8 @@
       "params": {
         "start": 2.5,
         "rotations": 1.5,
-        "saturation": 0.5,
+        "saturationMin": 0.5,
+        "saturationMax": 0.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -20147,7 +20299,8 @@
       "params": {
         "start": 2.5,
         "rotations": 1.5,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -20292,7 +20445,8 @@
       "params": {
         "start": 2.5,
         "rotations": 1.5,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -20437,7 +20591,8 @@
       "params": {
         "start": 2.5,
         "rotations": 1.5,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -20582,7 +20737,8 @@
       "params": {
         "start": 2.5,
         "rotations": 1.5,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 0.7
@@ -20727,7 +20883,8 @@
       "params": {
         "start": 2.5,
         "rotations": 1.5,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -20872,7 +21029,8 @@
       "params": {
         "start": 2.5,
         "rotations": 1.5,
-        "saturation": 1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 1.5,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1.4
@@ -21017,7 +21175,8 @@
       "params": {
         "start": 0.5,
         "rotations": -1.5,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -21162,7 +21321,8 @@
       "params": {
         "start": 0.5,
         "rotations": -1.5,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -21307,7 +21467,8 @@
       "params": {
         "start": 0.5,
         "rotations": -1.5,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -21452,7 +21613,8 @@
       "params": {
         "start": 0.5,
         "rotations": -1.5,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -21597,7 +21759,8 @@
       "params": {
         "start": 0.5,
         "rotations": -1.5,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -21742,7 +21905,8 @@
       "params": {
         "start": 0.5,
         "rotations": -1.5,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "sigmoid",
           "steepness": 4,
@@ -21888,7 +22052,8 @@
       "params": {
         "start": 0.5,
         "rotations": -1.5,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "sigmoid",
           "steepness": 8,
@@ -22034,7 +22199,8 @@
       "params": {
         "start": 0.5,
         "rotations": -1.5,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "sigmoid",
           "steepness": 6,
@@ -22180,7 +22346,8 @@
       "params": {
         "start": 0.5,
         "rotations": -1.5,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "sigmoid",
           "steepness": 0,
@@ -22326,7 +22493,8 @@
       "params": {
         "start": 0.5,
         "rotations": -1.5,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "bezier",
           "p1": [
@@ -22478,7 +22646,8 @@
       "params": {
         "start": 0.5,
         "rotations": -1.5,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "bezier",
           "p1": [
@@ -22630,7 +22799,8 @@
       "params": {
         "start": 0.5,
         "rotations": -1.5,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "bezier",
           "p1": [
@@ -22782,7 +22952,8 @@
       "params": {
         "start": 0.5,
         "rotations": -1.5,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "bezier",
           "p1": [
@@ -22934,7 +23105,8 @@
       "params": {
         "start": 0.5,
         "rotations": -1.5,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -23079,7 +23251,8 @@
       "params": {
         "start": 0.5,
         "rotations": -1.5,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -23224,7 +23397,8 @@
       "params": {
         "start": 0.5,
         "rotations": -1.5,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -23369,7 +23543,8 @@
       "params": {
         "start": 0.5,
         "rotations": -1.5,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -23514,7 +23689,8 @@
       "params": {
         "start": 0.5,
         "rotations": -1.5,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -23659,7 +23835,8 @@
       "params": {
         "start": 0.5,
         "rotations": -1.5,
-        "saturation": 1,
+        "saturationMin": 1,
+        "saturationMax": 1,
         "lightnessCurve": {
           "kind": "power",
           "gamma": 1
@@ -23797,6 +23974,444 @@
           "r": 0.9724446417042852,
           "g": 1,
           "b": 0.9815036875
+        }
+      ]
+    },
+    {
+      "params": {
+        "start": 0.5,
+        "rotations": -1.5,
+        "saturationMin": 0,
+        "saturationMax": 1.5,
+        "lightnessCurve": {
+          "kind": "power",
+          "gamma": 1
+        },
+        "lightnessAxisMin": 0,
+        "lightnessAxisMax": 1,
+        "chromaPeak": 0.5,
+        "chromaWidth": 1,
+        "chromaFloor": 0,
+        "reverse": false
+      },
+      "samples": [
+        {
+          "t": 0,
+          "r": 0,
+          "g": 0,
+          "b": 0
+        },
+        {
+          "t": 0.05,
+          "r": 0.051507527626969626,
+          "g": 0.04868396247226818,
+          "b": 0.052947339452761505
+        },
+        {
+          "t": 0.1,
+          "r": 0.10026024158972571,
+          "g": 0.09739839528306923,
+          "b": 0.1132443911906732
+        },
+        {
+          "t": 0.15,
+          "r": 0.13884591248074954,
+          "g": 0.15074586655627878,
+          "b": 0.17641972682793453
+        },
+        {
+          "t": 0.2,
+          "r": 0.16581690080174422,
+          "g": 0.211474077212636,
+          "b": 0.2316837089242315
+        },
+        {
+          "t": 0.25,
+          "r": 0.18810789002877176,
+          "g": 0.2781234903892421,
+          "b": 0.26795199227187927
+        },
+        {
+          "t": 0.3,
+          "r": 0.21906479262552742,
+          "g": 0.3447668881599473,
+          "b": 0.2806181779869259
+        },
+        {
+          "t": 0.35,
+          "r": 0.2728464085696093,
+          "g": 0.4030545264657322,
+          "b": 0.2758525208593925
+        },
+        {
+          "t": 0.4,
+          "r": 0.35756637558044974,
+          "g": 0.4457707333950629,
+          "b": 0.27022933298549967
+        },
+        {
+          "t": 0.45,
+          "r": 0.47019028062310875,
+          "g": 0.47041732902514827,
+          "b": 0.28542371123623766
+        },
+        {
+          "t": 0.5,
+          "r": 0.5956329720552881,
+          "g": 0.48123764794663226,
+          "b": 0.3398172349866434
+        },
+        {
+          "t": 0.55,
+          "r": 0.7109095035682288,
+          "g": 0.4886350372699184,
+          "b": 0.440296167812347
+        },
+        {
+          "t": 0.6,
+          "r": 0.7931620796278455,
+          "g": 0.5059348491508999,
+          "b": 0.5777273342775172
+        },
+        {
+          "t": 0.65,
+          "r": 0.8286812940486865,
+          "g": 0.5445257693890091,
+          "b": 0.7284149844678779
+        },
+        {
+          "t": 0.7,
+          "r": 0.8193420108489066,
+          "g": 0.6091805546495677,
+          "b": 0.8616463617555048
+        },
+        {
+          "t": 0.75,
+          "r": 0.7835252030617197,
+          "g": 0.6954802481601514,
+          "b": 0.9509932417672123
+        },
+        {
+          "t": 0.8,
+          "r": 0.7504619609615141,
+          "g": 0.7906483202569206,
+          "b": 0.9852633466296085
+        },
+        {
+          "t": 0.85,
+          "r": 0.7494205350039568,
+          "g": 0.8779067947851014,
+          "b": 0.9746254806457869
+        },
+        {
+          "t": 0.9,
+          "r": 0.7973879909910236,
+          "g": 0.9430865063710206,
+          "b": 0.9487498697998407
+        },
+        {
+          "t": 0.95,
+          "r": 0.890010290408057,
+          "g": 0.981154658187273,
+          "b": 0.9465054398520225
+        },
+        {
+          "t": 1,
+          "r": 1,
+          "g": 1,
+          "b": 1
+        }
+      ]
+    },
+    {
+      "params": {
+        "start": 0.5,
+        "rotations": -1.5,
+        "saturationMin": 1.5,
+        "saturationMax": 0,
+        "lightnessCurve": {
+          "kind": "power",
+          "gamma": 1
+        },
+        "lightnessAxisMin": 0,
+        "lightnessAxisMax": 1,
+        "chromaPeak": 0.5,
+        "chromaWidth": 1,
+        "chromaFloor": 0,
+        "reverse": false
+      },
+      "samples": [
+        {
+          "t": 0,
+          "r": 0,
+          "g": 0,
+          "b": 0
+        },
+        {
+          "t": 0.05,
+          "r": 0.0786430249124229,
+          "g": 0.024995286973095387,
+          "b": 0.1059994496024685
+        },
+        {
+          "t": 0.1,
+          "r": 0.10234217430753142,
+          "g": 0.07658555754762311,
+          "b": 0.2191995207160588
+        },
+        {
+          "t": 0.15,
+          "r": 0.0867935040575807,
+          "g": 0.1542265771522464,
+          "b": 0.29971178535829573
+        },
+        {
+          "t": 0.2,
+          "r": 0.06326760320697683,
+          "g": 0.24589630885054403,
+          "b": 0.32673483569692596
+        },
+        {
+          "t": 0.25,
+          "r": 0.06432367008631526,
+          "g": 0.3343704711677263,
+          "b": 0.30385597681563786
+        },
+        {
+          "t": 0.3,
+          "r": 0.11115118279289732,
+          "g": 0.40445607237321046,
+          "b": 0.2547757486361605
+        },
+        {
+          "t": 0.35,
+          "r": 0.20671475877213147,
+          "g": 0.44852983486493125,
+          "b": 0.21229753873887172
+        },
+        {
+          "t": 0.4,
+          "r": 0.3363495633706746,
+          "g": 0.46865610009259434,
+          "b": 0.20534399947824955
+        },
+        {
+          "t": 0.45,
+          "r": 0.4746770096504662,
+          "g": 0.474954513252959,
+          "b": 0.24885120262206822
+        },
+        {
+          "t": 0.5,
+          "r": 0.5956329720552881,
+          "g": 0.48123764794663226,
+          "b": 0.3398172349866434
+        },
+        {
+          "t": 0.55,
+          "r": 0.6816532301921872,
+          "g": 0.4997923032208424,
+          "b": 0.460242319119193
+        },
+        {
+          "t": 0.6,
+          "r": 0.728774719751897,
+          "g": 0.5372898994339332,
+          "b": 0.5851515561850115
+        },
+        {
+          "t": 0.65,
+          "r": 0.7462130044877543,
+          "g": 0.5932061835171587,
+          "b": 0.6922234531750111
+        },
+        {
+          "t": 0.7,
+          "r": 0.7511465760781029,
+          "g": 0.6610773805641004,
+          "b": 0.7692770121809307
+        },
+        {
+          "t": 0.75,
+          "r": 0.76117506768724,
+          "g": 0.7318267493867172,
+          "b": 0.8169977472557375
+        },
+        {
+          "t": 0.8,
+          "r": 0.7876154902403786,
+          "g": 0.7976620800642302,
+          "b": 0.8463158366574021
+        },
+        {
+          "t": 0.85,
+          "r": 0.832250682647757,
+          "g": 0.8549247284914885,
+          "b": 0.8719927318786682
+        },
+        {
+          "t": 0.9,
+          "r": 0.8885986656656694,
+          "g": 0.9047873895967801,
+          "b": 0.9054166521999824
+        },
+        {
+          "t": 0.95,
+          "r": 0.9468426468635819,
+          "g": 0.9516397188519617,
+          "b": 0.9498160757816854
+        },
+        {
+          "t": 1,
+          "r": 1,
+          "g": 1,
+          "b": 1
+        }
+      ]
+    },
+    {
+      "params": {
+        "start": 0.5,
+        "rotations": -1.5,
+        "saturationMin": 0.5,
+        "saturationMax": 1.5,
+        "lightnessCurve": {
+          "kind": "power",
+          "gamma": 1
+        },
+        "lightnessAxisMin": 0,
+        "lightnessAxisMax": 1,
+        "chromaPeak": 0.5,
+        "chromaWidth": 1,
+        "chromaFloor": 0,
+        "reverse": false
+      },
+      "samples": [
+        {
+          "t": 0,
+          "r": 0,
+          "g": 0,
+          "b": 0
+        },
+        {
+          "t": 0.05,
+          "r": 0.06105520259777727,
+          "g": 0.04034905812996664,
+          "b": 0.07161382265358433
+        },
+        {
+          "t": 0.1,
+          "r": 0.10104096635890286,
+          "g": 0.08959358113227694,
+          "b": 0.1529775647626928
+        },
+        {
+          "t": 0.15,
+          "r": 0.1177770804999431,
+          "g": 0.15215472560702759,
+          "b": 0.2263236552806998
+        },
+        {
+          "t": 0.2,
+          "r": 0.12023943520406982,
+          "g": 0.226772846829484,
+          "b": 0.2739286541565401
+        },
+        {
+          "t": 0.25,
+          "r": 0.1262157800575435,
+          "g": 0.3062469807784842,
+          "b": 0.2859039845437586
+        },
+        {
+          "t": 0.3,
+          "r": 0.1561151868898265,
+          "g": 0.3795855789510175,
+          "b": 0.26554342753231275
+        },
+        {
+          "t": 0.35,
+          "r": 0.22508466149365308,
+          "g": 0.4358978047540426,
+          "b": 0.22995170043901636
+        },
+        {
+          "t": 0.4,
+          "r": 0.3363495633706746,
+          "g": 0.46865610009259434,
+          "b": 0.20534399947824952
+        },
+        {
+          "t": 0.45,
+          "r": 0.47841595050659746,
+          "g": 0.47873550010946797,
+          "b": 0.2183741121102604
+        },
+        {
+          "t": 0.5,
+          "r": 0.6275106294070507,
+          "g": 0.4749835305955097,
+          "b": 0.28642297998219124
+        },
+        {
+          "t": 0.55,
+          "r": 0.7547939136322912,
+          "g": 0.4718991383435326,
+          "b": 0.410376940852078
+        },
+        {
+          "t": 0.6,
+          "r": 0.8360869862118111,
+          "g": 0.4850314822955443,
+          "b": 0.5727778530058544
+        },
+        {
+          "t": 0.65,
+          "r": 0.8607522955446046,
+          "g": 0.5255944972280621,
+          "b": 0.7424894688595483
+        },
+        {
+          "t": 0.7,
+          "r": 0.8363908695416076,
+          "g": 0.5962063481709344,
+          "b": 0.8847386991491484
+        },
+        {
+          "t": 0.75,
+          "r": 0.787250225624133,
+          "g": 0.6894224979557239,
+          "b": 0.9733258241857915
+        },
+        {
+          "t": 0.8,
+          "r": 0.7463337910416402,
+          "g": 0.789869013611664,
+          "b": 1
+        },
+        {
+          "t": 0.85,
+          "r": 0.7435040958865424,
+          "g": 0.8795483709489309,
+          "b": 0.9819563912720097
+        },
+        {
+          "t": 0.9,
+          "r": 0.7935875462129134,
+          "g": 0.9446823029032807,
+          "b": 0.9505554205331681
+        },
+        {
+          "t": 0.95,
+          "r": 0.8889578393625843,
+          "g": 0.9817012311379268,
+          "b": 0.946444131779251
+        },
+        {
+          "t": 1,
+          "r": 1,
+          "g": 1,
+          "b": 1
         }
       ]
     }

@@ -15,8 +15,24 @@ describe("encodeParams", () => {
   });
 
   test("only non-default params appear in the querystring", () => {
-    const qs = encodeParams({ ...DEFAULT_CUBEHELIX_PARAMS, saturation: 1.5 });
+    const qs = encodeParams({
+      ...DEFAULT_CUBEHELIX_PARAMS,
+      saturationMin: 1.5,
+      saturationMax: 1.5,
+    });
     expect(qs).toBe("?saturation=1.5");
+  });
+
+  test("split saturation emits saturationMin and saturationMax", () => {
+    const qs = encodeParams({
+      ...DEFAULT_CUBEHELIX_PARAMS,
+      saturationMin: 0.4,
+      saturationMax: 1.6,
+    });
+    const parsed = new URLSearchParams(qs.slice(1));
+    expect(parsed.get("saturationMin")).toBe("0.4");
+    expect(parsed.get("saturationMax")).toBe("1.6");
+    expect(parsed.has("saturation")).toBe(false);
   });
 
   test("multiple non-default params are all included", () => {
@@ -24,7 +40,8 @@ describe("encodeParams", () => {
       ...DEFAULT_CUBEHELIX_PARAMS,
       start: 1.0,
       rotations: 0.5,
-      saturation: 1.5,
+      saturationMin: 1.5,
+      saturationMax: 1.5,
       lightnessCurve: { kind: "power", gamma: 0.8 },
     });
     const parsed = new URLSearchParams(qs.slice(1));
@@ -134,20 +151,41 @@ describe("decodeParams", () => {
     const decoded = decodeParams("?saturation=1.5");
     expect(decoded.start).toBe(DEFAULT_CUBEHELIX_PARAMS.start);
     expect(decoded.rotations).toBe(DEFAULT_CUBEHELIX_PARAMS.rotations);
-    expect(decoded.saturation).toBe(1.5);
+    expect(decoded.saturationMin).toBe(1.5);
+    expect(decoded.saturationMax).toBe(1.5);
     expect(decoded.lightnessCurve).toEqual({ kind: "power", gamma: 1 });
+  });
+
+  test("legacy ?saturation= sets both saturationMin and saturationMax", () => {
+    const decoded = decodeParams("?saturation=2");
+    expect(decoded.saturationMin).toBe(2);
+    expect(decoded.saturationMax).toBe(2);
+  });
+
+  test("explicit saturationMin/Max keys override the unified saturation", () => {
+    const decoded = decodeParams("?saturation=1&saturationMax=2");
+    expect(decoded.saturationMin).toBe(1);
+    expect(decoded.saturationMax).toBe(2);
+  });
+
+  test("split saturationMin and saturationMax decode independently", () => {
+    const decoded = decodeParams("?saturationMin=0.4&saturationMax=1.6");
+    expect(decoded.saturationMin).toBe(0.4);
+    expect(decoded.saturationMax).toBe(1.6);
   });
 
   test("invalid values fall back to defaults", () => {
     const decoded = decodeParams("?start=not-a-number&saturation=NaN");
     expect(decoded.start).toBe(DEFAULT_CUBEHELIX_PARAMS.start);
-    expect(decoded.saturation).toBe(DEFAULT_CUBEHELIX_PARAMS.saturation);
+    expect(decoded.saturationMin).toBe(DEFAULT_CUBEHELIX_PARAMS.saturationMin);
+    expect(decoded.saturationMax).toBe(DEFAULT_CUBEHELIX_PARAMS.saturationMax);
   });
 
   test("out-of-range values are clamped to slider bounds", () => {
     const decoded = decodeParams("?start=999&saturation=-5&gamma=99");
     expect(decoded.start).toBe(3);
-    expect(decoded.saturation).toBe(0);
+    expect(decoded.saturationMin).toBe(0);
+    expect(decoded.saturationMax).toBe(0);
     expect(decoded.lightnessCurve).toEqual({ kind: "power", gamma: 2 });
   });
 
@@ -157,8 +195,8 @@ describe("decodeParams", () => {
   });
 
   test("saturation is uncapped above on decode but floored at 0", () => {
-    expect(decodeParams("?saturation=42").saturation).toBe(42);
-    expect(decodeParams("?saturation=-5").saturation).toBe(0);
+    expect(decodeParams("?saturation=42").saturationMax).toBe(42);
+    expect(decodeParams("?saturation=-5").saturationMin).toBe(0);
   });
 
   test("lightness range is clamped to [0, 1]", () => {
@@ -181,8 +219,8 @@ describe("decodeParams", () => {
   });
 
   test("supports leading question mark or omission", () => {
-    expect(decodeParams("?saturation=1.5").saturation).toBe(1.5);
-    expect(decodeParams("saturation=1.5").saturation).toBe(1.5);
+    expect(decodeParams("?saturation=1.5").saturationMin).toBe(1.5);
+    expect(decodeParams("saturation=1.5").saturationMin).toBe(1.5);
   });
 
   test("legacy gamma-only URLs decode as power curve", () => {
@@ -239,11 +277,21 @@ describe("round-trip", () => {
       ...DEFAULT_CUBEHELIX_PARAMS,
       start: 1.2,
       rotations: 0.5,
-      saturation: 1.7,
+      saturationMin: 1.7,
+      saturationMax: 1.7,
       lightnessCurve: { kind: "power", gamma: 0.9 },
       lightnessAxisMin: 0.1,
       lightnessAxisMax: 0.9,
       reverse: true,
+    };
+    expect(decodeParams(encodeParams(original))).toEqual(original);
+  });
+
+  test("split saturation round-trips", () => {
+    const original: CubehelixParams = {
+      ...DEFAULT_CUBEHELIX_PARAMS,
+      saturationMin: 0.4,
+      saturationMax: 1.6,
     };
     expect(decodeParams(encodeParams(original))).toEqual(original);
   });
@@ -316,7 +364,7 @@ describe("encodeAppState / decodeAppState", () => {
 
   test("default swatchCount is omitted from the querystring", () => {
     const qs = encodeAppState({
-      params: { ...DEFAULT_CUBEHELIX_PARAMS, saturation: 1.5 },
+      params: { ...DEFAULT_CUBEHELIX_PARAMS, saturationMin: 1.5, saturationMax: 1.5 },
       swatchCount: DEFAULT_SWATCH_COUNT,
     });
     expect(qs).toBe("?saturation=1.5");
@@ -330,7 +378,8 @@ describe("encodeAppState / decodeAppState", () => {
   test("missing swatchCount falls back to default", () => {
     const decoded = decodeAppState("?saturation=1.5");
     expect(decoded.swatchCount).toBe(DEFAULT_SWATCH_COUNT);
-    expect(decoded.params.saturation).toBe(1.5);
+    expect(decoded.params.saturationMin).toBe(1.5);
+    expect(decoded.params.saturationMax).toBe(1.5);
   });
 
   test("swatchCount is clamped and rounded", () => {
@@ -349,7 +398,8 @@ describe("encodeAppState / decodeAppState", () => {
         ...DEFAULT_CUBEHELIX_PARAMS,
         start: 1.2,
         rotations: 0.5,
-        saturation: 1.7,
+        saturationMin: 1.7,
+        saturationMax: 1.7,
         lightnessCurve: { kind: "power", gamma: 0.9 },
         lightnessAxisMin: 0.1,
         lightnessAxisMax: 0.9,

@@ -33,10 +33,16 @@ const CHROMA_PROBES: { chromaPeak: number; chromaWidth: number; chromaFloor: num
   { chromaPeak: 0.5, chromaWidth: 1.0, chromaFloor: 0.25 },
   { chromaPeak: 0.3, chromaWidth: 0.7, chromaFloor: 0.15 },
 ];
+const SATURATION_PROBES: { saturationMin: number; saturationMax: number }[] = [
+  { saturationMin: 0.0, saturationMax: 1.5 },
+  { saturationMin: 1.5, saturationMax: 0.0 },
+  { saturationMin: 0.5, saturationMax: 1.5 },
+];
 const LIGHTNESS_RANGE_PROBE: CubehelixParams = {
   start: 0.5,
   rotations: -1.5,
-  saturation: 1.0,
+  saturationMin: 1.0,
+  saturationMax: 1.0,
   lightnessCurve: { kind: "power", gamma: 1.0 },
   lightnessAxisMin: 0.0,
   lightnessAxisMax: 1.0,
@@ -76,7 +82,8 @@ for (const start of STARTS) {
             ...DEFAULT_CUBEHELIX_PARAMS,
             start,
             rotations,
-            saturation,
+            saturationMin: saturation,
+            saturationMax: saturation,
             lightnessCurve: powerCurve(gamma),
           }),
         );
@@ -120,9 +127,17 @@ for (const chroma of CHROMA_PROBES) {
     }),
   );
 }
+for (const sat of SATURATION_PROBES) {
+  entries.push(
+    buildEntry({
+      ...LIGHTNESS_RANGE_PROBE,
+      ...sat,
+    }),
+  );
+}
 
 const fixture = {
-  version: 8,
+  version: 9,
   generator: "cubehelix-studio/scripts/generate-parity-fixture.ts",
   parameterGrid: {
     start: STARTS,
@@ -133,6 +148,7 @@ const fixture = {
     sigmoidProbes: SIGMOID_PROBES,
     bezierProbes: BEZIER_PROBES,
     chromaProbes: CHROMA_PROBES,
+    saturationProbes: SATURATION_PROBES,
     tCount: T_COUNT,
   },
   entries,

@@ -33,7 +33,6 @@ export const DEFAULT_APP_STATE: AppState = {
 type SimpleNumericKey =
   | "start"
   | "rotations"
-  | "saturation"
   | "lightnessAxisMin"
   | "lightnessAxisMax"
   | "chromaPeak"
@@ -43,7 +42,6 @@ type SimpleNumericKey =
 const NUMERIC_KEYS = [
   "start",
   "rotations",
-  "saturation",
   "lightnessAxisMin",
   "lightnessAxisMax",
   "chromaPeak",
@@ -54,13 +52,14 @@ const NUMERIC_KEYS = [
 const PARAM_BOUNDS: Record<SimpleNumericKey, { min: number; max: number }> = {
   start: { min: 0, max: 3 },
   rotations: { min: -Infinity, max: Infinity },
-  saturation: { min: 0, max: Infinity },
   lightnessAxisMin: { min: 0, max: 1 },
   lightnessAxisMax: { min: 0, max: 1 },
   chromaPeak: { min: 0, max: 1 },
   chromaWidth: { min: 0.1, max: 5 },
   chromaFloor: { min: 0, max: 1 },
 };
+
+const SATURATION_BOUNDS = { min: 0, max: Infinity } as const;
 
 const ENCODE_PRECISION = 4;
 
@@ -191,6 +190,21 @@ function appendParamsToSearch(search: URLSearchParams, params: CubehelixParams):
       search.set(key, String(rounded));
     }
   }
+  // Saturation: emit a single `saturation` key when min === max (legacy-compat
+  // shared links keep their familiar shape); emit `saturationMin` /
+  // `saturationMax` only when split. Each component still default-omits.
+  const minRounded = roundTo(params.saturationMin, ENCODE_PRECISION);
+  const maxRounded = roundTo(params.saturationMax, ENCODE_PRECISION);
+  const defaultMin = roundTo(DEFAULT_CUBEHELIX_PARAMS.saturationMin, ENCODE_PRECISION);
+  const defaultMax = roundTo(DEFAULT_CUBEHELIX_PARAMS.saturationMax, ENCODE_PRECISION);
+  if (minRounded === maxRounded) {
+    if (minRounded !== defaultMin) {
+      search.set("saturation", String(minRounded));
+    }
+  } else {
+    if (minRounded !== defaultMin) search.set("saturationMin", String(minRounded));
+    if (maxRounded !== defaultMax) search.set("saturationMax", String(maxRounded));
+  }
   appendCurveToSearch(search, params.lightnessCurve);
   if (params.reverse !== DEFAULT_CUBEHELIX_PARAMS.reverse) {
     search.set("reverse", params.reverse ? "1" : "0");
@@ -206,6 +220,31 @@ function readParamsFromSearch(search: URLSearchParams): CubehelixParams {
     if (!Number.isFinite(num)) continue;
     const { min, max } = PARAM_BOUNDS[key];
     result[key] = clamp(num, min, max);
+  }
+  // Saturation: legacy `?saturation=` sets both ends; explicit
+  // `saturationMin` / `saturationMax` keys override.
+  const rawSat = search.get("saturation");
+  if (rawSat !== null) {
+    const num = Number(rawSat);
+    if (Number.isFinite(num)) {
+      const v = clamp(num, SATURATION_BOUNDS.min, SATURATION_BOUNDS.max);
+      result.saturationMin = v;
+      result.saturationMax = v;
+    }
+  }
+  const rawSatMin = search.get("saturationMin");
+  if (rawSatMin !== null) {
+    const num = Number(rawSatMin);
+    if (Number.isFinite(num)) {
+      result.saturationMin = clamp(num, SATURATION_BOUNDS.min, SATURATION_BOUNDS.max);
+    }
+  }
+  const rawSatMax = search.get("saturationMax");
+  if (rawSatMax !== null) {
+    const num = Number(rawSatMax);
+    if (Number.isFinite(num)) {
+      result.saturationMax = clamp(num, SATURATION_BOUNDS.min, SATURATION_BOUNDS.max);
+    }
   }
   result.lightnessCurve = readCurveFromSearch(search);
   const rawReverse = search.get("reverse");

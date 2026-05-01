@@ -16,7 +16,7 @@ Cubehelix Studio is a TypeScript + Python tool for designing cubehelix color pal
 - **The helix's endpoints are anchored at the black and white corners.** Everything else about the helix is parameter-controlled:
   - `start` — hue offset at the black anchor
   - `rotations` — number of hue turns from black to white
-  - `saturation`, `chromaPeak`, `chromaWidth`, `chromaFloor` — how far the helix bulges from the cube diagonal at each point along it
+  - `saturationMin`, `saturationMax`, `chromaPeak`, `chromaWidth`, `chromaFloor` — how far the helix bulges from the cube diagonal at each point along it
   - `lightnessCurve` (power / sigmoid / bezier) — how lightness rises along the curve, parameterized by `u ∈ [0, 1]`. It does not change which colors lie on the helix, only how the parameter is paced.
 - **The lightness axis bounds clip the helix to a sub-arc.** `[lightnessAxisMin, lightnessAxisMax]` selects the portion whose lightness output lies inside that window — they don't reshape the helix. The visible palette traverses only the surviving sub-arc, so narrower bounds expose fewer hue cycles.
 
@@ -29,7 +29,8 @@ uMax   = invertLightnessCurve(curve, lightnessAxisMax)
 u      = uMin + (uMax - uMin) · tEff                       // helix parameter
 fraction = evaluateLightnessCurve(curve, u)
 angle  = 2π · (start/3 + rotations · u + 1)
-amp    = saturation · chromaEnvelope(fraction, peak, width, floor)
+sat    = saturationMin + (saturationMax − saturationMin) · tEff
+amp    = sat · chromaEnvelope(fraction, peak, width, floor)
 r,g,b  = fraction + amp · projection(angle)                 // BT.601 helix coefficients
 ```
 
@@ -48,7 +49,8 @@ type LightnessCurve =
 interface CubehelixParams {
   start: number; // [0, 3], periodic
   rotations: number; // unbounded; turns over the full lightness axis
-  saturation: number; // [0, ∞); master amplitude on the chroma envelope
+  saturationMin: number; // [0, ∞); chroma amplitude at tEff = 0
+  saturationMax: number; // [0, ∞); chroma amplitude at tEff = 1; collapses to a single saturation when equal to saturationMin
   lightnessCurve: LightnessCurve;
   lightnessAxisMin: number; // [0, 1]
   lightnessAxisMax: number; // [0, 1], must be ≥ lightnessAxisMin
@@ -59,7 +61,7 @@ interface CubehelixParams {
 }
 ```
 
-**URL state** ([apps/web/src/lib/url-state.ts](apps/web/src/lib/url-state.ts)). Round-trippable, default-omitting. Numeric keys: `start`, `rotations`, `saturation`, `lightnessAxisMin`, `lightnessAxisMax`, `chromaPeak`, `chromaWidth`, `chromaFloor`. Curve keys: `lightnessCurve` (omitted when `power`), `gamma`, `sigmoidSteepness`, `sigmoidMidpoint`, `bezier1x` / `bezier1y` / `bezier2x` / `bezier2y`. Plus `reverse` (1/0) and `swatchCount`. Legacy `?gamma=…` URLs decode cleanly into a power curve. New keys must follow this pattern (camelCase, omitted when at default).
+**URL state** ([apps/web/src/lib/url-state.ts](apps/web/src/lib/url-state.ts)). Round-trippable, default-omitting. Numeric keys: `start`, `rotations`, `lightnessAxisMin`, `lightnessAxisMax`, `chromaPeak`, `chromaWidth`, `chromaFloor`. Saturation keys: `saturation` is emitted when `saturationMin === saturationMax`; otherwise the split form emits `saturationMin` / `saturationMax`. On decode, a single `?saturation=` sets both ends, and explicit `saturationMin` / `saturationMax` keys override. Curve keys: `lightnessCurve` (omitted when `power`), `gamma`, `sigmoidSteepness`, `sigmoidMidpoint`, `bezier1x` / `bezier1y` / `bezier2x` / `bezier2y`. Plus `reverse` (1/0) and `swatchCount`. Legacy `?gamma=…` and `?saturation=…` URLs decode cleanly. New keys must follow this pattern (camelCase, omitted when at default).
 
 ### Other architectural notes worth knowing
 
@@ -68,7 +70,7 @@ interface CubehelixParams {
 - Vertex colors written by `buildColoredTube` are linear-encoded via `srgbToLinear`. `THREE.BufferAttribute` does not have a `colorSpace` property in the pinned three.js; manual linearization is the correct pattern.
 - Saturation cap (`saturationCap` in `cubehelix.ts`) is the 95th percentile of per-sample S_exit values. The slider's max in `ParamControls` sweeps `start` over 24 values and takes the worst-case cap, so the slider stays stable as the user spins the start hue.
 - The cube viz scene is shifted by `[-0.5, -0.5, -0.5]` so the cube is centered at world origin and `OrbitControls.target = (0, 0, 0)` orbits the centroid.
-- The starting-hue wheel ([StartingHueWheel.tsx](apps/web/src/components/StartingHueWheel.tsx)) is a static reference rendered at `rotations = 0`, `lightnessAxisMin = lightnessAxisMax = 0.5`, `saturation = 2`. Each segment shows the abstract hue at that `start`, peak-normalized so all hues are equally vivid. The pointer color does not depend on the user's other parameters; an inline `?` popover in the panel explains the relationship between the picker hue and what the gradient actually looks like.
+- The starting-hue wheel ([StartingHueWheel.tsx](apps/web/src/components/StartingHueWheel.tsx)) is a static reference rendered at `rotations = 0`, `lightnessAxisMin = lightnessAxisMax = 0.5`, `saturationMin = saturationMax = 2`. Each segment shows the abstract hue at that `start`, peak-normalized so all hues are equally vivid. The pointer color does not depend on the user's other parameters; an inline `?` popover in the panel explains the relationship between the picker hue and what the gradient actually looks like.
 
 ### Control panel structure
 
@@ -80,54 +82,6 @@ The parameter panel is a stack of collapsible sections (native `<details>`):
 - **Output** (collapsed) — Reverse, Swatches
 
 `Reset` lives in the page header alongside `Share` (link icon) and `About`. Reset returns params + swatchCount to defaults and resets the cube camera.
-
----
-
-## Stage 2c — Saturation range along the curve
-
-**Goal.** Independent saturation values at the start and end of the curve, with linear interpolation in between. Davenport's Python port has this (`minSat`, `maxSat`) and it's the only field-standard knob we don't yet expose.
-
-**Relationship to chroma envelope.** `chromaFloor` lifts the envelope at both endpoints symmetrically. `saturationMin`/`saturationMax` is a different control: it lets one end be more saturated than the other along the whole curve. The two compose — `chromaFloor` controls how much chroma reaches the lightness extremes, while `saturationMin`/`saturationMax` controls how the overall saturation level varies from start to end.
-
-**Math.**
-
-```text
-saturation(t) = lerp(saturationMin, saturationMax, tEff)
-amp(t) = saturation(t) · chromaEnvelope(fraction, peak, width, floor)
-```
-
-When `saturationMin === saturationMax === saturation`, math collapses to the current single-saturation form.
-
-**UI affordance.** Single `Saturation` slider by default. A small "split" toggle (icon button or chevron) reveals `Saturation Min` / `Saturation Max` and decouples them. Toggling back collapses to a single value (use the average of the two, or the previous unified value if remembered). Keep the default UI tidy.
-
-**Type changes.** Two options, pick the simpler:
-
-```ts
-// Option A: always store both, collapsed when equal
-interface CubehelixParams {
-  saturationMin: number;
-  saturationMax: number;
-}
-
-// Option B: keep `saturation` plus optional split overrides
-interface CubehelixParams {
-  saturation: number;
-  saturationMin?: number;
-  saturationMax?: number;
-}
-```
-
-Recommend Option A internally (cleaner math, no special-casing), with the UI presenting a single value when `min === max`.
-
-**URL keys.** `saturationMin`, `saturationMax`. Both default-omitted; emit only when `min !== max` OR when either differs from the default `saturation`. Round-trip with the existing single-`saturation` URL still works (decodes to `saturationMin = saturationMax = saturation`).
-
-**Python parity.** Mirror in `cubehelix.py`. Fixture probes for split-saturation cases.
-
-**Saturation cap.** The cap currently assumes a single `saturation` scalar applied uniformly; it needs to take the worst case across `t ∈ [0, 1]` once saturation varies along the curve. Either pass `max(saturationMin, saturationMax)` into the cap envelope calculation, or compute the cap per-sample and take the worst case.
-
-**Tests.** Defaults collapse to current. Endpoints respect `saturationMin`/`saturationMax`. URL round-trip with split and unified forms. Saturation cap covers the worst-case end.
-
-**Files.** Same set as previous math stages: core math, types, tests, Python mirror, fixture generator, URL state, ParamControls.
 
 ---
 

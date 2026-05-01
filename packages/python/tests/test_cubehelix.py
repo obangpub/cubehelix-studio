@@ -30,7 +30,7 @@ def test_t1_default_params_returns_white() -> None:
 
 
 def test_clamps_into_unit_interval() -> None:
-    params = CubehelixParams(start=0.0, rotations=5.0, saturation=5.0)
+    params = CubehelixParams(start=0.0, rotations=5.0, saturation_min=5.0, saturation_max=5.0)
     for i in range(51):
         t = i / 50
         r, g, b = cubehelix(t, params)
@@ -40,7 +40,7 @@ def test_clamps_into_unit_interval() -> None:
 
 
 def test_saturation_zero_yields_grayscale_ramp() -> None:
-    params = CubehelixParams(start=0.0, rotations=0.0, saturation=0.0)
+    params = CubehelixParams(start=0.0, rotations=0.0, saturation_min=0.0, saturation_max=0.0)
     for i in range(11):
         t = i / 10
         r, g, b = cubehelix(t, params)
@@ -110,8 +110,31 @@ def test_bezier_curve_endpoints_and_monotonic() -> None:
         prev = v
 
 
+def test_saturation_interpolates_linearly_across_t() -> None:
+    half = CubehelixParams(saturation_min=0.0, saturation_max=1.0)
+    full = CubehelixParams(saturation_min=1.0, saturation_max=1.0)
+    zero = CubehelixParams(saturation_min=0.0, saturation_max=0.0)
+    # At t=0, half matches the zero-saturation greyscale.
+    h0 = cubehelix(0.0, half)
+    z0 = cubehelix(0.0, zero)
+    assert h0[0] == pytest.approx(z0[0], abs=1e-12)
+    assert h0[1] == pytest.approx(z0[1], abs=1e-12)
+    assert h0[2] == pytest.approx(z0[2], abs=1e-12)
+    # At t=1, half matches full saturation.
+    h1 = cubehelix(1.0, half)
+    f1 = cubehelix(1.0, full)
+    assert h1[0] == pytest.approx(f1[0], abs=1e-12)
+    assert h1[1] == pytest.approx(f1[1], abs=1e-12)
+    assert h1[2] == pytest.approx(f1[2], abs=1e-12)
+
+
 def test_lightness_range_endpoints_respected() -> None:
-    params = CubehelixParams(lightness_axis_min=0.2, lightness_axis_max=0.8, saturation=0.0)
+    params = CubehelixParams(
+        lightness_axis_min=0.2,
+        lightness_axis_max=0.8,
+        saturation_min=0.0,
+        saturation_max=0.0,
+    )
     r0, g0, b0 = cubehelix(0.0, params)
     r1, g1, b1 = cubehelix(1.0, params)
     assert r0 == pytest.approx(0.2, abs=1e-12)
