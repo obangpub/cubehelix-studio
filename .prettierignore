@@ -4,5 +4,6 @@
 **/node_modules/**
 **/.vite/**
 **/.venv/**
+**/.playwright-mcp/**
 fixtures/parity.json
 pnpm-lock.yaml

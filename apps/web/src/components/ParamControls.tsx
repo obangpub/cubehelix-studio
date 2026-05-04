@@ -18,6 +18,7 @@ import {
 } from "../lib/url-state";
 import { BezierEditor } from "./BezierEditor";
 import { RangeSlider } from "./RangeSlider";
+import { SaturationField } from "./SaturationField";
 import { Slider } from "./Slider";
 import { StartingHueWheel } from "./StartingHueWheel";
 
@@ -73,28 +74,24 @@ export function ParamControls({
     (key: "rotations" | "chromaPeak" | "chromaWidth" | "chromaFloor") => (value: number) => {
       onChange({ ...params, [key]: value });
     };
-  const setSaturation = (v: number) => {
-    onChange({ ...params, saturationMin: v, saturationMax: v });
-  };
   const setSaturationMin = (v: number) => {
     onChange({ ...params, saturationMin: v });
   };
   const setSaturationMax = (v: number) => {
     onChange({ ...params, saturationMax: v });
   };
-  const isSplitFromParams = params.saturationMin !== params.saturationMax;
-  const [saturationSplit, setSaturationSplit] = useState(isSplitFromParams);
-  // If the params arrive split (e.g. via URL), reveal the split UI even if
-  // local state hadn't been toggled yet.
-  const showSplit = saturationSplit || isSplitFromParams;
-  const toggleSaturationSplit = () => {
-    if (showSplit) {
-      // Collapse: average the two values into a unified saturation.
+  const paramsAreSplit = params.saturationMin !== params.saturationMax;
+  const [userUnlinked, setUserUnlinked] = useState(paramsAreSplit);
+  const linked = !userUnlinked && !paramsAreSplit;
+  const setLinked = (next: boolean) => {
+    if (next) {
+      // Linking: average the two values so the gradient stays close to where
+      // it was, then both sides match.
       const avg = (params.saturationMin + params.saturationMax) / 2;
       onChange({ ...params, saturationMin: avg, saturationMax: avg });
-      setSaturationSplit(false);
+      setUserUnlinked(false);
     } else {
-      setSaturationSplit(true);
+      setUserUnlinked(true);
     }
   };
   const minThumbColor = useMemo(() => toCssRgb(cubehelix(0, params)), [params]);
@@ -322,64 +319,19 @@ export function ParamControls({
         </summary>
         <div className="control-section-body">
           <div className="saturation-block">
-            {showSplit ? (
-              <>
-                <div className="saturation-block-header">
-                  <span className="saturation-block-label">Saturation</span>
-                  <button
-                    type="button"
-                    className="saturation-split-toggle"
-                    onClick={toggleSaturationSplit}
-                    aria-pressed={showSplit}
-                    title="Collapse to a single saturation"
-                  >
-                    Unify
-                  </button>
-                </div>
-                <Slider
-                  label="Saturation Min"
-                  technicalName="saturationMin"
-                  value={params.saturationMin}
-                  min={0}
-                  max={SATURATION_SLIDER_MAX}
-                  step={0.01}
-                  scaleExponent={3}
-                  onChange={setSaturationMin}
-                />
-                <Slider
-                  label="Saturation Max"
-                  technicalName="saturationMax"
-                  value={params.saturationMax}
-                  min={0}
-                  max={SATURATION_SLIDER_MAX}
-                  step={0.01}
-                  scaleExponent={3}
-                  onChange={setSaturationMax}
-                />
-              </>
-            ) : (
-              <div className="saturation-unified">
-                <Slider
-                  label="Saturation"
-                  technicalName="saturation"
-                  value={params.saturationMin}
-                  min={0}
-                  max={SATURATION_SLIDER_MAX}
-                  step={0.01}
-                  scaleExponent={3}
-                  onChange={setSaturation}
-                />
-                <button
-                  type="button"
-                  className="saturation-split-toggle"
-                  onClick={toggleSaturationSplit}
-                  aria-pressed={showSplit}
-                  title="Vary saturation across the curve"
-                >
-                  Split
-                </button>
-              </div>
-            )}
+            <span className="saturation-block-label">Saturation</span>
+            <SaturationField
+              params={params}
+              saturationMin={params.saturationMin}
+              saturationMax={params.saturationMax}
+              linked={linked}
+              max={SATURATION_SLIDER_MAX}
+              scaleExponent={3}
+              step={0.01}
+              onMinChange={setSaturationMin}
+              onMaxChange={setSaturationMax}
+              onLinkedChange={setLinked}
+            />
           </div>
           <Slider
             label="Peak Position"

@@ -34,3 +34,6 @@ pnpm-debug.log*
 .env.local
 .env.*.local
 .claude/
+
+# Playwright MCP scratch
+.playwright-mcp/

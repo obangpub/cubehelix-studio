@@ -466,52 +466,117 @@ header p {
 .saturation-block {
   display: flex;
   flex-direction: column;
-  gap: 0.75rem;
-}
-
-.saturation-block-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
+  gap: 0.5rem;
 }
 
 .saturation-block-label {
   font-weight: 500;
 }
 
-.saturation-unified {
-  position: relative;
+.saturation-field {
+  width: 100%;
 }
 
-.saturation-unified .saturation-split-toggle {
-  position: absolute;
-  top: 0;
-  right: 6rem;
+.saturation-field-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
-.saturation-split-toggle {
-  font: inherit;
+.saturation-field-box {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.35rem;
+  flex: 0 0 auto;
+}
+
+.saturation-field-label {
   font-size: 0.75rem;
+  color: var(--muted);
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.saturation-field-track {
+  position: relative;
+  width: 88px;
+  height: 132px;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  overflow: hidden;
+  cursor: ns-resize;
+  touch-action: none;
+}
+
+.saturation-field-track:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: 2px;
+}
+
+.saturation-field-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+.saturation-field-thumb {
+  position: absolute;
+  left: -2px;
+  right: -2px;
+  height: 2px;
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow:
+    0 0 0 1px rgba(0, 0, 0, 0.65),
+    0 1px 3px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+  transform: translateY(50%);
+}
+
+.saturation-field-number {
+  font: inherit;
+  font-size: 0.8rem;
+  width: 100%;
+  text-align: center;
+  padding: 0.15rem 0.25rem;
+  background: var(--surface);
+  color: var(--fg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+}
+
+.saturation-link-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  padding: 0;
   color: var(--muted);
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 4px;
-  padding: 0.15rem 0.5rem;
   cursor: pointer;
   transition:
     color 120ms ease,
     border-color 120ms ease;
 }
 
-.saturation-split-toggle:hover {
+.saturation-link-toggle:hover {
   color: var(--fg);
   border-color: var(--fg);
 }
 
-.saturation-split-toggle:focus-visible {
+.saturation-link-toggle:focus-visible {
   outline: 2px solid var(--fg);
   outline-offset: 2px;
+}
+
+.saturation-link-toggle[aria-pressed="true"] {
+  color: var(--fg);
 }
 
 .hue-control {
