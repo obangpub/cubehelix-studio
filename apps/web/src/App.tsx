@@ -6,6 +6,7 @@ import { ExportPanel } from "./components/ExportPanel";
 import { GammaBar } from "./components/GammaBar";
 import { GradientStrip } from "./components/GradientStrip";
 import { ParamControls } from "./components/ParamControls";
+import { PresetGallery } from "./components/PresetGallery";
 import { ShareLink } from "./components/ShareLink";
 import { SwatchRow } from "./components/SwatchRow";
 import { useUrlParams } from "./hooks/useUrlParams";
@@ -117,6 +118,7 @@ export default function App() {
           <SwatchRow params={params} count={swatchCount} />
         </section>
         <div className="layout-controls">
+          <PresetGallery onSelect={setParams} />
           <ParamControls
             params={params}
             onChange={setParams}

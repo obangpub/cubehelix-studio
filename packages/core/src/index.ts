@@ -30,3 +30,5 @@ export type { ContrastMatrix, PaletteRole, ResolvedRole, RolePalette } from "./r
 export { contrastMatrix, DEFAULT_ROLES, resolveRoles } from "./roles";
 export type { ExportFormat, SerializeOptions } from "./exports";
 export { paramsToString, serialize } from "./exports";
+export type { PaletteMode, Preset } from "./presets";
+export { getPresetById, PRESETS } from "./presets";

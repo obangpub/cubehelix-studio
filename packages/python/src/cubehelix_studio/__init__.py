@@ -19,22 +19,27 @@ from .cubehelix import (
 )
 from .format import to_hex, to_rgb_255
 from .mpl import to_matplotlib_colormap
+from .presets import PRESETS, PaletteMode, Preset, get_preset_by_id
 from .sampling import sample_sequential
 
 __all__ = [
     "DEFAULT_CHROMA_FLOOR",
     "DEFAULT_CHROMA_PEAK",
     "DEFAULT_CHROMA_WIDTH",
+    "PRESETS",
     "BezierCurve",
     "CubehelixParams",
     "LightnessCurve",
+    "PaletteMode",
     "PowerCurve",
+    "Preset",
     "SigmoidCurve",
     "chroma_envelope",
     "contrast_ratio",
     "cubehelix",
     "cubehelix_raw",
     "evaluate_lightness_curve",
+    "get_preset_by_id",
     "invert_lightness_curve",
     "pick_text_color",
     "sample_sequential",

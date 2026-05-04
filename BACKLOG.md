@@ -121,46 +121,17 @@ Mode toggle preferred.
 
 ---
 
-## Stage 2e — Curated preset gallery
+## Stage 2e — Diverging cubehelix presets
 
-**Goal.** Ship a small set of named presets so users can start from a known-good palette instead of from defaults. Field precedent: d3 ships `interpolateCubehelixDefault`; Cobeldick's MATLAB port ships `preset_colormap`; we ship neither.
+**Goal.** Add a diverging-mode set to the existing preset gallery once Stage 3 (diverging cubehelix) lands. Sequential presets ship now in [packages/core/src/presets.ts](packages/core/src/presets.ts); a diverging set joins them via the same `Preset` type with `mode: "diverging"`.
 
-**Implementation.** Each preset is a stored `CubehelixParams` plus a name and a one-line description. A new `packages/core/src/presets.ts` exports `PRESETS: readonly Preset[]`. The web app gets a small gallery (drawer, popover, or a horizontal strip of mini-gradients) that loads a preset via the existing URL-state setter.
-
-```ts
-interface Preset {
-  id: string; // url-safe slug
-  name: string; // display name
-  description: string; // one short sentence
-  params: CubehelixParams;
-  mode: "sequential" | "diverging"; // for filtering once Stage 3 lands
-}
-```
-
-**Starter palette set.**
-
-Sequential:
-
-- **Classic** — Green (2011) defaults; the canonical reference ramp.
-- **Embers** — near-black through deep red into orange/yellow; warm sequential.
-- **Tidewater** — navy through teal to pale cyan; cool sequential.
-- **Foxglove** — forest green to light pink; off-axis sequential. Foxglove's pink-purple bell flowers against green stems match the visual literally.
-- **Lichen** — charcoal through olive to pale chartreuse; earthy/muted.
-- **Iris** — deep indigo through violet to pale lavender; purple sequential.
-
-Diverging (after Stage 3 lands):
+**Diverging palettes worth tuning.**
 
 - **Compass** — cool blue ↔ warm red, white pivot; the workhorse diverging.
 - **Solstice** — deep teal ↔ amber, light cream pivot; warmer than Compass.
 - **Eclipse** — pale on the outside, deep purple/black at the pivot; inverted diverging for "deviation from a mean" data where the middle should pop.
 
-The exact `CubehelixParams` for each preset are a tuning task, not a math task — pick them by feel in the running app and freeze the values into `presets.ts`.
-
-**URL state.** No new keys. A preset is just a starting point that hydrates the URL with that preset's params; thereafter the URL state is whatever the user has tweaked.
-
-**Tests.** Each preset's params decode/encode round-trip cleanly. Each preset's first sample is in-gamut (i.e. `wasClamped()` is false at `t ∈ {0, 0.5, 1}`).
-
-**Files.** `packages/core/src/presets.ts` (new), `packages/python/src/cubehelix_studio/presets.py` (new mirror), a new `apps/web/src/components/PresetGallery.tsx`, plumbing in `App.tsx`, tests on both sides.
+The exact params are a tuning task — pick by feel in the running app and freeze the values into `presets.ts`. The gallery component and tests already accommodate the new mode; only the preset list and any mode-filtering UI need to grow.
 
 ---
 
