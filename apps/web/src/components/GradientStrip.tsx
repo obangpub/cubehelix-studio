@@ -1,21 +1,28 @@
 import { useId, useMemo } from "react";
-import { cubehelix, toCssRgb, type CubehelixParams } from "@cubehelix-studio/core";
+import {
+  applyPreview,
+  cubehelix,
+  toCssRgb,
+  type CubehelixParams,
+  type PreviewMode,
+} from "@cubehelix-studio/core";
 
 interface GradientStripProps {
   params: CubehelixParams;
+  previewMode?: PreviewMode;
   height?: number;
 }
 
 const STOP_COUNT = 64;
 
-export function GradientStrip({ params, height = 60 }: GradientStripProps) {
+export function GradientStrip({ params, previewMode = "normal", height = 60 }: GradientStripProps) {
   const gradientId = useId();
   const stops = useMemo(() => {
     return Array.from({ length: STOP_COUNT + 1 }, (_, i) => {
       const t = i / STOP_COUNT;
-      return { offset: t, color: toCssRgb(cubehelix(t, params)) };
+      return { offset: t, color: toCssRgb(applyPreview(cubehelix(t, params), previewMode)) };
     });
-  }, [params]);
+  }, [params, previewMode]);
 
   return (
     <svg

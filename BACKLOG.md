@@ -135,35 +135,6 @@ The exact params are a tuning task — pick by feel in the running app and freez
 
 ---
 
-## Stage 2f — Perceptual previews
-
-**Goal.** Let the user check that a palette survives grayscale and the major colour-vision-deficiency conditions without leaving the app. Cubehelix is robust under these by design; we should show the proof.
-
-**Implementation.** A single "Preview as" radio control:
-
-- Normal (default)
-- Grayscale (sRGB-luma reduction)
-- Protanopia
-- Deuteranopia
-- Tritanopia
-
-The active preview transforms the rendered swatches, gradient strip, and (probably) the cube tube colours uniformly so all three views move together. The transform is a per-pixel function `RGB → RGB` applied at render time; the underlying palette and URL state are unchanged.
-
-**Math.**
-
-- Grayscale: standard sRGB-luma reduction, `Y = 0.2126·R + 0.7152·G + 0.0722·B` after linearizing, then back to sRGB.
-- CVD: Brettel/Viénot transform (well-documented, widely used). One 3×3 matrix per condition applied in linear-RGB space. A `cvd.ts` module in `packages/core` exports the three transforms; the web app applies them on render.
-
-**UI.** Radio group placed alongside the existing palette views — likely a horizontal segmented control above or below the gradient strip. Selection is purely a view setting, not a palette parameter, so it does not enter the URL state.
-
-**Python.** Mirror the `cvd` module so the Python library can apply the same transforms (useful for matplotlib figure previews).
-
-**Tests.** Normal preview produces unchanged colours. Grayscale preview produces equal R=G=B per swatch. CVD transforms are deterministic and reversible to round-trip identity within tolerance.
-
-**Files.** `packages/core/src/cvd.ts` (new), `packages/python/src/cubehelix_studio/cvd.py` (new), `apps/web/src/components/PreviewControl.tsx` (new), plumbing in `GradientStrip.tsx`, `SwatchRow.tsx`, `CubeVisualization.tsx`. No URL-state changes.
-
----
-
 ## Stage 2g — Help popovers on advanced controls
 
 **Goal.** Surface short, plain-language explanations next to controls whose semantics aren't obvious. The starting-hue wheel already has one (`info-popover` pattern in [ParamControls.tsx](apps/web/src/components/ParamControls.tsx)); reuse the same component.

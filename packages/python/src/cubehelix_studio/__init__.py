@@ -1,6 +1,7 @@
 """Grayscale-safe color palettes from cubehelix."""
 
 from .contrast import contrast_ratio, pick_text_color
+from .cvd import PREVIEW_MODES, PreviewMode, apply_preview
 from .cubehelix import (
     DEFAULT_CHROMA_FLOOR,
     DEFAULT_CHROMA_PEAK,
@@ -27,13 +28,16 @@ __all__ = [
     "DEFAULT_CHROMA_PEAK",
     "DEFAULT_CHROMA_WIDTH",
     "PRESETS",
+    "PREVIEW_MODES",
     "BezierCurve",
     "CubehelixParams",
     "LightnessCurve",
     "PaletteMode",
     "PowerCurve",
     "Preset",
+    "PreviewMode",
     "SigmoidCurve",
+    "apply_preview",
     "chroma_envelope",
     "contrast_ratio",
     "cubehelix",

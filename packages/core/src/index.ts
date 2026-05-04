@@ -32,3 +32,5 @@ export type { ExportFormat, SerializeOptions } from "./exports";
 export { paramsToString, serialize } from "./exports";
 export type { PaletteMode, Preset } from "./presets";
 export { getPresetById, PRESETS } from "./presets";
+export type { PreviewMode } from "./cvd";
+export { applyPreview, PREVIEW_MODES } from "./cvd";

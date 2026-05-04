@@ -1,25 +1,34 @@
 import { useMemo } from "react";
 import {
+  applyPreview,
   pickTextColor,
   sampleSequential,
   toCssRgb,
   toHex,
   type CubehelixParams,
+  type PreviewMode,
 } from "@cubehelix-studio/core";
 
 interface SwatchRowProps {
   params: CubehelixParams;
   count?: number;
+  previewMode?: PreviewMode;
 }
 
-export function SwatchRow({ params, count = 9 }: SwatchRowProps) {
+export function SwatchRow({ params, count = 9, previewMode = "normal" }: SwatchRowProps) {
   const swatches = useMemo(() => {
-    return sampleSequential(params, count).map((color) => ({
-      bg: toCssRgb(color),
-      hex: toHex(color),
-      text: toCssRgb(pickTextColor(color)),
-    }));
-  }, [params, count]);
+    // Hex stays as the underlying palette color (the data); only the rendered
+    // swatch background goes through the preview transform, with text contrast
+    // computed against what's displayed.
+    return sampleSequential(params, count).map((color) => {
+      const previewed = applyPreview(color, previewMode);
+      return {
+        bg: toCssRgb(previewed),
+        hex: toHex(color),
+        text: toCssRgb(pickTextColor(previewed)),
+      };
+    });
+  }, [params, count, previewMode]);
   return (
     <div
       className="swatch-row"

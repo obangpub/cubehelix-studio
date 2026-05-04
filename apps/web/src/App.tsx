@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { CubehelixParams } from "@cubehelix-studio/core";
+import type { CubehelixParams, PreviewMode } from "@cubehelix-studio/core";
 import { AboutDialog } from "./components/AboutDialog";
 import { CubeVisualization } from "./components/CubeVisualization";
 import { ExportPanel } from "./components/ExportPanel";
@@ -7,6 +7,7 @@ import { GammaBar } from "./components/GammaBar";
 import { GradientStrip } from "./components/GradientStrip";
 import { ParamControls } from "./components/ParamControls";
 import { PresetGallery } from "./components/PresetGallery";
+import { PreviewControl } from "./components/PreviewControl";
 import { ShareLink } from "./components/ShareLink";
 import { SwatchRow } from "./components/SwatchRow";
 import { useUrlParams } from "./hooks/useUrlParams";
@@ -44,6 +45,7 @@ export default function App() {
   const [state, setState] = useUrlParams();
   const { params, swatchCount } = state;
   const [resetSignal, setResetSignal] = useState(0);
+  const [previewMode, setPreviewMode] = useState<PreviewMode>("normal");
   const [appTheme, setAppThemeState] = useState<Theme>(
     () => readStoredTheme(APP_THEME_KEY) ?? detectSystemTheme(),
   );
@@ -112,10 +114,12 @@ export default function App() {
             resetSignal={resetSignal}
             cubeTheme={cubeTheme}
             onCubeThemeChange={setCubeTheme}
+            previewMode={previewMode}
           />
-          <GradientStrip params={params} />
+          <PreviewControl value={previewMode} onChange={setPreviewMode} />
+          <GradientStrip params={params} previewMode={previewMode} />
           <GammaBar params={params} />
-          <SwatchRow params={params} count={swatchCount} />
+          <SwatchRow params={params} count={swatchCount} previewMode={previewMode} />
         </section>
         <div className="layout-controls">
           <PresetGallery onSelect={setParams} />

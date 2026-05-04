@@ -3,10 +3,12 @@ import { Canvas, useFrame, useThree } from "@react-three/fiber";
 import { OrbitControls, OrthographicCamera, PerspectiveCamera } from "@react-three/drei";
 import * as THREE from "three";
 import {
+  applyPreview,
   cubehelixRaw,
   evaluateLightnessCurve,
   invertLightnessCurve,
   type CubehelixParams,
+  type PreviewMode,
   type RGB,
 } from "@cubehelix-studio/core";
 
@@ -16,6 +18,7 @@ interface CubeVisualizationProps {
   resetSignal?: number;
   cubeTheme: "light" | "dark";
   onCubeThemeChange: (next: "light" | "dark") => void;
+  previewMode?: PreviewMode;
 }
 
 interface Sample {
@@ -235,11 +238,16 @@ function buildGhostLine(positions: THREE.Vector3[], color: number): THREE.Line {
   return line;
 }
 
-function buildScene(samples: Sample[], ghostColor: number): ScenePieces {
+function buildScene(samples: Sample[], ghostColor: number, previewMode: PreviewMode): ScenePieces {
   const colored: THREE.BufferGeometry[] = [];
   const ghosts: THREE.Line[] = [];
   if (samples.length < 2) return { colored, ghosts };
 
+  // Helix position stays at the true RGB-cube coordinates so the path through
+  // the cube remains the data-truth visualization. Only the rendered color
+  // goes through the preview transform — the user reads "this is where the
+  // helix lives" alongside "this is what each point looks like to the
+  // simulated viewer."
   forEachRun(
     samples,
     (s) => s.inRange,
@@ -247,7 +255,7 @@ function buildScene(samples: Sample[], ghostColor: number): ScenePieces {
     (run) => {
       if (run.length < 2) return;
       const positions = run.map((s) => sampleToVec(s.clamped));
-      const cols = run.map((s) => s.clamped);
+      const cols = run.map((s) => applyPreview(s.clamped, previewMode));
       colored.push(buildColoredTube(positions, cols, TUBE_RADIUS, COLOR_RADIAL_SEGMENTS, true));
     },
   );
@@ -399,13 +407,14 @@ interface HelixProps {
   samples: number;
   showGhost: boolean;
   ghostColor: number;
+  previewMode: PreviewMode;
 }
 
-function Helix({ params, samples, showGhost, ghostColor }: HelixProps) {
+function Helix({ params, samples, showGhost, ghostColor, previewMode }: HelixProps) {
   const { colored, ghosts } = useMemo(() => {
     const s = buildSamples(params, samples);
-    return buildScene(s, ghostColor);
-  }, [params, samples, ghostColor]);
+    return buildScene(s, ghostColor, previewMode);
+  }, [params, samples, ghostColor, previewMode]);
 
   useEffect(() => {
     return () => {
@@ -937,6 +946,7 @@ export function CubeVisualization({
   resetSignal,
   cubeTheme,
   onCubeThemeChange,
+  previewMode = "normal",
 }: CubeVisualizationProps) {
   const effectiveSamples = useMemo(() => {
     if (samples != null) return samples;
@@ -1033,6 +1043,7 @@ export function CubeVisualization({
                 samples={effectiveSamples}
                 showGhost={view.showGhostHelix}
                 ghostColor={ghostColor}
+                previewMode={previewMode}
               />
             </group>
             <OrbitControls

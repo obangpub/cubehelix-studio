@@ -914,6 +914,57 @@ header p {
   background: var(--surface);
 }
 
+.preview-control {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.preview-control-label {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--muted);
+}
+
+.preview-control-options {
+  display: flex;
+  flex-wrap: wrap;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  align-self: flex-start;
+}
+
+.preview-control-option {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.625rem;
+  cursor: pointer;
+  font-size: 0.8rem;
+  color: var(--muted);
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+  user-select: none;
+}
+
+.preview-control-option:last-child {
+  border-right: none;
+}
+
+.preview-control-option.is-active {
+  background: var(--fg);
+  color: var(--bg);
+}
+
+.preview-control-option input[type="radio"] {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  pointer-events: none;
+}
+
 .swatch-row {
   display: grid;
   grid-template-columns: repeat(9, 1fr);
