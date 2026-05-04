@@ -19,8 +19,7 @@ interface SaturationFieldProps {
   max: number;
   scaleExponent: number;
   step: number;
-  onMinChange: (next: number) => void;
-  onMaxChange: (next: number) => void;
+  onChange: (next: { min: number; max: number }) => void;
   onLinkedChange: (next: boolean) => void;
 }
 
@@ -32,31 +31,23 @@ export function SaturationField({
   max,
   scaleExponent,
   step,
-  onMinChange,
-  onMaxChange,
+  onChange,
   onLinkedChange,
 }: SaturationFieldProps) {
-  const handleMinChange = useCallback(
+  // Both handlers commit through a single onChange so linked drags update min
+  // and max in one render — two sequential setStates would race on stale params
+  // and silently leave the values unequal, which would flip linked → false.
+  const handleDarkChange = useCallback(
     (v: number) => {
-      if (linked) {
-        onMinChange(v);
-        onMaxChange(v);
-      } else {
-        onMinChange(v);
-      }
+      onChange({ min: v, max: linked ? v : saturationMax });
     },
-    [linked, onMinChange, onMaxChange],
+    [linked, onChange, saturationMax],
   );
-  const handleMaxChange = useCallback(
+  const handleLightChange = useCallback(
     (v: number) => {
-      if (linked) {
-        onMinChange(v);
-        onMaxChange(v);
-      } else {
-        onMaxChange(v);
-      }
+      onChange({ min: linked ? v : saturationMin, max: v });
     },
-    [linked, onMinChange, onMaxChange],
+    [linked, onChange, saturationMin],
   );
 
   return (
@@ -71,7 +62,7 @@ export function SaturationField({
           max={max}
           scaleExponent={scaleExponent}
           step={step}
-          onChange={handleMinChange}
+          onChange={handleDarkChange}
         />
         <button
           type="button"
@@ -96,7 +87,7 @@ export function SaturationField({
           max={max}
           scaleExponent={scaleExponent}
           step={step}
-          onChange={handleMaxChange}
+          onChange={handleLightChange}
         />
       </div>
     </div>

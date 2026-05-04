@@ -74,11 +74,8 @@ export function ParamControls({
     (key: "rotations" | "chromaPeak" | "chromaWidth" | "chromaFloor") => (value: number) => {
       onChange({ ...params, [key]: value });
     };
-  const setSaturationMin = (v: number) => {
-    onChange({ ...params, saturationMin: v });
-  };
-  const setSaturationMax = (v: number) => {
-    onChange({ ...params, saturationMax: v });
+  const setSaturationBoth = ({ min, max }: { min: number; max: number }) => {
+    onChange({ ...params, saturationMin: min, saturationMax: max });
   };
   const paramsAreSplit = params.saturationMin !== params.saturationMax;
   const [userUnlinked, setUserUnlinked] = useState(paramsAreSplit);
@@ -336,8 +333,7 @@ export function ParamControls({
                 max={SATURATION_SLIDER_MAX}
                 scaleExponent={3}
                 step={0.01}
-                onMinChange={setSaturationMin}
-                onMaxChange={setSaturationMax}
+                onChange={setSaturationBoth}
                 onLinkedChange={setLinked}
               />
             </div>
