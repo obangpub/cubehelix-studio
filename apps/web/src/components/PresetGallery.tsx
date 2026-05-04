@@ -15,11 +15,23 @@ interface PresetGalleryProps {
 
 export function PresetGallery({ onSelect }: PresetGalleryProps) {
   return (
-    <div className="preset-gallery" role="group" aria-label="Palette presets">
-      {PRESETS.map((preset) => (
-        <PresetTile key={preset.id} preset={preset} onSelect={onSelect} />
-      ))}
-    </div>
+    <section className="controls">
+      <details className="control-section" open>
+        <summary className="control-section-header">
+          <span className="control-section-title">Presets</span>
+          <span className="control-section-chevron" aria-hidden>
+            ▾
+          </span>
+        </summary>
+        <div className="control-section-body">
+          <div className="preset-gallery" role="group" aria-label="Palette presets">
+            {PRESETS.map((preset) => (
+              <PresetTile key={preset.id} preset={preset} onSelect={onSelect} />
+            ))}
+          </div>
+        </div>
+      </details>
+    </section>
   );
 }
 
