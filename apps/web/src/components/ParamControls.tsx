@@ -149,248 +149,259 @@ export function ParamControls({
   const radioName = useId();
 
   return (
-    <section className="controls">
-      <details className="control-section" open>
-        <summary className="control-section-header">
-          <span className="control-section-title">Hue</span>
-          <span className="control-section-chevron" aria-hidden>
-            ▾
-          </span>
-        </summary>
-        <div className="control-section-body">
-          <div className="hue-control">
-            <div className="hue-control-header">
-              <span className="slider-label">Starting Hue</span>
-              <details className="info-popover">
-                <summary
-                  className="info-popover-trigger"
-                  aria-label="About the starting hue wheel"
-                  title="About the starting hue wheel"
-                >
-                  ?
-                </summary>
-                <div className="info-popover-content" role="tooltip">
-                  <p>The wheel sets your gradient&apos;s starting hue, shown at full saturation.</p>
-                  <p>
-                    You may not see that hue in the gradient itself. By default the gradient starts
-                    at black, so it&apos;s hidden at that end. <em>Hue Rotations</em> also turns the
-                    hue as the gradient brightens, shifting the first visible color away from the
-                    pointer.
-                  </p>
-                  <p>
-                    Other parameters bend the gradient&apos;s path; they don&apos;t move its start.
-                  </p>
-                </div>
-              </details>
-              <input
-                id="hue-control-number"
-                className="slider-value"
-                type="number"
-                value={Number(mod3(params.start).toFixed(3))}
-                step={0.05}
-                onChange={(e) => setStart(e.currentTarget.valueAsNumber)}
-                aria-label="Starting Hue value"
-              />
-            </div>
-            <StartingHueWheel value={params.start} onChange={setStart} />
-          </div>
-          <Slider
-            label="Hue Rotations"
-            technicalName="rotations"
-            value={params.rotations}
-            min={-3}
-            max={3}
-            step={0.05}
-            numberMin={-Infinity}
-            numberMax={Infinity}
-            onChange={update("rotations")}
-          />
-        </div>
-      </details>
-
-      <details className="control-section">
-        <summary className="control-section-header">
-          <span className="control-section-title">Lightness</span>
-          <span className="control-section-chevron" aria-hidden>
-            ▾
-          </span>
-        </summary>
-        <div className="control-section-body">
-          <div className="curve-control">
-            <span className="slider-label">Lightness Curve</span>
-            <div
-              className="curve-kind-selector"
-              role="radiogroup"
-              aria-label="Lightness curve type"
-            >
-              {(["power", "sigmoid", "bezier"] as const).map((k) => (
-                <label
-                  key={k}
-                  className={`curve-kind-option ${params.lightnessCurve.kind === k ? "is-active" : ""}`}
-                >
-                  <input
-                    type="radio"
-                    name={radioName}
-                    value={k}
-                    checked={params.lightnessCurve.kind === k}
-                    onChange={() => switchKind(k)}
-                  />
-                  <span>{k.charAt(0).toUpperCase() + k.slice(1)}</span>
-                </label>
-              ))}
-            </div>
-            {params.lightnessCurve.kind === "power" && (
-              <Slider
-                label="Gamma"
-                technicalName="gamma"
-                value={params.lightnessCurve.gamma}
-                min={0.5}
-                max={2}
-                step={0.01}
-                onChange={(v) => setCurve({ kind: "power", gamma: v })}
-              />
-            )}
-            {params.lightnessCurve.kind === "sigmoid" && (
-              <>
-                <Slider
-                  label="Steepness"
-                  technicalName="sigmoidSteepness"
-                  value={params.lightnessCurve.steepness}
-                  min={0}
-                  max={12}
+    <>
+      <section className="controls">
+        <details className="control-section" open>
+          <summary className="control-section-header">
+            <span className="control-section-title">Hue</span>
+            <span className="control-section-chevron" aria-hidden>
+              ▾
+            </span>
+          </summary>
+          <div className="control-section-body">
+            <div className="hue-control">
+              <div className="hue-control-header">
+                <span className="slider-label">Starting Hue</span>
+                <details className="info-popover">
+                  <summary
+                    className="info-popover-trigger"
+                    aria-label="About the starting hue wheel"
+                    title="About the starting hue wheel"
+                  >
+                    ?
+                  </summary>
+                  <div className="info-popover-content" role="tooltip">
+                    <p>
+                      The wheel sets your gradient&apos;s starting hue, shown at full saturation.
+                    </p>
+                    <p>
+                      You may not see that hue in the gradient itself. By default the gradient
+                      starts at black, so it&apos;s hidden at that end. <em>Hue Rotations</em> also
+                      turns the hue as the gradient brightens, shifting the first visible color away
+                      from the pointer.
+                    </p>
+                    <p>
+                      Other parameters bend the gradient&apos;s path; they don&apos;t move its
+                      start.
+                    </p>
+                  </div>
+                </details>
+                <input
+                  id="hue-control-number"
+                  className="slider-value"
+                  type="number"
+                  value={Number(mod3(params.start).toFixed(3))}
                   step={0.05}
-                  onChange={(v) =>
-                    setCurve({
-                      kind: "sigmoid",
-                      steepness: v,
-                      midpoint: (params.lightnessCurve as { midpoint: number }).midpoint,
-                    })
-                  }
+                  onChange={(e) => setStart(e.currentTarget.valueAsNumber)}
+                  aria-label="Starting Hue value"
                 />
+              </div>
+              <StartingHueWheel value={params.start} onChange={setStart} />
+            </div>
+            <Slider
+              label="Hue Rotations"
+              technicalName="rotations"
+              value={params.rotations}
+              min={-3}
+              max={3}
+              step={0.05}
+              numberMin={-Infinity}
+              numberMax={Infinity}
+              onChange={update("rotations")}
+            />
+          </div>
+        </details>
+      </section>
+
+      <section className="controls">
+        <details className="control-section">
+          <summary className="control-section-header">
+            <span className="control-section-title">Lightness</span>
+            <span className="control-section-chevron" aria-hidden>
+              ▾
+            </span>
+          </summary>
+          <div className="control-section-body">
+            <div className="curve-control">
+              <span className="slider-label">Lightness Curve</span>
+              <div
+                className="curve-kind-selector"
+                role="radiogroup"
+                aria-label="Lightness curve type"
+              >
+                {(["power", "sigmoid", "bezier"] as const).map((k) => (
+                  <label
+                    key={k}
+                    className={`curve-kind-option ${params.lightnessCurve.kind === k ? "is-active" : ""}`}
+                  >
+                    <input
+                      type="radio"
+                      name={radioName}
+                      value={k}
+                      checked={params.lightnessCurve.kind === k}
+                      onChange={() => switchKind(k)}
+                    />
+                    <span>{k.charAt(0).toUpperCase() + k.slice(1)}</span>
+                  </label>
+                ))}
+              </div>
+              {params.lightnessCurve.kind === "power" && (
                 <Slider
-                  label="Midpoint"
-                  technicalName="sigmoidMidpoint"
-                  value={params.lightnessCurve.midpoint}
-                  min={0}
-                  max={1}
+                  label="Gamma"
+                  technicalName="gamma"
+                  value={params.lightnessCurve.gamma}
+                  min={0.5}
+                  max={2}
                   step={0.01}
-                  onChange={(v) =>
-                    setCurve({
-                      kind: "sigmoid",
-                      steepness: (params.lightnessCurve as { steepness: number }).steepness,
-                      midpoint: v,
-                    })
-                  }
+                  onChange={(v) => setCurve({ kind: "power", gamma: v })}
                 />
-              </>
-            )}
-            {params.lightnessCurve.kind === "bezier" && (
-              <BezierEditor
-                p1={params.lightnessCurve.p1}
-                p2={params.lightnessCurve.p2}
-                onChange={(p1, p2) => setCurve({ kind: "bezier", p1, p2 })}
-              />
-            )}
-          </div>
-          <RangeSlider
-            label="Lightness Axis"
-            technicalNameMin="lightnessAxisMin"
-            technicalNameMax="lightnessAxisMax"
-            valueMin={params.lightnessAxisMin}
-            valueMax={params.lightnessAxisMax}
-            min={0}
-            max={1}
-            step={0.01}
-            thumbMinColor={minThumbColor}
-            thumbMaxColor={maxThumbColor}
-            onChange={({ min: nextMin, max: nextMax }) =>
-              onChange({ ...params, lightnessAxisMin: nextMin, lightnessAxisMax: nextMax })
-            }
-          />
-        </div>
-      </details>
-
-      <details className="control-section" open>
-        <summary className="control-section-header">
-          <span className="control-section-title">Chroma</span>
-          <span className="control-section-chevron" aria-hidden>
-            ▾
-          </span>
-        </summary>
-        <div className="control-section-body">
-          <div className="saturation-block">
-            <span className="saturation-block-label">Saturation</span>
-            <SaturationField
-              params={params}
-              saturationMin={params.saturationMin}
-              saturationMax={params.saturationMax}
-              linked={linked}
-              max={SATURATION_SLIDER_MAX}
-              scaleExponent={3}
+              )}
+              {params.lightnessCurve.kind === "sigmoid" && (
+                <>
+                  <Slider
+                    label="Steepness"
+                    technicalName="sigmoidSteepness"
+                    value={params.lightnessCurve.steepness}
+                    min={0}
+                    max={12}
+                    step={0.05}
+                    onChange={(v) =>
+                      setCurve({
+                        kind: "sigmoid",
+                        steepness: v,
+                        midpoint: (params.lightnessCurve as { midpoint: number }).midpoint,
+                      })
+                    }
+                  />
+                  <Slider
+                    label="Midpoint"
+                    technicalName="sigmoidMidpoint"
+                    value={params.lightnessCurve.midpoint}
+                    min={0}
+                    max={1}
+                    step={0.01}
+                    onChange={(v) =>
+                      setCurve({
+                        kind: "sigmoid",
+                        steepness: (params.lightnessCurve as { steepness: number }).steepness,
+                        midpoint: v,
+                      })
+                    }
+                  />
+                </>
+              )}
+              {params.lightnessCurve.kind === "bezier" && (
+                <BezierEditor
+                  p1={params.lightnessCurve.p1}
+                  p2={params.lightnessCurve.p2}
+                  onChange={(p1, p2) => setCurve({ kind: "bezier", p1, p2 })}
+                />
+              )}
+            </div>
+            <RangeSlider
+              label="Lightness Axis"
+              technicalNameMin="lightnessAxisMin"
+              technicalNameMax="lightnessAxisMax"
+              valueMin={params.lightnessAxisMin}
+              valueMax={params.lightnessAxisMax}
+              min={0}
+              max={1}
               step={0.01}
-              onMinChange={setSaturationMin}
-              onMaxChange={setSaturationMax}
-              onLinkedChange={setLinked}
+              thumbMinColor={minThumbColor}
+              thumbMaxColor={maxThumbColor}
+              onChange={({ min: nextMin, max: nextMax }) =>
+                onChange({ ...params, lightnessAxisMin: nextMin, lightnessAxisMax: nextMax })
+              }
             />
           </div>
-          <Slider
-            label="Peak Position"
-            technicalName="chromaPeak"
-            value={params.chromaPeak}
-            min={CHROMA_PEAK_BOUNDS.min}
-            max={CHROMA_PEAK_BOUNDS.max}
-            step={0.01}
-            onChange={update("chromaPeak")}
-          />
-          <Slider
-            label="Chroma Width"
-            technicalName="chromaWidth"
-            value={params.chromaWidth}
-            min={CHROMA_WIDTH_BOUNDS.min}
-            max={CHROMA_WIDTH_BOUNDS.max}
-            step={0.01}
-            scaleExponent={2}
-            onChange={update("chromaWidth")}
-          />
-          <Slider
-            label="Chroma Floor"
-            technicalName="chromaFloor"
-            value={params.chromaFloor}
-            min={CHROMA_FLOOR_BOUNDS.min}
-            max={CHROMA_FLOOR_BOUNDS.max}
-            step={0.01}
-            onChange={update("chromaFloor")}
-          />
-        </div>
-      </details>
+        </details>
+      </section>
 
-      <details className="control-section">
-        <summary className="control-section-header">
-          <span className="control-section-title">Output</span>
-          <span className="control-section-chevron" aria-hidden>
-            ▾
-          </span>
-        </summary>
-        <div className="control-section-body">
-          <label className="toggle">
-            <input
-              type="checkbox"
-              checked={params.reverse}
-              onChange={(e) => onChange({ ...params, reverse: e.currentTarget.checked })}
+      <section className="controls">
+        <details className="control-section" open>
+          <summary className="control-section-header">
+            <span className="control-section-title">Chroma</span>
+            <span className="control-section-chevron" aria-hidden>
+              ▾
+            </span>
+          </summary>
+          <div className="control-section-body">
+            <div className="saturation-block">
+              <span className="saturation-block-label">Saturation</span>
+              <SaturationField
+                params={params}
+                saturationMin={params.saturationMin}
+                saturationMax={params.saturationMax}
+                linked={linked}
+                max={SATURATION_SLIDER_MAX}
+                scaleExponent={3}
+                step={0.01}
+                onMinChange={setSaturationMin}
+                onMaxChange={setSaturationMax}
+                onLinkedChange={setLinked}
+              />
+            </div>
+            <Slider
+              label="Peak Position"
+              technicalName="chromaPeak"
+              value={params.chromaPeak}
+              min={CHROMA_PEAK_BOUNDS.min}
+              max={CHROMA_PEAK_BOUNDS.max}
+              step={0.01}
+              onChange={update("chromaPeak")}
             />
-            <span className="slider-label">Reverse</span>
-          </label>
-          <Slider
-            label="Swatches"
-            technicalName="swatchCount"
-            value={swatchCount}
-            min={SWATCH_COUNT_BOUNDS.min}
-            max={SWATCH_COUNT_BOUNDS.max}
-            step={1}
-            onChange={(value) => onSwatchCountChange(Math.round(value))}
-          />
-        </div>
-      </details>
-    </section>
+            <Slider
+              label="Chroma Width"
+              technicalName="chromaWidth"
+              value={params.chromaWidth}
+              min={CHROMA_WIDTH_BOUNDS.min}
+              max={CHROMA_WIDTH_BOUNDS.max}
+              step={0.01}
+              scaleExponent={2}
+              onChange={update("chromaWidth")}
+            />
+            <Slider
+              label="Chroma Floor"
+              technicalName="chromaFloor"
+              value={params.chromaFloor}
+              min={CHROMA_FLOOR_BOUNDS.min}
+              max={CHROMA_FLOOR_BOUNDS.max}
+              step={0.01}
+              onChange={update("chromaFloor")}
+            />
+          </div>
+        </details>
+      </section>
+
+      <section className="controls">
+        <details className="control-section">
+          <summary className="control-section-header">
+            <span className="control-section-title">Output</span>
+            <span className="control-section-chevron" aria-hidden>
+              ▾
+            </span>
+          </summary>
+          <div className="control-section-body">
+            <label className="toggle">
+              <input
+                type="checkbox"
+                checked={params.reverse}
+                onChange={(e) => onChange({ ...params, reverse: e.currentTarget.checked })}
+              />
+              <span className="slider-label">Reverse</span>
+            </label>
+            <Slider
+              label="Swatches"
+              technicalName="swatchCount"
+              value={swatchCount}
+              min={SWATCH_COUNT_BOUNDS.min}
+              max={SWATCH_COUNT_BOUNDS.max}
+              step={1}
+              onChange={(value) => onSwatchCountChange(Math.round(value))}
+            />
+          </div>
+        </details>
+      </section>
+    </>
   );
 }
