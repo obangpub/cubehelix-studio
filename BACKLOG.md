@@ -135,24 +135,6 @@ The exact params are a tuning task — pick by feel in the running app and freez
 
 ---
 
-## Stage 2g — Help popovers on advanced controls
-
-**Goal.** Surface short, plain-language explanations next to controls whose semantics aren't obvious. The starting-hue wheel already has one (`info-popover` pattern in [ParamControls.tsx](apps/web/src/components/ParamControls.tsx)); reuse the same component.
-
-**Where to add.** Selectively, not blanket — most controls have widely-known semantics and don't need help.
-
-- Lightness Curve (radio + sub-controls) — "what does Sigmoid do? what's a Bezier handle for?"
-- Peak Position / Chroma Width / Chroma Floor — chroma-envelope shaping is novel and easily misread
-- Hue Rotations — clarify that the count is over the full lightness axis, not the visible window
-
-Skip Saturation, Lightness Axis, Reverse, Swatches — names map directly to expected behavior.
-
-**Implementation.** Extract the existing inline `<details className="info-popover">` markup from the starting-hue wheel into a reusable `<HelpPopover>` component. The trigger is a small `?` icon next to the slider label; the content panel positions below the trigger, centered, and stays within the panel via the existing CSS.
-
-**Files.** A new `apps/web/src/components/HelpPopover.tsx` and small wiring in `ParamControls.tsx`. No math, no URL state.
-
----
-
 ## Stage 3 — Diverging cubehelix
 
 **Goal.** Two-sided palette where lightness rises from a lower extreme to a midpoint pivot, then falls back to an upper extreme (or vice versa). Each half is a cubehelix with potentially different rotation count. Examples: red-to-white-to-blue with hue rotations on each side. None of the surveyed cubehelix implementations ships diverging; this is a differentiator.

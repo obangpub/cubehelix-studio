@@ -17,6 +17,7 @@ import {
   SWATCH_COUNT_BOUNDS,
 } from "../lib/url-state";
 import { BezierEditor } from "./BezierEditor";
+import { HelpPopover } from "./HelpPopover";
 import { RangeSlider } from "./RangeSlider";
 import { SaturationField } from "./SaturationField";
 import { Slider } from "./Slider";
@@ -159,30 +160,18 @@ export function ParamControls({
             <div className="hue-control">
               <div className="hue-control-header">
                 <span className="slider-label">Starting Hue</span>
-                <details className="info-popover">
-                  <summary
-                    className="info-popover-trigger"
-                    aria-label="About the starting hue wheel"
-                    title="About the starting hue wheel"
-                  >
-                    ?
-                  </summary>
-                  <div className="info-popover-content" role="tooltip">
-                    <p>
-                      The wheel sets your gradient&apos;s starting hue, shown at full saturation.
-                    </p>
-                    <p>
-                      You may not see that hue in the gradient itself. By default the gradient
-                      starts at black, so it&apos;s hidden at that end. <em>Hue Rotations</em> also
-                      turns the hue as the gradient brightens, shifting the first visible color away
-                      from the pointer.
-                    </p>
-                    <p>
-                      Other parameters bend the gradient&apos;s path; they don&apos;t move its
-                      start.
-                    </p>
-                  </div>
-                </details>
+                <HelpPopover label="About the starting hue wheel">
+                  <p>The wheel sets your gradient&apos;s starting hue, shown at full saturation.</p>
+                  <p>
+                    You may not see that hue in the gradient itself. By default the gradient starts
+                    at black, so it&apos;s hidden at that end. <em>Hue Rotations</em> also turns the
+                    hue as the gradient brightens, shifting the first visible color away from the
+                    pointer.
+                  </p>
+                  <p>
+                    Other parameters bend the gradient&apos;s path; they don&apos;t move its start.
+                  </p>
+                </HelpPopover>
                 <input
                   id="hue-control-number"
                   className="slider-value"
@@ -204,6 +193,19 @@ export function ParamControls({
               step={0.05}
               numberMin={-Infinity}
               numberMax={Infinity}
+              help={
+                <HelpPopover label="About hue rotations">
+                  <p>
+                    How many times the hue cycles between the dark and light anchors of the full
+                    lightness range, not just the visible window. Negative values turn the other
+                    way.
+                  </p>
+                  <p>
+                    The visible palette traverses a sub-arc of that full helix; clipping the{" "}
+                    <em>Lightness Axis</em> exposes fewer turns than this number suggests.
+                  </p>
+                </HelpPopover>
+              }
               onChange={update("rotations")}
             />
           </div>
@@ -220,7 +222,24 @@ export function ParamControls({
           </summary>
           <div className="control-section-body">
             <div className="curve-control">
-              <span className="slider-label">Lightness Curve</span>
+              <div className="label-with-help">
+                <span className="slider-label">Lightness Curve</span>
+                <HelpPopover label="About the lightness curve">
+                  <p>
+                    Lightness rises from black to white along the helix. This control reshapes how
+                    that rise is paced, which stretches or compresses where chroma peaks.
+                  </p>
+                  <p>
+                    <em>Power</em> uses a single gamma exponent. <em>Sigmoid</em> stretches the
+                    midtones and compresses the extremes. <em>Bezier</em> exposes two control
+                    handles for an arbitrary monotonic curve.
+                  </p>
+                  <p>
+                    The hues on the helix do not change; only the rate at which the visible palette
+                    moves through them.
+                  </p>
+                </HelpPopover>
+              </div>
               <div
                 className="curve-kind-selector"
                 role="radiogroup"
@@ -344,6 +363,15 @@ export function ParamControls({
               min={CHROMA_PEAK_BOUNDS.min}
               max={CHROMA_PEAK_BOUNDS.max}
               step={0.01}
+              help={
+                <HelpPopover label="About peak position">
+                  <p>
+                    The lightness at which chroma is most saturated. Default 0.5 puts the most vivid
+                    colors in the midtones. Lower values shift the chroma peak into the shadows;
+                    higher values shift it into the highlights.
+                  </p>
+                </HelpPopover>
+              }
               onChange={update("chromaPeak")}
             />
             <Slider
@@ -354,6 +382,15 @@ export function ParamControls({
               max={CHROMA_WIDTH_BOUNDS.max}
               step={0.01}
               scaleExponent={2}
+              help={
+                <HelpPopover label="About chroma width">
+                  <p>
+                    How sharply chroma falls off away from the peak. Small values give a narrow band
+                    of high saturation around the peak with muted endpoints; large values spread
+                    saturation broadly across the palette.
+                  </p>
+                </HelpPopover>
+              }
               onChange={update("chromaWidth")}
             />
             <Slider
@@ -363,6 +400,15 @@ export function ParamControls({
               min={CHROMA_FLOOR_BOUNDS.min}
               max={CHROMA_FLOOR_BOUNDS.max}
               step={0.01}
+              help={
+                <HelpPopover label="About chroma floor">
+                  <p>
+                    Lifts the chroma envelope at the dark and light endpoints. Default 0 makes the
+                    palette anchor at pure black and pure white. Raise this to keep some color in
+                    the shadows and highlights instead of running all the way to the cube corners.
+                  </p>
+                </HelpPopover>
+              }
               onChange={update("chromaFloor")}
             />
           </div>

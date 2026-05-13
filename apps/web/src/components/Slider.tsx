@@ -1,3 +1,5 @@
+import type { ReactNode } from "react";
+
 interface SliderProps {
   label: string;
   technicalName: string;
@@ -8,6 +10,7 @@ interface SliderProps {
   numberMin?: number;
   numberMax?: number;
   scaleExponent?: number;
+  help?: ReactNode;
   onChange: (value: number) => void;
 }
 
@@ -23,6 +26,7 @@ export function Slider({
   numberMin,
   numberMax,
   scaleExponent = 1,
+  help,
   onChange,
 }: SliderProps) {
   const id = `slider-${technicalName}`;
@@ -63,6 +67,7 @@ export function Slider({
     <div className="slider">
       <label htmlFor={id}>
         <span className="slider-label">{label}</span>
+        {help}
         <input
           id={numberId}
           className="slider-value"
