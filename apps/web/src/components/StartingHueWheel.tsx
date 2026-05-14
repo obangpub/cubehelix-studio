@@ -135,6 +135,13 @@ export function StartingHueWheel({
   const pointerAngle = angleAt(mod3(value));
   const pInner = pointFromAngle(pointerAngle, POINTER_INNER);
   const pOuter = pointFromAngle(pointerAngle, POINTER_OUTER);
+  // Fill the wheel's inner disc with the pure hue at the current value so the
+  // selected color is visible at a glance, not just inferred from the pointer
+  // position.
+  const selectedColor = useMemo(
+    () => toCssRgb(cubehelix(REFERENCE_T, wheelParams(mod3(value)))),
+    [value],
+  );
 
   return (
     <svg
@@ -154,7 +161,7 @@ export function StartingHueWheel({
       {segments.map((s, i) => (
         <path key={i} d={s.path} fill={s.color} />
       ))}
-      <circle cx={0} cy={0} r={INNER_RADIUS} fill="var(--surface)" />
+      <circle cx={0} cy={0} r={INNER_RADIUS} fill={selectedColor} />
       <line
         x1={pInner.x}
         y1={pInner.y}
