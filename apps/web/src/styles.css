@@ -419,7 +419,6 @@ header p {
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 8px;
-  overflow: hidden;
 }
 
 .control-section + .control-section {
@@ -438,6 +437,11 @@ header p {
   background: var(--bg);
   user-select: none;
   list-style: none;
+  border-radius: 7px 7px 0 0;
+}
+
+.control-section:not([open]) > .control-section-header {
+  border-radius: 7px;
 }
 
 .control-section-header::-webkit-details-marker {
@@ -732,8 +736,115 @@ header p {
   touch-action: none;
 }
 
+.hue-wheel--compact {
+  width: 130px;
+  height: 130px;
+}
+
 .hue-wheel:active {
   cursor: grabbing;
+}
+
+.hue-mode-toggle {
+  display: inline-flex;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  overflow: hidden;
+  align-self: flex-start;
+}
+
+.hue-waypoint-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.hue-waypoint-header {
+  font-size: 0.75rem;
+  color: var(--muted);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+}
+
+.hue-waypoint-hue {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.hue-waypoint-hue-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.hue-waypoint-hue-header .slider-value {
+  margin-left: auto;
+}
+
+.winding-stepper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.winding-stepper-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-left: auto;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--surface);
+}
+
+.winding-step-button {
+  font: inherit;
+  font-size: 0.95rem;
+  line-height: 1;
+  width: 1.75rem;
+  height: 1.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: var(--fg);
+  border: none;
+  cursor: pointer;
+}
+
+.winding-step-button:hover {
+  background: var(--bg);
+}
+
+.winding-step-button:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: -1px;
+}
+
+.winding-value {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.85rem;
+  min-width: 2.5rem;
+  text-align: center;
+  padding: 0 0.25rem;
+}
+
+.hue-computed-readout {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.78rem;
+  color: var(--muted);
+}
+
+.hue-computed-readout code {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  color: var(--fg);
 }
 
 .curve-control {

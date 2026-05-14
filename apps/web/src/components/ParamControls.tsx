@@ -6,8 +6,12 @@ import {
   DEFAULT_POWER_GAMMA,
   DEFAULT_SIGMOID_MIDPOINT,
   DEFAULT_SIGMOID_STEEPNESS,
+  findWindingForRotations,
+  huesAtT,
+  solveHueWaypoints,
   toCssRgb,
   type CubehelixParams,
+  type HueWaypoint,
   type LightnessCurve,
 } from "@cubehelix-studio/core";
 import {
@@ -15,9 +19,11 @@ import {
   CHROMA_PEAK_BOUNDS,
   CHROMA_WIDTH_BOUNDS,
   SWATCH_COUNT_BOUNDS,
+  type HueAuthoringState,
 } from "../lib/url-state";
 import { BezierEditor } from "./BezierEditor";
 import { HelpPopover } from "./HelpPopover";
+import { HueWaypointEditor } from "./HueWaypointEditor";
 import { RangeSlider } from "./RangeSlider";
 import { SaturationField } from "./SaturationField";
 import { Slider } from "./Slider";
@@ -38,6 +44,8 @@ interface ParamControlsProps {
   onChange: (params: CubehelixParams) => void;
   swatchCount: number;
   onSwatchCountChange: (count: number) => void;
+  hueAuthoring: HueAuthoringState;
+  onHueAuthoringChange: (next: HueAuthoringState) => void;
 }
 
 interface RememberedCurves {
@@ -70,13 +78,39 @@ export function ParamControls({
   onChange,
   swatchCount,
   onSwatchCountChange,
+  hueAuthoring,
+  onHueAuthoringChange,
 }: ParamControlsProps) {
-  const update =
-    (key: "rotations" | "chromaPeak" | "chromaWidth" | "chromaFloor") => (value: number) => {
-      onChange({ ...params, [key]: value });
-    };
+  // Apply a params patch while preserving waypoint mode: re-run the solver
+  // when in waypoint mode so start/rotations stay derived from the user's
+  // pinned waypoints under the new context (lightness curve / axis / reverse
+  // are part of that context and all reshape u → t).
+  const applyParamsPatch = (patch: Partial<CubehelixParams>) => {
+    const nextParams = { ...params, ...patch };
+    if (hueAuthoring.mode === "waypoints") {
+      const solved = solveHueWaypoints(
+        hueAuthoring.waypoints[0],
+        hueAuthoring.waypoints[1],
+        hueAuthoring.winding,
+        {
+          lightnessCurve: nextParams.lightnessCurve,
+          lightnessAxisMin: nextParams.lightnessAxisMin,
+          lightnessAxisMax: nextParams.lightnessAxisMax,
+          reverse: nextParams.reverse,
+        },
+      );
+      if (solved !== null) {
+        onChange({ ...nextParams, start: solved.start, rotations: solved.rotations });
+        return;
+      }
+    }
+    onChange(nextParams);
+  };
+  const update = (key: "chromaPeak" | "chromaWidth" | "chromaFloor") => (value: number) => {
+    applyParamsPatch({ [key]: value });
+  };
   const setSaturationBoth = ({ min, max }: { min: number; max: number }) => {
-    onChange({ ...params, saturationMin: min, saturationMax: max });
+    applyParamsPatch({ saturationMin: min, saturationMax: max });
   };
   const paramsAreSplit = params.saturationMin !== params.saturationMax;
   const [userUnlinked, setUserUnlinked] = useState(paramsAreSplit);
@@ -86,7 +120,7 @@ export function ParamControls({
       // Linking: average the two values so the gradient stays close to where
       // it was, then both sides match.
       const avg = (params.saturationMin + params.saturationMax) / 2;
-      onChange({ ...params, saturationMin: avg, saturationMax: avg });
+      applyParamsPatch({ saturationMin: avg, saturationMax: avg });
       setUserUnlinked(false);
     } else {
       setUserUnlinked(true);
@@ -94,9 +128,70 @@ export function ParamControls({
   };
   const minThumbColor = useMemo(() => toCssRgb(cubehelix(0, params)), [params]);
   const maxThumbColor = useMemo(() => toCssRgb(cubehelix(1, params)), [params]);
+
+  // Auto-switch back to freeform when the user directly edits start or
+  // rotations. The mode toggle still works for explicit transitions.
+  const switchToFreeformAnd = (patch: Partial<CubehelixParams>) => {
+    onChange({ ...params, ...patch });
+    if (hueAuthoring.mode !== "freeform") {
+      onHueAuthoringChange({ mode: "freeform" });
+    }
+  };
   const setStart = (v: number) => {
     if (!Number.isFinite(v)) return;
-    onChange({ ...params, start: mod3(v) });
+    switchToFreeformAnd({ start: mod3(v) });
+  };
+  const setRotations = (v: number) => {
+    switchToFreeformAnd({ rotations: v });
+  };
+
+  const solverCtx = {
+    lightnessCurve: params.lightnessCurve,
+    lightnessAxisMin: params.lightnessAxisMin,
+    lightnessAxisMax: params.lightnessAxisMax,
+    reverse: params.reverse,
+  };
+
+  const enterWaypointMode = () => {
+    const ts: [number, number] = [0.25, 0.75];
+    const [h1, h2] = huesAtT(params, ts);
+    const waypoints: [HueWaypoint, HueWaypoint] = [
+      { t: ts[0], hue: h1! },
+      { t: ts[1], hue: h2! },
+    ];
+    const winding = findWindingForRotations(
+      waypoints[0],
+      waypoints[1],
+      params.rotations,
+      solverCtx,
+    );
+    onHueAuthoringChange({ mode: "waypoints", waypoints, winding });
+  };
+
+  // When in waypoint mode, any change to the waypoints, winding, or solver
+  // context inputs (lightness curve / axis / reverse) re-runs the solver and
+  // writes start/rotations back into params.
+  const commitWaypointUpdate = (waypoints: [HueWaypoint, HueWaypoint], winding: number) => {
+    const solved = solveHueWaypoints(waypoints[0], waypoints[1], winding, solverCtx);
+    onHueAuthoringChange({ mode: "waypoints", waypoints, winding });
+    if (solved !== null) {
+      onChange({ ...params, start: solved.start, rotations: solved.rotations });
+    }
+  };
+
+  const setWaypoint = (idx: 0 | 1, next: HueWaypoint) => {
+    if (hueAuthoring.mode !== "waypoints") return;
+    const waypoints: [HueWaypoint, HueWaypoint] = [
+      hueAuthoring.waypoints[0],
+      hueAuthoring.waypoints[1],
+    ];
+    waypoints[idx] = next;
+    commitWaypointUpdate(waypoints, hueAuthoring.winding);
+  };
+
+  const setWinding = (next: number) => {
+    if (hueAuthoring.mode !== "waypoints") return;
+    commitWaypointUpdate(hueAuthoring.waypoints, next);
   };
 
   const [remembered, setRemembered] = useState<RememberedCurves>(() =>
@@ -119,7 +214,7 @@ export function ParamControls({
           };
       }
     });
-    onChange({ ...params, lightnessCurve: curve });
+    applyParamsPatch({ lightnessCurve: curve });
   };
   const switchKind = (kind: LightnessCurve["kind"]) => {
     if (params.lightnessCurve.kind === kind) return;
@@ -157,57 +252,142 @@ export function ParamControls({
             </span>
           </summary>
           <div className="control-section-body">
-            <div className="hue-control">
-              <div className="hue-control-header">
-                <span className="slider-label">Starting Hue</span>
-                <HelpPopover label="About the starting hue wheel">
-                  <p>The wheel sets your gradient&apos;s starting hue, shown at full saturation.</p>
-                  <p>
-                    You may not see that hue in the gradient itself. By default the gradient starts
-                    at black, so it&apos;s hidden at that end. <em>Hue Rotations</em> also turns the
-                    hue as the gradient brightens, shifting the first visible color away from the
-                    pointer.
-                  </p>
-                  <p>
-                    Other parameters bend the gradient&apos;s path; they don&apos;t move its start.
-                  </p>
-                </HelpPopover>
-                <input
-                  id="hue-control-number"
-                  className="slider-value"
-                  type="number"
-                  value={Number(mod3(params.start).toFixed(3))}
-                  step={0.05}
-                  onChange={(e) => setStart(e.currentTarget.valueAsNumber)}
-                  aria-label="Starting Hue value"
-                />
-              </div>
-              <StartingHueWheel value={params.start} onChange={setStart} />
+            <div className="hue-mode-toggle" role="radiogroup" aria-label="Hue authoring mode">
+              {(["freeform", "waypoints"] as const).map((m) => (
+                <label
+                  key={m}
+                  className={`curve-kind-option ${hueAuthoring.mode === m ? "is-active" : ""}`}
+                >
+                  <input
+                    type="radio"
+                    name={`${radioName}-mode`}
+                    value={m}
+                    checked={hueAuthoring.mode === m}
+                    onChange={() => {
+                      if (m === "waypoints" && hueAuthoring.mode !== "waypoints") {
+                        enterWaypointMode();
+                      } else if (m === "freeform" && hueAuthoring.mode !== "freeform") {
+                        onHueAuthoringChange({ mode: "freeform" });
+                      }
+                    }}
+                  />
+                  <span>{m === "freeform" ? "Freeform" : "Waypoints"}</span>
+                </label>
+              ))}
             </div>
-            <Slider
-              label="Hue Rotations"
-              technicalName="rotations"
-              value={params.rotations}
-              min={-3}
-              max={3}
-              step={0.05}
-              numberMin={-Infinity}
-              numberMax={Infinity}
-              help={
-                <HelpPopover label="About hue rotations">
-                  <p>
-                    How many times the hue cycles between the dark and light anchors of the full
-                    lightness range, not just the visible window. Negative values turn the other
-                    way.
-                  </p>
-                  <p>
-                    The visible palette traverses a sub-arc of that full helix; clipping the{" "}
-                    <em>Lightness Axis</em> exposes fewer turns than this number suggests.
-                  </p>
-                </HelpPopover>
-              }
-              onChange={update("rotations")}
-            />
+            {hueAuthoring.mode === "freeform" ? (
+              <>
+                <div className="hue-control">
+                  <div className="hue-control-header">
+                    <span className="slider-label">Starting Hue</span>
+                    <HelpPopover label="About the starting hue wheel">
+                      <p>
+                        The wheel sets your gradient&apos;s starting hue, shown at full saturation.
+                      </p>
+                      <p>
+                        You may not see that hue in the gradient itself. By default the gradient
+                        starts at black, so it&apos;s hidden at that end. <em>Hue Rotations</em>{" "}
+                        also turns the hue as the gradient brightens, shifting the first visible
+                        color away from the pointer.
+                      </p>
+                      <p>
+                        Other parameters bend the gradient&apos;s path; they don&apos;t move its
+                        start.
+                      </p>
+                    </HelpPopover>
+                    <input
+                      id="hue-control-number"
+                      className="slider-value"
+                      type="number"
+                      value={Number(mod3(params.start).toFixed(3))}
+                      step={0.05}
+                      onChange={(e) => setStart(e.currentTarget.valueAsNumber)}
+                      aria-label="Starting Hue value"
+                    />
+                  </div>
+                  <StartingHueWheel value={params.start} onChange={setStart} />
+                </div>
+                <Slider
+                  label="Hue Rotations"
+                  technicalName="rotations"
+                  value={params.rotations}
+                  min={-3}
+                  max={3}
+                  step={0.05}
+                  numberMin={-Infinity}
+                  numberMax={Infinity}
+                  help={
+                    <HelpPopover label="About hue rotations">
+                      <p>
+                        How many times the hue cycles between the dark and light anchors of the full
+                        lightness range, not just the visible window. Negative values turn the other
+                        way.
+                      </p>
+                      <p>
+                        The visible palette traverses a sub-arc of that full helix; clipping the{" "}
+                        <em>Lightness Axis</em> exposes fewer turns than this number suggests.
+                      </p>
+                    </HelpPopover>
+                  }
+                  onChange={setRotations}
+                />
+              </>
+            ) : (
+              <>
+                <HueWaypointEditor
+                  index={1}
+                  waypoint={hueAuthoring.waypoints[0]}
+                  otherT={hueAuthoring.waypoints[1].t}
+                  onChange={(next) => setWaypoint(0, next)}
+                />
+                <HueWaypointEditor
+                  index={2}
+                  waypoint={hueAuthoring.waypoints[1]}
+                  otherT={hueAuthoring.waypoints[0].t}
+                  onChange={(next) => setWaypoint(1, next)}
+                />
+                <div className="winding-stepper">
+                  <span className="slider-label">Winding</span>
+                  <HelpPopover label="About winding">
+                    <p>
+                      The waypoint hues lie on the hue circle, which means there are infinitely many
+                      helices that pass through both. Each integer of <em>winding</em> picks a
+                      different one — winding 0 takes the shortest path between the two hues; higher
+                      values spin through additional full hue cycles.
+                    </p>
+                  </HelpPopover>
+                  <div className="winding-stepper-controls">
+                    <button
+                      type="button"
+                      className="winding-step-button"
+                      onClick={() => setWinding(hueAuthoring.winding - 1)}
+                      aria-label="Decrease winding"
+                    >
+                      −
+                    </button>
+                    <span className="winding-value">
+                      {hueAuthoring.winding > 0 ? `+${hueAuthoring.winding}` : hueAuthoring.winding}
+                    </span>
+                    <button
+                      type="button"
+                      className="winding-step-button"
+                      onClick={() => setWinding(hueAuthoring.winding + 1)}
+                      aria-label="Increase winding"
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
+                <div className="hue-computed-readout">
+                  <span>
+                    start = <code>{mod3(params.start).toFixed(3)}</code>
+                  </span>
+                  <span>
+                    rotations = <code>{params.rotations.toFixed(3)}</code>
+                  </span>
+                </div>
+              </>
+            )}
           </div>
         </details>
       </section>
@@ -326,7 +506,7 @@ export function ParamControls({
               thumbMinColor={minThumbColor}
               thumbMaxColor={maxThumbColor}
               onChange={({ min: nextMin, max: nextMax }) =>
-                onChange({ ...params, lightnessAxisMin: nextMin, lightnessAxisMax: nextMax })
+                applyParamsPatch({ lightnessAxisMin: nextMin, lightnessAxisMax: nextMax })
               }
             />
           </div>
@@ -428,7 +608,7 @@ export function ParamControls({
               <input
                 type="checkbox"
                 checked={params.reverse}
-                onChange={(e) => onChange({ ...params, reverse: e.currentTarget.checked })}
+                onChange={(e) => applyParamsPatch({ reverse: e.currentTarget.checked })}
               />
               <span className="slider-label">Reverse</span>
             </label>

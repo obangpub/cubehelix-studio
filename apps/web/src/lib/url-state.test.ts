@@ -366,12 +366,17 @@ describe("encodeAppState / decodeAppState", () => {
     const qs = encodeAppState({
       params: { ...DEFAULT_CUBEHELIX_PARAMS, saturationMin: 1.5, saturationMax: 1.5 },
       swatchCount: DEFAULT_SWATCH_COUNT,
+      hueAuthoring: { mode: "freeform" },
     });
     expect(qs).toBe("?saturation=1.5");
   });
 
   test("non-default swatchCount is encoded", () => {
-    const qs = encodeAppState({ params: DEFAULT_CUBEHELIX_PARAMS, swatchCount: 12 });
+    const qs = encodeAppState({
+      params: DEFAULT_CUBEHELIX_PARAMS,
+      swatchCount: 12,
+      hueAuthoring: { mode: "freeform" },
+    });
     expect(qs).toBe("?swatchCount=12");
   });
 
@@ -406,7 +411,110 @@ describe("encodeAppState / decodeAppState", () => {
         reverse: true,
       } satisfies CubehelixParams,
       swatchCount: 14,
+      hueAuthoring: { mode: "freeform" } as const,
     };
     expect(decodeAppState(encodeAppState(original))).toEqual(original);
+  });
+
+  test("waypoint-mode round-trip preserves waypoints, winding, and derived params", () => {
+    const original = {
+      params: DEFAULT_CUBEHELIX_PARAMS,
+      swatchCount: DEFAULT_SWATCH_COUNT,
+      hueAuthoring: {
+        mode: "waypoints" as const,
+        waypoints: [
+          { t: 0.25, hue: 0.15 },
+          { t: 0.75, hue: 0.6 },
+        ] as [{ t: number; hue: number }, { t: number; hue: number }],
+        winding: 0,
+      },
+    };
+    const encoded = encodeAppState(original);
+    expect(encoded).toContain("hueMode=waypoints");
+    expect(encoded).toContain("wp=");
+    expect(encoded).not.toContain("start=");
+    expect(encoded).not.toContain("rotations=");
+    const decoded = decodeAppState(encoded);
+    expect(decoded.hueAuthoring.mode).toBe("waypoints");
+    if (decoded.hueAuthoring.mode === "waypoints") {
+      expect(decoded.hueAuthoring.waypoints[0].t).toBeCloseTo(0.25, 6);
+      expect(decoded.hueAuthoring.waypoints[0].hue).toBeCloseTo(0.15, 6);
+      expect(decoded.hueAuthoring.waypoints[1].t).toBeCloseTo(0.75, 6);
+      expect(decoded.hueAuthoring.waypoints[1].hue).toBeCloseTo(0.6, 6);
+      expect(decoded.hueAuthoring.winding).toBe(0);
+    }
+  });
+
+  test("waypoint-mode encodes winding when non-zero", () => {
+    const encoded = encodeAppState({
+      params: DEFAULT_CUBEHELIX_PARAMS,
+      swatchCount: DEFAULT_SWATCH_COUNT,
+      hueAuthoring: {
+        mode: "waypoints",
+        waypoints: [
+          { t: 0.2, hue: 0.1 },
+          { t: 0.8, hue: 0.7 },
+        ],
+        winding: 2,
+      },
+    });
+    expect(encoded).toContain("winding=2");
+  });
+
+  test("waypoint-mode omits zero winding from URL", () => {
+    const encoded = encodeAppState({
+      params: DEFAULT_CUBEHELIX_PARAMS,
+      swatchCount: DEFAULT_SWATCH_COUNT,
+      hueAuthoring: {
+        mode: "waypoints",
+        waypoints: [
+          { t: 0.2, hue: 0.1 },
+          { t: 0.8, hue: 0.7 },
+        ],
+        winding: 0,
+      },
+    });
+    expect(encoded).not.toContain("winding=");
+  });
+
+  test("hueMode=waypoints without valid wp falls back to freeform", () => {
+    const decoded = decodeAppState("?hueMode=waypoints");
+    expect(decoded.hueAuthoring.mode).toBe("freeform");
+  });
+
+  test("malformed wp falls back to freeform without throwing", () => {
+    const decoded = decodeAppState("?hueMode=waypoints&wp=garbage");
+    expect(decoded.hueAuthoring.mode).toBe("freeform");
+  });
+
+  test("waypoints solve to start/rotations that place the requested hues", () => {
+    const original = {
+      params: DEFAULT_CUBEHELIX_PARAMS,
+      swatchCount: DEFAULT_SWATCH_COUNT,
+      hueAuthoring: {
+        mode: "waypoints" as const,
+        waypoints: [
+          { t: 0.25, hue: 0.2 },
+          { t: 0.75, hue: 0.65 },
+        ] as [{ t: number; hue: number }, { t: number; hue: number }],
+        winding: 0,
+      },
+    };
+    const decoded = decodeAppState(encodeAppState(original));
+    // The decoded params should produce the requested hues at the requested t's.
+    const { start, rotations, lightnessAxisMin, lightnessAxisMax, lightnessCurve, reverse } =
+      decoded.params;
+    function angleAtT(t: number): number {
+      // Inline the same math as the solver to verify what we got back.
+      const uMin = lightnessAxisMin; // power gamma=1 default → u == fraction
+      const uMax = lightnessAxisMax;
+      const tEff = reverse ? 1 - t : t;
+      const u = uMin + (uMax - uMin) * tEff;
+      const a = start / 3 + rotations * u + 1;
+      return a - Math.floor(a);
+    }
+    void lightnessCurve;
+    expect(angleAtT(0.25)).toBeCloseTo(0.2, 4);
+    expect(angleAtT(0.75)).toBeCloseTo(0.65, 4);
   });
 });

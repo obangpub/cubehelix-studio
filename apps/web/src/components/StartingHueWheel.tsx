@@ -9,6 +9,8 @@ import {
 interface StartingHueWheelProps {
   value: number;
   onChange: (next: number) => void;
+  ariaLabel?: string;
+  compact?: boolean;
 }
 
 const SEGMENT_COUNT = 60;
@@ -68,7 +70,12 @@ function arcSegmentPath(angleStart: number, angleEnd: number): string {
   return `M ${o0.x} ${o0.y} A ${OUTER_RADIUS} ${OUTER_RADIUS} 0 0 1 ${o1.x} ${o1.y} L ${i1.x} ${i1.y} A ${INNER_RADIUS} ${INNER_RADIUS} 0 0 0 ${i0.x} ${i0.y} Z`;
 }
 
-export function StartingHueWheel({ value, onChange }: StartingHueWheelProps) {
+export function StartingHueWheel({
+  value,
+  onChange,
+  ariaLabel = "Starting Hue",
+  compact = false,
+}: StartingHueWheelProps) {
   const segments = useMemo(() => {
     const out: { path: string; color: string }[] = [];
     for (let i = 0; i < SEGMENT_COUNT; i++) {
@@ -132,10 +139,10 @@ export function StartingHueWheel({ value, onChange }: StartingHueWheelProps) {
   return (
     <svg
       ref={svgRef}
-      className="hue-wheel"
+      className={compact ? "hue-wheel hue-wheel--compact" : "hue-wheel"}
       viewBox="-1.15 -1.15 2.3 2.3"
       role="slider"
-      aria-label="Starting Hue"
+      aria-label={ariaLabel}
       aria-valuemin={0}
       aria-valuemax={3}
       aria-valuenow={Number(mod3(value).toFixed(3))}

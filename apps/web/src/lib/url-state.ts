@@ -6,13 +6,20 @@ import {
   DEFAULT_POWER_GAMMA,
   DEFAULT_SIGMOID_MIDPOINT,
   DEFAULT_SIGMOID_STEEPNESS,
+  solveHueWaypoints,
   type CubehelixParams,
+  type HueWaypoint,
   type LightnessCurve,
 } from "@cubehelix-studio/core";
+
+export type HueAuthoringState =
+  | { mode: "freeform" }
+  | { mode: "waypoints"; waypoints: [HueWaypoint, HueWaypoint]; winding: number };
 
 export interface AppState {
   params: CubehelixParams;
   swatchCount: number;
+  hueAuthoring: HueAuthoringState;
 }
 
 export const DEFAULT_SWATCH_COUNT = 9;
@@ -28,6 +35,7 @@ export const CHROMA_FLOOR_BOUNDS = { min: 0, max: 1 } as const;
 export const DEFAULT_APP_STATE: AppState = {
   params: DEFAULT_CUBEHELIX_PARAMS,
   swatchCount: DEFAULT_SWATCH_COUNT,
+  hueAuthoring: { mode: "freeform" },
 };
 
 type SimpleNumericKey =
@@ -274,6 +282,20 @@ export function decodeParams(searchString: string): CubehelixParams {
 export function encodeAppState(state: AppState): string {
   const search = new URLSearchParams();
   appendParamsToSearch(search, state.params);
+  if (state.hueAuthoring.mode === "waypoints") {
+    // start and rotations are derived from waypoints; omit them so the URL
+    // has one canonical source of truth.
+    search.delete("start");
+    search.delete("rotations");
+    search.set("hueMode", "waypoints");
+    const wp = state.hueAuthoring.waypoints
+      .map((w) => `${roundTo(w.t, ENCODE_PRECISION)}:${roundTo(w.hue, ENCODE_PRECISION)}`)
+      .join(",");
+    search.set("wp", wp);
+    if (state.hueAuthoring.winding !== 0) {
+      search.set("winding", String(state.hueAuthoring.winding));
+    }
+  }
   const swatchCount = Math.round(state.swatchCount);
   if (swatchCount !== DEFAULT_SWATCH_COUNT) {
     search.set("swatchCount", String(swatchCount));
@@ -284,7 +306,24 @@ export function encodeAppState(state: AppState): string {
 
 export function decodeAppState(searchString: string): AppState {
   const search = new URLSearchParams(searchString);
-  const params = readParamsFromSearch(search);
+  let params = readParamsFromSearch(search);
+  let hueAuthoring: HueAuthoringState = { mode: "freeform" };
+  if (search.get("hueMode") === "waypoints") {
+    const parsed = parseWaypointsParam(search.get("wp"));
+    if (parsed !== null) {
+      const winding = parseWindingParam(search.get("winding"));
+      const solved = solveHueWaypoints(parsed[0], parsed[1], winding, {
+        lightnessCurve: params.lightnessCurve,
+        lightnessAxisMin: params.lightnessAxisMin,
+        lightnessAxisMax: params.lightnessAxisMax,
+        reverse: params.reverse,
+      });
+      if (solved !== null) {
+        params = { ...params, start: solved.start, rotations: solved.rotations };
+        hueAuthoring = { mode: "waypoints", waypoints: parsed, winding };
+      }
+    }
+  }
   let swatchCount = DEFAULT_SWATCH_COUNT;
   const rawCount = search.get("swatchCount");
   if (rawCount !== null) {
@@ -293,5 +332,31 @@ export function decodeAppState(searchString: string): AppState {
       swatchCount = clamp(Math.round(num), SWATCH_COUNT_BOUNDS.min, SWATCH_COUNT_BOUNDS.max);
     }
   }
-  return { params, swatchCount };
+  return { params, swatchCount, hueAuthoring };
+}
+
+function parseWaypointsParam(raw: string | null): [HueWaypoint, HueWaypoint] | null {
+  if (raw === null) return null;
+  const parts = raw.split(",");
+  if (parts.length !== 2) return null;
+  const result: HueWaypoint[] = [];
+  for (const part of parts) {
+    const [tRaw, hRaw] = part.split(":");
+    if (tRaw === undefined || hRaw === undefined) return null;
+    const t = Number(tRaw);
+    const h = Number(hRaw);
+    if (!Number.isFinite(t) || !Number.isFinite(h)) return null;
+    result.push({
+      t: clamp(t, 0, 1),
+      hue: ((h % 1) + 1) % 1,
+    });
+  }
+  return [result[0]!, result[1]!];
+}
+
+function parseWindingParam(raw: string | null): number {
+  if (raw === null) return 0;
+  const num = Number(raw);
+  if (!Number.isFinite(num)) return 0;
+  return Math.round(num);
 }

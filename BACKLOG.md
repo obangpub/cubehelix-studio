@@ -85,42 +85,6 @@ The parameter panel is a stack of collapsible sections (native `<details>`):
 
 ---
 
-## Stage 2d — Hue waypoints
-
-**Goal.** Let the user say "the hue at `t = 0.2` should be magenta, and the hue at `t = 0.8` should be teal" and have the tool back-solve `start` and `rotations` to satisfy those constraints. Two waypoints fully determine the two parameters.
-
-**Math.** The cubehelix angle at a given t is `angle(u) = 2π · (start/3 + rotations · u + 1)` where `u` is the helix parameter (recall: u maps to t via the lightness axis bounds). For waypoints, the user specifies hue at a given `t`, so we evaluate u at that t and solve. Given two waypoints `(t1, hue1)` and `(t2, hue2)` (where hue is a target cubehelix angle, not an HSL hue):
-
-```text
-u_i  = uMin + (uMax - uMin) · t_i
-angle_i = 2π · (start/3 + rotations · u_i + 1)   ≡ hue_i (mod 2π)
-```
-
-Subtracting: `2π · rotations · (u2 − u1) ≡ (hue2 − hue1) (mod 2π)`.
-
-This admits multiple solutions for `rotations` differing by integer cycles (`+2π · n / (u2 − u1)` for any integer n). The user must pick which "winding" they want — pick the rotation count closest to a current/default value, or expose it as a "winding" integer alongside the waypoints.
-
-**Mapping hue picker → cubehelix angle.** The starting-hue wheel already maps `start ∈ [0, 3]` to a 2D ring color. Reuse the same picker for waypoints; each waypoint emits a target angle.
-
-**Type changes.** Decide whether waypoints supplement or replace `start`/`rotations`:
-
-- Supplement: `hueWaypoints?: { t: number; angle: number }[]`. When present, `start` and `rotations` are derived from waypoints (existing fields become read-only, or are recomputed when waypoints change).
-- Replace: introduce a `hueMode: "freeform" | "waypoints"` field; in waypoint mode, `start`/`rotations` are derived.
-
-Mode toggle preferred.
-
-**URL keys.** `hueWaypoints` as comma list `t1:hue1,t2:hue2,...`, plus a `windingChoice` integer if needed. Presence overrides `start`/`rotations`.
-
-**UI.** Two waypoint rows under the existing wheel. Each row has a `t` slider and a hue picker (small wheel or color swatch with a click-to-edit). Computed `start` / `rotations` are shown as read-only. Possibly a "winding" selector to pick among integer-shifted solutions.
-
-**Solver.** Two-equation system, closed-form. Care for the modular arithmetic (`hue2 − hue1` should land in `[−π, π]` before computing rotations).
-
-**Tests.** Round-trip: setting waypoints, computing `(start, rotations)`, evaluating cubehelix at the waypoint ts should yield the requested angles within numerical tolerance. Multiple windings produce visibly different curves but all satisfy the waypoint constraints.
-
-**Files.** `packages/core/src/cubehelix.ts` (or a new `packages/core/src/waypoints.ts`), web `ParamControls.tsx` and a new `HueWaypointRow.tsx` or similar, URL state, tests. Python may not need a mirror if this is purely a UI-side computation that produces standard `(start, rotations)` — but if you keep waypoints in the params object, Python needs the same field.
-
----
-
 ## Stage 2e — Diverging cubehelix presets
 
 **Goal.** Add a diverging-mode set to the existing preset gallery once Stage 3 (diverging cubehelix) lands. Sequential presets ship now in [packages/core/src/presets.ts](packages/core/src/presets.ts); a diverging set joins them via the same `Preset` type with `mode: "diverging"`.
@@ -241,13 +205,9 @@ These came up in the field-survey of other cubehelix implementations; documentin
 
 ## Recommended execution order
 
-1. **Stage 2c** (saturation range along the curve). Closes the only field-standard knob we don't yet expose; piggybacks on the chroma-envelope parity scaffolding.
-2. **Stage 2d** (hue waypoints). Mostly UI + small solver. Reuses the starting-hue wheel.
-3. **Stage 2e** (curated preset gallery). No math; quick UX win that strengthens positioning. Slot in any time.
-4. **Stage 2f** (perceptual previews). Pure rendering work; can land independently of any math stage. Substantiates the "survives grayscale, colorblindness, and print" claim in the README.
-5. **Stage 2g** (help popovers). UI-only polish; can ship anytime.
-6. **Stage 3** (diverging cubehelix). Largest restructuring; do last. Two-cube cube-viz layout is the headline visualization. Stage 2f's CVD module should also be applied to the diverging palettes once Stage 3 ships.
+What remains:
 
-Stages 2e, 2f, and 2g are independent of the math stages and can land at any point — useful low-risk inserts while bigger work is in flight.
+1. **Stage 3** (diverging cubehelix). Largest restructuring. Two-cube cube-viz layout is the headline visualization. The existing CVD module should also apply to the diverging palettes once this ships.
+2. **Stage 2e** (diverging cubehelix presets). Slots into the existing preset gallery once Stage 3 lands — just adds entries with `mode: "diverging"`.
 
 Each stage should be a single logical commit (or commit pair: math/types + UI). Validate parity after each.

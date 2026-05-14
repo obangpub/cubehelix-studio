@@ -11,7 +11,7 @@ import { PreviewControl } from "./components/PreviewControl";
 import { ShareLink } from "./components/ShareLink";
 import { SwatchRow } from "./components/SwatchRow";
 import { useUrlParams } from "./hooks/useUrlParams";
-import { DEFAULT_APP_STATE } from "./lib/url-state";
+import { DEFAULT_APP_STATE, type HueAuthoringState } from "./lib/url-state";
 
 export type Theme = "light" | "dark";
 
@@ -43,7 +43,7 @@ function detectSystemTheme(): Theme {
 
 export default function App() {
   const [state, setState] = useUrlParams();
-  const { params, swatchCount } = state;
+  const { params, swatchCount, hueAuthoring } = state;
   const [resetSignal, setResetSignal] = useState(0);
   const [previewMode, setPreviewMode] = useState<PreviewMode>("normal");
   const [appTheme, setAppThemeState] = useState<Theme>(
@@ -65,6 +65,9 @@ export default function App() {
   };
   const setSwatchCount = (next: number) => {
     setState((prev) => ({ ...prev, swatchCount: next }));
+  };
+  const setHueAuthoring = (next: HueAuthoringState) => {
+    setState((prev) => ({ ...prev, hueAuthoring: next }));
   };
   const handleReset = () => {
     setState(DEFAULT_APP_STATE);
@@ -122,12 +125,23 @@ export default function App() {
           <SwatchRow params={params} count={swatchCount} previewMode={previewMode} />
         </section>
         <div className="layout-controls">
-          <PresetGallery onSelect={setParams} />
+          <PresetGallery
+            onSelect={(nextParams) => {
+              setParams(nextParams);
+              // Presets ship start/rotations directly; drop any waypoint state
+              // so the loaded preset isn't immediately re-solved away.
+              if (hueAuthoring.mode !== "freeform") {
+                setHueAuthoring({ mode: "freeform" });
+              }
+            }}
+          />
           <ParamControls
             params={params}
             onChange={setParams}
             swatchCount={swatchCount}
             onSwatchCountChange={setSwatchCount}
+            hueAuthoring={hueAuthoring}
+            onHueAuthoringChange={setHueAuthoring}
           />
         </div>
       </div>
