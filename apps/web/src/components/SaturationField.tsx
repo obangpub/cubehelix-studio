@@ -312,12 +312,15 @@ function UnlinkedIcon() {
         stroke="currentColor"
         strokeWidth="1.4"
       />
+      {/* Shackle swung open on its left hinge so the unlocked state is
+          unmistakable, not a faint outline change against the linked icon. */}
       <path
         fill="none"
         stroke="currentColor"
         strokeWidth="1.4"
         strokeLinecap="round"
-        d="M5.5 7V4.5a2.5 2.5 0 0 1 5 0"
+        transform="rotate(-22 5.5 7)"
+        d="M5.5 7V4A3 3 0 0 1 10.5 5"
       />
     </svg>
   );
