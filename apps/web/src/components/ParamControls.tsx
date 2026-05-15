@@ -136,20 +136,14 @@ export function ParamControls({
   const minThumbColor = useMemo(() => toCssRgb(cubehelix(0, params)), [params]);
   const maxThumbColor = useMemo(() => toCssRgb(cubehelix(1, params)), [params]);
 
-  // Auto-switch back to freeform when the user directly edits start or
-  // rotations. The mode toggle still works for explicit transitions.
-  const switchToFreeformAnd = (patch: Partial<CubehelixParams>) => {
-    onChange({ ...params, ...patch });
-    if (hueAuthoring.mode !== "freeform") {
-      onHueAuthoringChange({ mode: "freeform" });
-    }
-  };
+  // The Starting Hue wheel and Hue Rotations slider only render in freeform
+  // mode, so these setters always run with mode already "freeform".
   const setStart = (v: number) => {
     if (!Number.isFinite(v)) return;
-    switchToFreeformAnd({ start: mod3(v) });
+    onChange({ ...params, start: mod3(v) });
   };
   const setRotations = (v: number) => {
-    switchToFreeformAnd({ rotations: v });
+    onChange({ ...params, rotations: v });
   };
 
   const solverCtx = {

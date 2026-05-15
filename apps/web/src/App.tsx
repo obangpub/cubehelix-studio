@@ -92,13 +92,14 @@ function AppInner() {
     setState(DEFAULT_APP_STATE);
     setResetSignal((n) => n + 1);
   };
+  // App theme and cube-viz theme are independent: the header toggle changes
+  // only the app chrome, the cube toolbar's own toggle changes only the cube.
+  // Neither cascades into the other, so a deliberate cube-theme choice is
+  // never silently overwritten.
   const toggleAppTheme = () => {
     const next: Theme = appTheme === "light" ? "dark" : "light";
     setAppThemeState(next);
     writeStoredTheme(APP_THEME_KEY, next);
-    // Master toggle cascades into the cube viz so the whole app moves together.
-    setCubeThemeState(next);
-    writeStoredTheme(CUBE_THEME_KEY, next);
     announce(next === "dark" ? "Dark theme" : "Light theme");
   };
   const setCubeTheme = (next: Theme) => {
@@ -146,6 +147,7 @@ function AppInner() {
         </section>
         <div className="layout-controls">
           <PresetGallery
+            params={params}
             onSelect={(nextParams) => {
               setParams(nextParams);
               // Presets ship start/rotations directly; drop any waypoint state

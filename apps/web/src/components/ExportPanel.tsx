@@ -1,4 +1,4 @@
-import { useId, useMemo, useRef, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import {
   DEFAULT_ROLES,
   serialize,
@@ -45,6 +45,13 @@ export function ExportPanel({ params, swatchCount }: ExportPanelProps) {
   const announce = useAnnounce();
   const baseId = useId();
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const copyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (copyTimerRef.current !== null) clearTimeout(copyTimerRef.current);
+    };
+  }, []);
 
   const palette: RolePalette = useMemo(
     () => ({ params, roles: rolesForCount(swatchCount) }),
@@ -93,7 +100,9 @@ export function ExportPanel({ params, swatchCount }: ExportPanelProps) {
     } catch {
       setCopyStatus("failed");
     }
-    setTimeout(() => setCopyStatus("idle"), COPY_FEEDBACK_MS);
+    // Reset any in-flight revert timer so rapid clicks don't race.
+    if (copyTimerRef.current !== null) clearTimeout(copyTimerRef.current);
+    copyTimerRef.current = setTimeout(() => setCopyStatus("idle"), COPY_FEEDBACK_MS);
   };
 
   const copyTooltip =

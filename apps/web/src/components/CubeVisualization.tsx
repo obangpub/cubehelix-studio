@@ -692,6 +692,7 @@ function SnapPanel({ onSnap }: SnapPanelProps) {
               type="button"
               className="cube-snap-button"
               onClick={() => onSnap(s.id)}
+              aria-label={`Snap to ${s.label} corner`}
             >
               <span className="cube-snap-swatch" style={{ background: s.swatch }} aria-hidden />
               <span>{s.label}</span>
@@ -708,6 +709,7 @@ function SnapPanel({ onSnap }: SnapPanelProps) {
               type="button"
               className="cube-snap-button"
               onClick={() => onSnap(s.id)}
+              aria-label={`Snap to ${s.label} face`}
             >
               <span className="cube-snap-swatch" style={{ background: s.swatch }} aria-hidden />
               <span>{s.label}</span>
