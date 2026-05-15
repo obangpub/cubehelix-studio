@@ -45,6 +45,10 @@ export default function App() {
   const [state, setState] = useUrlParams();
   const { params, swatchCount, hueAuthoring } = state;
   const [resetSignal, setResetSignal] = useState(0);
+  // Bumped on preset load to remount ParamControls (clearing its Tier 3 state —
+  // userUnlinked, remembered curves) without disturbing the cube camera, which
+  // a full resetSignal pulse would.
+  const [presetEpoch, setPresetEpoch] = useState(0);
   const [previewMode, setPreviewMode] = useState<PreviewMode>("normal");
   const [appTheme, setAppThemeState] = useState<Theme>(
     () => readStoredTheme(APP_THEME_KEY) ?? detectSystemTheme(),
@@ -138,10 +142,13 @@ export default function App() {
               if (hueAuthoring.mode !== "freeform") {
                 setHueAuthoring({ mode: "freeform" });
               }
+              // Remount ParamControls so its Tier 3 state (saturation
+              // link state, remembered curves) re-seeds from the preset.
+              setPresetEpoch((n) => n + 1);
             }}
           />
           <ParamControls
-            key={resetSignal}
+            key={`${resetSignal}-${presetEpoch}`}
             params={params}
             onChange={setParams}
             swatchCount={swatchCount}
