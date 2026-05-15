@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useId, useRef } from "react";
 import { helixGeometry, type CubehelixParams } from "@cubehelix-studio/core";
 import { clamp01 } from "../lib/math";
+import { positionToValue, valueToPosition } from "../lib/scale";
 
 const FIELD_WIDTH = 88;
 const FIELD_HEIGHT = 132;
@@ -123,26 +124,15 @@ function SaturationFieldBox({
     drawField(canvas, side, params, otherValue, linked, max, scaleExponent);
   }, [params, side, otherValue, linked, max, scaleExponent]);
 
-  const positionToValue = (p: number): number => {
-    const clamped = Math.max(0, Math.min(1, p));
-    const v = max * Math.pow(clamped, scaleExponent);
-    if (step > 0) {
-      const decimals = Math.max(0, Math.ceil(-Math.log10(step)));
-      return Number(v.toFixed(decimals));
-    }
-    return v;
-  };
-  const valueToPosition = (v: number): number => {
-    const clamped = Math.max(0, Math.min(max, v));
-    return Math.pow(clamped / max, 1 / scaleExponent);
-  };
+  // Saturation runs from 0 at the bottom of the track to `max` at the top.
+  const scale = { min: 0, max, exponent: scaleExponent, step };
 
   const updateFromPointer = (clientY: number) => {
     const rect = trackRef.current?.getBoundingClientRect();
     if (!rect) return;
     const yFromTop = clientY - rect.top;
     const positionFromBottom = 1 - yFromTop / rect.height;
-    onChange(positionToValue(positionFromBottom));
+    onChange(positionToValue(positionFromBottom, scale));
   };
 
   const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
@@ -186,7 +176,7 @@ function SaturationFieldBox({
     onChange(next);
   };
 
-  const thumbBottomPercent = valueToPosition(ownValue) * 100;
+  const thumbBottomPercent = valueToPosition(ownValue, scale) * 100;
   const label = side === "dark" ? "Dark" : "Light";
 
   return (
@@ -280,7 +270,7 @@ function drawField(
 
   for (let y = 0; y < h; y++) {
     const positionFromBottom = (h - 1 - y) / (h - 1);
-    const rowSat = max * Math.pow(positionFromBottom, scaleExponent);
+    const rowSat = positionToValue(positionFromBottom, { min: 0, max, exponent: scaleExponent });
     for (let x = 0; x < w; x++) {
       const t = columnT[x]!;
       const f = fraction[x]!;
