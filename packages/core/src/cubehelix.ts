@@ -25,17 +25,28 @@ export const DEFAULT_CUBEHELIX_PARAMS: CubehelixParams = {
   reverse: false,
 };
 
-export function cubehelixRaw(t: number, params: CubehelixParams): RGB {
-  const {
-    start,
-    rotations,
-    saturationMin,
-    saturationMax,
-    lightnessCurve,
-    lightnessAxisMin,
-    lightnessAxisMax,
-    reverse,
-  } = params;
+/**
+ * The geometry of the cubehelix curve at parameter `t`, decomposed so a caller
+ * can reconstruct a color at any saturation: `channel = fraction + saturation *
+ * envelope * direction`. This is the entry point renderers must use when they
+ * evaluate the helix per pixel or per segment with a saturation that is not the
+ * one `cubehelixRaw` would apply (see docs/renderer-core-boundary.md).
+ */
+export interface HelixGeometry {
+  /** Base lightness fraction (the achromatic value at this `t`). */
+  fraction: number;
+  /** Chroma envelope at this fraction; scales how far the color may stray. */
+  envelope: number;
+  /** Red-channel direction component of the helix at this `t`. */
+  dr: number;
+  /** Green-channel direction component of the helix at this `t`. */
+  dg: number;
+  /** Blue-channel direction component of the helix at this `t`. */
+  db: number;
+}
+
+export function helixGeometry(t: number, params: CubehelixParams): HelixGeometry {
+  const { start, rotations, lightnessCurve, lightnessAxisMin, lightnessAxisMax, reverse } = params;
   const tEff = reverse ? 1 - t : t;
   // The cubehelix is a fixed curve in cube space, parameterized by u in [0,1]
   // along the lightness axis from black to white. `rotations` is the number of
@@ -48,17 +59,31 @@ export function cubehelixRaw(t: number, params: CubehelixParams): RGB {
   const u = uMin + (uMax - uMin) * tEff;
   const fraction = evaluateLightnessCurve(lightnessCurve, u);
   const angle = 2 * Math.PI * (start / 3 + rotations * u + 1);
+  const cosA = Math.cos(angle);
+  const sinA = Math.sin(angle);
+  return {
+    fraction,
+    envelope: chromaEnvelope(fraction, params),
+    dr: -0.14861 * cosA + 1.78277 * sinA,
+    dg: -0.29227 * cosA - 0.90649 * sinA,
+    db: 1.97294 * cosA,
+  };
+}
+
+export function cubehelixRaw(t: number, params: CubehelixParams): RGB {
+  const { saturationMin, saturationMax, reverse } = params;
+  const tEff = reverse ? 1 - t : t;
+  const { fraction, envelope, dr, dg, db } = helixGeometry(t, params);
   // Saturation interpolates linearly along the user's visible window so users
   // can fade chroma toward one end. When saturationMin === saturationMax this
   // collapses to the original single-saturation form.
   const saturation = saturationMin + (saturationMax - saturationMin) * tEff;
-  const amp = saturation * chromaEnvelope(fraction, params);
-  const cosA = Math.cos(angle);
-  const sinA = Math.sin(angle);
-  const r = fraction + amp * (-0.14861 * cosA + 1.78277 * sinA);
-  const g = fraction + amp * (-0.29227 * cosA - 0.90649 * sinA);
-  const b = fraction + amp * (1.97294 * cosA);
-  return { r, g, b };
+  const amp = saturation * envelope;
+  return {
+    r: fraction + amp * dr,
+    g: fraction + amp * dg,
+    b: fraction + amp * db,
+  };
 }
 
 export function cubehelix(t: number, params: CubehelixParams): RGB {
