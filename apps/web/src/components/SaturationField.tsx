@@ -244,10 +244,10 @@ function drawField(
   const data = image.data;
 
   const [tStart, tEnd] = side === "dark" ? DARK_T_RANGE : LIGHT_T_RANGE;
-  // The field is drawn in fixed palette orientation: the left box edits the
-  // dark end and the right box the light end, independent of the `reverse`
-  // toggle. Geometry comes from core with `reverse` neutralized so the t
-  // ranges above keep mapping to those fixed ends.
+  // `reverse` only flips the order of the final output gradient; it is not a
+  // property of the helix these controls edit. So this field always renders in
+  // fixed orientation — the left box edits the dark end, the right box the
+  // light end — and asks core for geometry with `reverse` neutralized.
   const geometryParams: CubehelixParams = params.reverse ? { ...params, reverse: false } : params;
 
   const columnT = new Float64Array(w);
