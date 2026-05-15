@@ -323,8 +323,8 @@ body {
 }
 
 .cube-segmented-option.is-active {
-  background: var(--bg);
-  font-weight: 600;
+  background: var(--fg);
+  color: var(--bg);
 }
 
 .gamma-bar {

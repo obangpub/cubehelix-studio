@@ -11,6 +11,7 @@ import { PreviewControl } from "./components/PreviewControl";
 import { ShareLink } from "./components/ShareLink";
 import { SwatchRow } from "./components/SwatchRow";
 import { useUrlParams } from "./hooks/useUrlParams";
+import { AnnouncerProvider, useAnnounce } from "./lib/announcer";
 import { DEFAULT_APP_STATE, type HueAuthoringState } from "./lib/url-state";
 
 export type Theme = "light" | "dark";
@@ -42,6 +43,15 @@ function detectSystemTheme(): Theme {
 }
 
 export default function App() {
+  return (
+    <AnnouncerProvider>
+      <AppInner />
+    </AnnouncerProvider>
+  );
+}
+
+function AppInner() {
+  const announce = useAnnounce();
   const [state, setState] = useUrlParams();
   const { params, swatchCount, hueAuthoring } = state;
   const [resetSignal, setResetSignal] = useState(0);
@@ -89,6 +99,7 @@ export default function App() {
     // Master toggle cascades into the cube viz so the whole app moves together.
     setCubeThemeState(next);
     writeStoredTheme(CUBE_THEME_KEY, next);
+    announce(next === "dark" ? "Dark theme" : "Light theme");
   };
   const setCubeTheme = (next: Theme) => {
     setCubeThemeState(next);

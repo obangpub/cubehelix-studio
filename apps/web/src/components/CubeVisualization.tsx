@@ -730,7 +730,7 @@ function SettingsPanel({ view, onChange }: SettingsPanelProps) {
     <div className="cube-panel" role="group" aria-label="Cube view settings">
       <div className="cube-panel-row">
         <span className="cube-panel-label">Projection</span>
-        <div className="cube-segmented">
+        <div className="cube-segmented" role="radiogroup" aria-label="Projection">
           {(["perspective", "orthographic"] as const).map((p) => (
             <label
               key={p}

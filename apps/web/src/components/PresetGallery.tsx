@@ -6,6 +6,7 @@ import {
   type CubehelixParams,
   type Preset,
 } from "@cubehelix-studio/core";
+import { useAnnounce } from "../lib/announcer";
 
 const STOP_COUNT = 32;
 
@@ -42,6 +43,7 @@ interface PresetTileProps {
 
 function PresetTile({ preset, onSelect }: PresetTileProps) {
   const gradientId = useId();
+  const announce = useAnnounce();
   const stops = useMemo(() => {
     return Array.from({ length: STOP_COUNT + 1 }, (_, i) => {
       const t = i / STOP_COUNT;
@@ -53,7 +55,10 @@ function PresetTile({ preset, onSelect }: PresetTileProps) {
     <button
       type="button"
       className="preset-tile"
-      onClick={() => onSelect(preset.params)}
+      onClick={() => {
+        onSelect(preset.params);
+        announce(`Loaded ${preset.name} preset`);
+      }}
       title={preset.description}
       aria-label={`Load ${preset.name} preset: ${preset.description}`}
     >

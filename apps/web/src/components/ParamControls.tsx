@@ -21,6 +21,7 @@ import {
   SWATCH_COUNT_BOUNDS,
   type HueAuthoringState,
 } from "../lib/url-state";
+import { useAnnounce } from "../lib/announcer";
 import { BezierEditor } from "./BezierEditor";
 import { HelpPopover } from "./HelpPopover";
 import { HueWaypointEditor } from "./HueWaypointEditor";
@@ -86,6 +87,7 @@ export function ParamControls({
   hueAuthoring,
   onHueAuthoringChange,
 }: ParamControlsProps) {
+  const announce = useAnnounce();
   // Apply a params patch while preserving waypoint mode: re-run the solver
   // when in waypoint mode so start/rotations stay derived from the user's
   // pinned waypoints under the new context (lightness curve / axis / reverse
@@ -285,8 +287,10 @@ export function ParamControls({
                     onChange={() => {
                       if (m === "waypoints" && hueAuthoring.mode !== "waypoints") {
                         enterWaypointMode();
+                        announce("Hue mode: Waypoints");
                       } else if (m === "freeform" && hueAuthoring.mode !== "freeform") {
                         onHueAuthoringChange({ mode: "freeform" });
+                        announce("Hue mode: Freeform");
                       }
                     }}
                   />
