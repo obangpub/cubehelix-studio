@@ -56,7 +56,7 @@ export function CameraRig({ projection, controlsRef, snap }: CameraRigProps) {
     camera.up.set(def.up[0], def.up[1], def.up[2]);
     camera.lookAt(0, 0, 0);
     controlsRef.current?.update();
-    // camera and controlsRef intentionally omitted; see comment above.
+    // eslint-disable-next-line react-hooks/exhaustive-deps -- camera and controlsRef are omitted by design (see the comment above the effect).
   }, [snap]);
 
   if (projection === "perspective") {
