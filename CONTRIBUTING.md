@@ -16,7 +16,7 @@ The TypeScript and Python libraries are independent implementations of the same 
 
 ## Prerequisites
 
-- Node `>=20` (the repo's [`.nvmrc`](.nvmrc) pins the recommended version)
+- Node `>=22` (pinned in the repo's [`.nvmrc`](.nvmrc))
 - pnpm (any recent version; the lockfile is `pnpm-lock.yaml`)
 - Python `>=3.10`
 - [uv](https://docs.astral.sh/uv/) for the Python package

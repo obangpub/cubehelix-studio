@@ -53,6 +53,6 @@
     "lint": "eslint src tests"
   },
   "engines": {
-    "node": ">=20"
+    "node": ">=22"
   }
 }

@@ -989,9 +989,15 @@ export function CubeVisualization({
     controls.update();
   };
   const handleReset = () => resetViewRef.current();
+  // Tier 3 / ephemeral state: header Reset pulses resetSignal, and the cube
+  // clears its view toggles, snap, and open panel alongside the camera so the
+  // whole visualization returns to defaults together.
   useEffect(() => {
     if (resetSignal === undefined) return;
     resetViewRef.current();
+    setView(DEFAULT_VIEW);
+    setSnap(null);
+    setActivePanel(null);
   }, [resetSignal]);
   const handleSnap = (id: SnapId) => {
     setSnap((prev) => ({ id, signal: (prev?.signal ?? 0) + 1 }));

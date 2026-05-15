@@ -69,6 +69,11 @@ export default function App() {
   const setHueAuthoring = (next: HueAuthoringState) => {
     setState((prev) => ({ ...prev, hueAuthoring: next }));
   };
+  // Reset clears Tier 1 / document state (DEFAULT_APP_STATE) and pulses
+  // resetSignal so Tier 3 / ephemeral widget state re-seeds from the cleared
+  // palette. It deliberately leaves Tier 2 / workspace preferences alone
+  // (appTheme, cubeTheme, previewMode) — Reset starts a new palette, not a new
+  // workspace. See the AppState comment in lib/url-state.ts.
   const handleReset = () => {
     setState(DEFAULT_APP_STATE);
     setResetSignal((n) => n + 1);
@@ -136,6 +141,7 @@ export default function App() {
             }}
           />
           <ParamControls
+            key={resetSignal}
             params={params}
             onChange={setParams}
             swatchCount={swatchCount}

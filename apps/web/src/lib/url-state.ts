@@ -16,6 +16,11 @@ export type HueAuthoringState =
   | { mode: "freeform" }
   | { mode: "waypoints"; waypoints: [HueWaypoint, HueWaypoint]; winding: number };
 
+// Tier 1 / document state: the palette artifact itself. Membership in AppState
+// means a field is URL-synced (encodeAppState/decodeAppState) and cleared by
+// header Reset (handleReset -> DEFAULT_APP_STATE). The test for membership is
+// "does this describe the exported palette?". Workspace preferences (theme,
+// preview lens) and ephemeral widget state stay out of here; see App.handleReset.
 export interface AppState {
   params: CubehelixParams;
   swatchCount: number;
