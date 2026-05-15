@@ -11,6 +11,7 @@ import {
   type HueWaypoint,
   type LightnessCurve,
 } from "@cubehelix-studio/core";
+import { clamp } from "./math";
 
 export type HueAuthoringState =
   | { mode: "freeform" }
@@ -79,12 +80,6 @@ const ENCODE_PRECISION = 4;
 function roundTo(value: number, decimals: number): number {
   const factor = 10 ** decimals;
   return Math.round(value * factor) / factor;
-}
-
-function clamp(value: number, min: number, max: number): number {
-  if (value < min) return min;
-  if (value > max) return max;
-  return value;
 }
 
 function parseNumOr(raw: string | null, fallback: number): number {

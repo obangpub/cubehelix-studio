@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useId, useRef } from "react";
 import { helixGeometry, type CubehelixParams } from "@cubehelix-studio/core";
+import { clamp01 } from "../lib/math";
 
 const FIELD_WIDTH = 88;
 const FIELD_HEIGHT = 132;
@@ -307,12 +308,6 @@ function drawField(
     }
   }
   ctx.putImageData(image, 0, 0);
-}
-
-function clamp01(v: number): number {
-  if (v < 0) return 0;
-  if (v > 1) return 1;
-  return v;
 }
 
 function LinkedIcon() {

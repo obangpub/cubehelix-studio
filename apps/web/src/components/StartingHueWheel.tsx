@@ -5,6 +5,7 @@ import {
   toCssRgb,
   type CubehelixParams,
 } from "@cubehelix-studio/core";
+import { mod } from "../lib/math";
 
 interface StartingHueWheelProps {
   value: number;
@@ -48,10 +49,6 @@ function wheelParams(start: number): CubehelixParams {
     chromaFloor: 0,
     reverse: false,
   };
-}
-
-function mod3(v: number): number {
-  return ((v % 3) + 3) % 3;
 }
 
 function angleAt(start: number): number {
@@ -108,7 +105,7 @@ export function StartingHueWheel({
     if (dx === 0 && dy === 0) return;
     let theta = Math.atan2(dx, -dy);
     if (theta < 0) theta += 2 * Math.PI;
-    onChange(mod3((theta / (2 * Math.PI)) * 3));
+    onChange(mod((theta / (2 * Math.PI)) * 3, 3));
   };
 
   const onPointerDown = (e: React.PointerEvent<SVGSVGElement>) => {
@@ -163,17 +160,17 @@ export function StartingHueWheel({
         return;
     }
     e.preventDefault();
-    onChange(mod3(next));
+    onChange(mod(next, 3));
   };
 
-  const pointerAngle = angleAt(mod3(value));
+  const pointerAngle = angleAt(mod(value, 3));
   const pInner = pointFromAngle(pointerAngle, POINTER_INNER);
   const pOuter = pointFromAngle(pointerAngle, POINTER_OUTER);
   // Fill the wheel's inner disc with the pure hue at the current value so the
   // selected color is visible at a glance, not just inferred from the pointer
   // position.
   const selectedColor = useMemo(
-    () => toCssRgb(cubehelix(REFERENCE_T, wheelParams(mod3(value)))),
+    () => toCssRgb(cubehelix(REFERENCE_T, wheelParams(mod(value, 3)))),
     [value],
   );
 
@@ -187,7 +184,7 @@ export function StartingHueWheel({
       aria-label={ariaLabel}
       aria-valuemin={0}
       aria-valuemax={3}
-      aria-valuenow={Number(mod3(value).toFixed(3))}
+      aria-valuenow={Number(mod(value, 3).toFixed(3))}
       onPointerDown={onPointerDown}
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}

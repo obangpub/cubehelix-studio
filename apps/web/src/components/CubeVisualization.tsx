@@ -11,6 +11,7 @@ import {
   type PreviewMode,
   type RGB,
 } from "@cubehelix-studio/core";
+import { clamp01 } from "../lib/math";
 import { effectiveSampleCount } from "../lib/sample-count";
 
 interface CubeVisualizationProps {
@@ -37,10 +38,6 @@ const GHOST_GAP_SIZE = 0.02;
 const GHOST_OPACITY = 0.55;
 const GHOST_EMERGE_SAMPLES = 4;
 const BISECT_ITER = 6;
-
-function clamp01(x: number): number {
-  return x < 0 ? 0 : x > 1 ? 1 : x;
-}
 
 function isInGamut(c: RGB): boolean {
   return c.r >= 0 && c.r <= 1 && c.g >= 0 && c.g <= 1 && c.b >= 0 && c.b <= 1;

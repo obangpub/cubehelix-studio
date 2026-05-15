@@ -1,4 +1,5 @@
 import { useId, useMemo, useRef, useState } from "react";
+import { clamp01 } from "../lib/math";
 
 type Pair = readonly [number, number];
 
@@ -11,10 +12,6 @@ interface BezierEditorProps {
 const VIEW_PADDING = 0.08;
 const HANDLE_RADIUS = 0.04;
 const CURVE_SAMPLES = 48;
-
-function clamp01(x: number): number {
-  return x < 0 ? 0 : x > 1 ? 1 : x;
-}
 
 function cubicAt(s: number, p1: Pair, p2: Pair): { x: number; y: number } {
   const omS = 1 - s;
