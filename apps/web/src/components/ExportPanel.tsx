@@ -1,4 +1,4 @@
-import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { useId, useMemo, useRef, useState } from "react";
 import {
   DEFAULT_ROLES,
   serialize,
@@ -7,6 +7,7 @@ import {
   type PaletteRole,
   type RolePalette,
 } from "@cubehelix-studio/core";
+import { useCopyToClipboard } from "../hooks/useCopyToClipboard";
 import { useAnnounce } from "../lib/announcer";
 
 interface ExportPanelProps {
@@ -37,21 +38,12 @@ const FORMATS: FormatOption[] = [
   { value: "python", label: "Python (matplotlib)", language: "python" },
 ];
 
-const COPY_FEEDBACK_MS = 1500;
-
 export function ExportPanel({ params, swatchCount }: ExportPanelProps) {
   const [format, setFormat] = useState<ExportFormat>("css");
-  const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "failed">("idle");
+  const { status: copyStatus, copy } = useCopyToClipboard();
   const announce = useAnnounce();
   const baseId = useId();
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const copyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    return () => {
-      if (copyTimerRef.current !== null) clearTimeout(copyTimerRef.current);
-    };
-  }, []);
 
   const palette: RolePalette = useMemo(
     () => ({ params, roles: rolesForCount(swatchCount) }),
@@ -93,18 +85,6 @@ export function ExportPanel({ params, swatchCount }: ExportPanelProps) {
     tabRefs.current[nextIndex]?.focus();
   };
 
-  const copy = async () => {
-    try {
-      await navigator.clipboard.writeText(output);
-      setCopyStatus("copied");
-    } catch {
-      setCopyStatus("failed");
-    }
-    // Reset any in-flight revert timer so rapid clicks don't race.
-    if (copyTimerRef.current !== null) clearTimeout(copyTimerRef.current);
-    copyTimerRef.current = setTimeout(() => setCopyStatus("idle"), COPY_FEEDBACK_MS);
-  };
-
   const copyTooltip =
     copyStatus === "copied" ? "Copied" : copyStatus === "failed" ? "Copy failed" : "Copy";
 
@@ -135,7 +115,7 @@ export function ExportPanel({ params, swatchCount }: ExportPanelProps) {
         <button
           type="button"
           className="header-icon-button"
-          onClick={copy}
+          onClick={() => copy(output)}
           aria-label={copyTooltip}
           title={copyTooltip}
         >
