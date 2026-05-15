@@ -29,9 +29,11 @@ lens.
 - App- or component-local. Never URL-synced: a shared link must not impose the
   sender's environment on the recipient.
 - Never cleared by Reset: Reset starts a new palette, not a new workspace.
-- Persisted to `localStorage` only when it is a true standing preference.
-- Members: `appTheme`, `cubeTheme` (persisted); `previewMode` (session-only —
-  a viewing lens, not worth persisting).
+- Persisted to `localStorage` only when it is a true standing preference;
+  a Tier 2 member that is not a cross-visit preference simply goes unpersisted.
+- Members: `appTheme`, `cubeTheme` (persisted); `previewMode` (a CVD preview
+  lens — survives Reset like any Tier 2 state, but is not worth persisting
+  across visits, so it is left in component state only).
 
 **No — Tier 3: ephemeral or derived UI state.**
 
