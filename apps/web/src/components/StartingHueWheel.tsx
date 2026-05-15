@@ -5,6 +5,8 @@ import {
   toCssRgb,
   type CubehelixParams,
 } from "@cubehelix-studio/core";
+import { useKeyboardStepper } from "../hooks/useKeyboardStepper";
+import { usePointerDrag } from "../hooks/usePointerDrag";
 import { mod } from "../lib/math";
 
 interface StartingHueWheelProps {
@@ -86,13 +88,6 @@ export function StartingHueWheel({
   }, []);
 
   const svgRef = useRef<SVGSVGElement>(null);
-  // Track drag state in a ref rather than gating on `hasPointerCapture` in the
-  // move handler. The browser can drop pointer capture mid-drag (focus loss,
-  // capture stolen by another element, React reconciliation race), which left
-  // the wheel feeling stuck even though the pointer was still down. The ref
-  // survives all of that; we still call setPointerCapture so events keep
-  // routing to the SVG when the cursor leaves its bounding box.
-  const draggingRef = useRef(false);
 
   const updateFromPointer = (clientX: number, clientY: number) => {
     const svg = svgRef.current;
@@ -108,60 +103,23 @@ export function StartingHueWheel({
     onChange(mod((theta / (2 * Math.PI)) * 3, 3));
   };
 
-  const onPointerDown = (e: React.PointerEvent<SVGSVGElement>) => {
-    draggingRef.current = true;
-    try {
-      e.currentTarget.setPointerCapture(e.pointerId);
-    } catch {
-      // Capture can fail in odd states (already captured by a different
-      // element, etc.); the ref-based gate keeps the drag working anyway.
-    }
-    updateFromPointer(e.clientX, e.clientY);
-  };
-  const onPointerMove = (e: React.PointerEvent<SVGSVGElement>) => {
-    if (!draggingRef.current) return;
-    updateFromPointer(e.clientX, e.clientY);
-  };
-  const onPointerUp = (e: React.PointerEvent<SVGSVGElement>) => {
-    draggingRef.current = false;
-    if (e.currentTarget.hasPointerCapture(e.pointerId)) {
-      e.currentTarget.releasePointerCapture(e.pointerId);
-    }
-  };
+  const drag = usePointerDrag<SVGSVGElement>({
+    onDrag: (e) => updateFromPointer(e.clientX, e.clientY),
+  });
 
-  // Keyboard: the wheel is periodic over [0, 3), so steps wrap via mod3.
+  // The wheel is periodic over [0, 3), so keyboard steps wrap via mod. End
+  // lands just shy of a full turn so it stays distinct from Home.
   const KEY_STEP = 0.05;
   const KEY_STEP_LARGE = 0.5;
-  const onKeyDown = (e: React.KeyboardEvent<SVGSVGElement>) => {
-    let next: number;
-    switch (e.key) {
-      case "ArrowRight":
-      case "ArrowUp":
-        next = value + KEY_STEP;
-        break;
-      case "ArrowLeft":
-      case "ArrowDown":
-        next = value - KEY_STEP;
-        break;
-      case "PageUp":
-        next = value + KEY_STEP_LARGE;
-        break;
-      case "PageDown":
-        next = value - KEY_STEP_LARGE;
-        break;
-      case "Home":
-        next = 0;
-        break;
-      case "End":
-        // End lands just shy of a full turn so it stays distinct from Home.
-        next = 3 - KEY_STEP;
-        break;
-      default:
-        return;
-    }
-    e.preventDefault();
-    onChange(mod(next, 3));
-  };
+  const onKeyDown = useKeyboardStepper({
+    value,
+    step: KEY_STEP,
+    largeStep: KEY_STEP_LARGE,
+    homeValue: 0,
+    endValue: 3 - KEY_STEP,
+    bound: (v) => mod(v, 3),
+    onChange,
+  });
 
   const pointerAngle = angleAt(mod(value, 3));
   const pInner = pointFromAngle(pointerAngle, POINTER_INNER);
@@ -185,10 +143,7 @@ export function StartingHueWheel({
       aria-valuemin={0}
       aria-valuemax={3}
       aria-valuenow={Number(mod(value, 3).toFixed(3))}
-      onPointerDown={onPointerDown}
-      onPointerMove={onPointerMove}
-      onPointerUp={onPointerUp}
-      onPointerCancel={onPointerUp}
+      {...drag}
       onKeyDown={onKeyDown}
     >
       {segments.map((s, i) => (

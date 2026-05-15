@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useId, useRef } from "react";
 import { helixGeometry, type CubehelixParams } from "@cubehelix-studio/core";
-import { clamp01 } from "../lib/math";
+import { useKeyboardStepper } from "../hooks/useKeyboardStepper";
+import { usePointerDrag } from "../hooks/usePointerDrag";
+import { clamp, clamp01 } from "../lib/math";
 import { positionToValue, valueToPosition } from "../lib/scale";
 
 const FIELD_WIDTH = 88;
@@ -135,46 +137,20 @@ function SaturationFieldBox({
     onChange(positionToValue(positionFromBottom, scale));
   };
 
-  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.currentTarget.setPointerCapture(e.pointerId);
-    updateFromPointer(e.clientY);
-  };
-  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (e.buttons === 0) return;
-    updateFromPointer(e.clientY);
-  };
+  const drag = usePointerDrag<HTMLDivElement>({
+    onDrag: (e) => updateFromPointer(e.clientY),
+    preventDefault: true,
+  });
 
-  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    const big = step * 10;
-    let next: number;
-    switch (e.key) {
-      case "ArrowUp":
-      case "ArrowRight":
-        next = Math.min(max, ownValue + step);
-        break;
-      case "ArrowDown":
-      case "ArrowLeft":
-        next = Math.max(0, ownValue - step);
-        break;
-      case "PageUp":
-        next = Math.min(max, ownValue + big);
-        break;
-      case "PageDown":
-        next = Math.max(0, ownValue - big);
-        break;
-      case "Home":
-        next = 0;
-        break;
-      case "End":
-        next = max;
-        break;
-      default:
-        return;
-    }
-    e.preventDefault();
-    onChange(next);
-  };
+  const onKeyDown = useKeyboardStepper({
+    value: ownValue,
+    step,
+    largeStep: step * 10,
+    homeValue: 0,
+    endValue: max,
+    bound: (v) => clamp(v, 0, max),
+    onChange,
+  });
 
   const thumbBottomPercent = valueToPosition(ownValue, scale) * 100;
   const label = side === "dark" ? "Dark" : "Light";
@@ -185,8 +161,7 @@ function SaturationFieldBox({
       <div
         ref={trackRef}
         className="saturation-field-track"
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
+        {...drag}
         onKeyDown={onKeyDown}
         role="slider"
         tabIndex={0}
