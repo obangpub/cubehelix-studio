@@ -45,17 +45,17 @@ lens.
 ## Placement reference
 
 | State                                | Tier | URL? | localStorage? | Reset clears?       |
-| ------------------------------------- | ---- | ---- | ------------- | ------------------- |
-| `params`                              | 1    | yes  | no            | yes                 |
-| `swatchCount`                         | 1    | yes  | no            | yes                 |
-| `hueAuthoring`                        | 1    | yes  | no            | yes                 |
-| `appTheme`                            | 2    | no   | yes           | no                  |
-| `cubeTheme`                           | 2    | no   | yes           | no                  |
-| `previewMode`                         | 2    | no   | no            | no                  |
-| `userUnlinked`                        | 3    | no   | no            | yes                 |
-| `remembered`                          | 3    | no   | no            | yes                 |
-| cube `view` / `snap` / `activePanel`  | 3    | no   | no            | yes                 |
-| `resetSignal`                         | 3    | no   | no            | n/a (the mechanism) |
+| ------------------------------------ | ---- | ---- | ------------- | ------------------- |
+| `params`                             | 1    | yes  | no            | yes                 |
+| `swatchCount`                        | 1    | yes  | no            | yes                 |
+| `hueAuthoring`                       | 1    | yes  | no            | yes                 |
+| `appTheme`                           | 2    | no   | yes           | no                  |
+| `cubeTheme`                          | 2    | no   | yes           | no                  |
+| `previewMode`                        | 2    | no   | no            | no                  |
+| `userUnlinked`                       | 3    | no   | no            | yes                 |
+| `remembered`                         | 3    | no   | no            | yes                 |
+| cube `view` / `snap` / `activePanel` | 3    | no   | no            | yes                 |
+| `resetSignal`                        | 3    | no   | no            | n/a (the mechanism) |
 
 ## Clearing Tier 3 state on Reset
 
