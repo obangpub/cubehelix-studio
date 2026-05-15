@@ -190,7 +190,11 @@ function readCurveFromSearch(search: URLSearchParams): LightnessCurve {
         DEFAULT_BEZIER_P2,
         BEZIER_COMPONENT_BOUNDS,
       );
-      return { kind: "bezier", p1, p2 };
+      // The Bezier curve must stay monotonic in x for invertLightnessCurve's
+      // bisection to be valid. The editor enforces p1.x <= p2.x on drag; a
+      // hand-edited URL can violate it, so clamp p1.x down here to match.
+      const p1x = Math.min(p1[0], p2[0]);
+      return { kind: "bezier", p1: [p1x, p1[1]], p2 };
     }
   }
 }
@@ -288,10 +292,10 @@ export function encodeAppState(state: AppState): string {
   const search = new URLSearchParams();
   appendParamsToSearch(search, state.params);
   if (state.hueAuthoring.mode === "waypoints") {
-    // start and rotations are derived from waypoints; omit them so the URL
-    // has one canonical source of truth.
-    search.delete("start");
-    search.delete("rotations");
+    // start and rotations are normally derived from the waypoints. They are
+    // still emitted (default-omitted as usual) so that a degenerate waypoint
+    // config — one the solver can't resolve on decode — falls back to the
+    // last-good palette instead of snapping to defaults.
     search.set("hueMode", "waypoints");
     const wp = state.hueAuthoring.waypoints
       .map((w) => `${roundTo(w.t, ENCODE_PRECISION)}:${roundTo(w.hue, ENCODE_PRECISION)}`)

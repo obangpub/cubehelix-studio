@@ -260,6 +260,21 @@ describe("decodeParams", () => {
     });
   });
 
+  test("bezier curve decode enforces p1.x <= p2.x for monotonicity", () => {
+    // A hand-edited URL with the handles crossed in x would make the curve
+    // non-monotonic and break invertLightnessCurve's bisection.
+    const decoded = decodeParams(
+      "?lightnessCurve=bezier&bezier1x=0.9&bezier1y=0.3&bezier2x=0.2&bezier2y=0.7",
+    );
+    expect(decoded.lightnessCurve.kind).toBe("bezier");
+    if (decoded.lightnessCurve.kind === "bezier") {
+      expect(decoded.lightnessCurve.p1[0]).toBeLessThanOrEqual(decoded.lightnessCurve.p2[0]);
+      expect(decoded.lightnessCurve.p1[0]).toBe(0.2);
+      expect(decoded.lightnessCurve.p1[1]).toBe(0.3);
+      expect(decoded.lightnessCurve.p2[0]).toBe(0.2);
+    }
+  });
+
   test("unknown lightnessCurve value falls back to power", () => {
     const decoded = decodeParams("?lightnessCurve=cosmic");
     expect(decoded.lightnessCurve).toEqual({ kind: "power", gamma: 1 });
@@ -432,8 +447,6 @@ describe("encodeAppState / decodeAppState", () => {
     const encoded = encodeAppState(original);
     expect(encoded).toContain("hueMode=waypoints");
     expect(encoded).toContain("wp=");
-    expect(encoded).not.toContain("start=");
-    expect(encoded).not.toContain("rotations=");
     const decoded = decodeAppState(encoded);
     expect(decoded.hueAuthoring.mode).toBe("waypoints");
     if (decoded.hueAuthoring.mode === "waypoints") {
@@ -480,6 +493,36 @@ describe("encodeAppState / decodeAppState", () => {
   test("hueMode=waypoints without valid wp falls back to freeform", () => {
     const decoded = decodeAppState("?hueMode=waypoints");
     expect(decoded.hueAuthoring.mode).toBe("freeform");
+  });
+
+  test("waypoint-mode keeps non-default start/rotations in the URL as a fallback", () => {
+    const encoded = encodeAppState({
+      params: { ...DEFAULT_CUBEHELIX_PARAMS, start: 1.4, rotations: 0.8 },
+      swatchCount: DEFAULT_SWATCH_COUNT,
+      hueAuthoring: {
+        mode: "waypoints",
+        waypoints: [
+          { t: 0.2, hue: 0.1 },
+          { t: 0.8, hue: 0.7 },
+        ],
+        winding: 0,
+      },
+    });
+    expect(encoded).toContain("start=1.4");
+    expect(encoded).toContain("rotations=0.8");
+  });
+
+  test("degenerate waypoint URL (collapsed lightness axis) falls back to URL start/rotations, not defaults", () => {
+    // lightnessAxisMin === lightnessAxisMax collapses the two waypoint u-values,
+    // so the solver returns null on decode. The palette should still render the
+    // start/rotations carried in the URL rather than snapping to defaults.
+    const decoded = decodeAppState(
+      "?hueMode=waypoints&wp=0.2:0.1,0.8:0.7&start=1.4&rotations=0.8" +
+        "&lightnessAxisMin=0.5&lightnessAxisMax=0.5",
+    );
+    expect(decoded.hueAuthoring.mode).toBe("freeform");
+    expect(decoded.params.start).toBeCloseTo(1.4, 6);
+    expect(decoded.params.rotations).toBeCloseTo(0.8, 6);
   });
 
   test("malformed wp falls back to freeform without throwing", () => {

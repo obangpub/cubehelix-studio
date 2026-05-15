@@ -35,6 +35,11 @@ import { StartingHueWheel } from "./StartingHueWheel";
 // leaving the upper portion for the rare 2..4.5 territory.
 const SATURATION_SLIDER_MAX = 4.5;
 
+// The Hue Rotations slider sweeps -3..3, but the number input may exceed that.
+// Cap it well past any practical palette so a typed or pasted extreme value
+// can't drive the cube viz into an unbounded geometry rebuild.
+const ROTATIONS_NUMBER_LIMIT = 50;
+
 function mod3(v: number): number {
   return ((v % 3) + 3) % 3;
 }
@@ -194,6 +199,20 @@ export function ParamControls({
     commitWaypointUpdate(hueAuthoring.waypoints, next);
   };
 
+  // Whether the current waypoints resolve to a (start, rotations) pair. Null
+  // means a degenerate config (e.g. a collapsed lightness axis makes the two
+  // waypoint u-values coincide); the UI surfaces this instead of silently
+  // leaving start/rotations stale.
+  const waypointSolved =
+    hueAuthoring.mode === "waypoints"
+      ? solveHueWaypoints(
+          hueAuthoring.waypoints[0],
+          hueAuthoring.waypoints[1],
+          hueAuthoring.winding,
+          solverCtx,
+        )
+      : null;
+
   const [remembered, setRemembered] = useState<RememberedCurves>(() =>
     curvesFromParams(params.lightnessCurve),
   );
@@ -314,8 +333,8 @@ export function ParamControls({
                   min={-3}
                   max={3}
                   step={0.05}
-                  numberMin={-Infinity}
-                  numberMax={Infinity}
+                  numberMin={-ROTATIONS_NUMBER_LIMIT}
+                  numberMax={ROTATIONS_NUMBER_LIMIT}
                   help={
                     <HelpPopover label="About hue rotations">
                       <p>
@@ -378,14 +397,21 @@ export function ParamControls({
                     </button>
                   </div>
                 </div>
-                <div className="hue-computed-readout">
-                  <span>
-                    start = <code>{mod3(params.start).toFixed(3)}</code>
-                  </span>
-                  <span>
-                    rotations = <code>{params.rotations.toFixed(3)}</code>
-                  </span>
-                </div>
+                {waypointSolved === null ? (
+                  <p className="hue-waypoint-warning" role="status">
+                    These waypoints can&apos;t resolve with the current lightness axis — widen the
+                    axis or switch to Freeform.
+                  </p>
+                ) : (
+                  <div className="hue-computed-readout">
+                    <span>
+                      start = <code>{mod3(params.start).toFixed(3)}</code>
+                    </span>
+                    <span>
+                      rotations = <code>{params.rotations.toFixed(3)}</code>
+                    </span>
+                  </div>
+                )}
               </>
             )}
           </div>

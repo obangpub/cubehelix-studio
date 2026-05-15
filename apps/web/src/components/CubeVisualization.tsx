@@ -11,6 +11,7 @@ import {
   type PreviewMode,
   type RGB,
 } from "@cubehelix-studio/core";
+import { effectiveSampleCount } from "../lib/sample-count";
 
 interface CubeVisualizationProps {
   params: CubehelixParams;
@@ -446,9 +447,6 @@ function Helix({ params, samples, showGhost, ghostColor, previewMode }: HelixPro
 const DEFAULT_CAMERA_POSITION: [number, number, number] = [1.3, 0.9, 1.7];
 const ORTHO_ZOOM = 280;
 const SNAP_DISTANCE = 2.5;
-
-const SAMPLES_PER_ROTATION = 96;
-const MIN_SAMPLES = 256;
 
 type SnapId =
   | "k"
@@ -948,13 +946,10 @@ export function CubeVisualization({
   onCubeThemeChange,
   previewMode = "normal",
 }: CubeVisualizationProps) {
-  const effectiveSamples = useMemo(() => {
-    if (samples != null) return samples;
-    const absR = Math.abs(params.rotations);
-    if (absR < 1) return MIN_SAMPLES;
-    const perRotation = SAMPLES_PER_ROTATION;
-    return Math.ceil(absR) * perRotation;
-  }, [samples, params.rotations]);
+  const effectiveSamples = useMemo(
+    () => effectiveSampleCount(params.rotations, samples),
+    [samples, params.rotations],
+  );
   const controlsRef = useRef<ComponentRef<typeof OrbitControls>>(null);
   const [view, setView] = useState<ViewSettings>(DEFAULT_VIEW);
   const [snap, setSnap] = useState<{ id: SnapId; signal: number } | null>(null);
