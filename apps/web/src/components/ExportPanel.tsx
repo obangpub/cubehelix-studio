@@ -29,15 +29,14 @@ function rolesForCount(count: number): PaletteRole[] {
 interface FormatOption {
   value: ExportFormat;
   label: string;
-  language: string;
 }
 
 const FORMATS: FormatOption[] = [
-  { value: "css", label: "CSS variables", language: "css" },
-  { value: "tailwind", label: "Tailwind v4", language: "css" },
-  { value: "scss", label: "SCSS", language: "scss" },
-  { value: "json", label: "JSON tokens", language: "json" },
-  { value: "python", label: "Python (matplotlib)", language: "python" },
+  { value: "css", label: "CSS variables" },
+  { value: "tailwind", label: "Tailwind v4" },
+  { value: "scss", label: "SCSS" },
+  { value: "json", label: "JSON tokens" },
+  { value: "python", label: "Python (matplotlib)" },
 ];
 
 export function ExportPanel({ params, swatchCount }: ExportPanelProps) {
