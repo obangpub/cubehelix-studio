@@ -9,6 +9,7 @@ import {
 } from "@cubehelix-studio/core";
 import { useCopyToClipboard } from "../hooks/useCopyToClipboard";
 import { useAnnounce } from "../lib/announcer";
+import { CopyFeedback } from "./CopyFeedback";
 import { CheckIcon, ClipboardIcon } from "./icons";
 
 interface ExportPanelProps {
@@ -124,6 +125,7 @@ export function ExportPanel({ params, swatchCount }: ExportPanelProps) {
           <span className="visually-hidden" aria-live="polite">
             {copyTooltip}
           </span>
+          <CopyFeedback status={copyStatus} />
         </button>
       </header>
       <pre

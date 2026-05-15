@@ -1,4 +1,5 @@
 import { useCopyToClipboard } from "../hooks/useCopyToClipboard";
+import { CopyFeedback } from "./CopyFeedback";
 import { CheckIcon, LinkIcon } from "./icons";
 
 export function ShareLink() {
@@ -19,6 +20,7 @@ export function ShareLink() {
       <span className="visually-hidden" aria-live="polite">
         {tooltip}
       </span>
+      <CopyFeedback status={status} />
     </button>
   );
 }
