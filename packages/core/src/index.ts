@@ -1,8 +1,10 @@
 export type { CubehelixParams, LightnessCurve, RGB } from "./types";
+export type { HelixGeometry } from "./cubehelix";
 export {
   cubehelix,
   cubehelixRaw,
   DEFAULT_CUBEHELIX_PARAMS,
+  helixGeometry,
   saturationCap,
   wasClamped,
 } from "./cubehelix";

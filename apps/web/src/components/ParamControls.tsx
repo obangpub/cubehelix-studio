@@ -21,6 +21,7 @@ import {
   SWATCH_COUNT_BOUNDS,
   type HueAuthoringState,
 } from "../lib/url-state";
+import { useAnnounce } from "../lib/announcer";
 import { BezierEditor } from "./BezierEditor";
 import { HelpPopover } from "./HelpPopover";
 import { HueWaypointEditor } from "./HueWaypointEditor";
@@ -34,6 +35,11 @@ import { StartingHueWheel } from "./StartingHueWheel";
 // the Slider) puts the most-used 0..2 range across the lower ~76% of travel,
 // leaving the upper portion for the rare 2..4.5 territory.
 const SATURATION_SLIDER_MAX = 4.5;
+
+// The Hue Rotations slider sweeps -3..3, but the number input may exceed that.
+// Cap it well past any practical palette so a typed or pasted extreme value
+// can't drive the cube viz into an unbounded geometry rebuild.
+const ROTATIONS_NUMBER_LIMIT = 50;
 
 function mod3(v: number): number {
   return ((v % 3) + 3) % 3;
@@ -81,6 +87,7 @@ export function ParamControls({
   hueAuthoring,
   onHueAuthoringChange,
 }: ParamControlsProps) {
+  const announce = useAnnounce();
   // Apply a params patch while preserving waypoint mode: re-run the solver
   // when in waypoint mode so start/rotations stay derived from the user's
   // pinned waypoints under the new context (lightness curve / axis / reverse
@@ -129,28 +136,25 @@ export function ParamControls({
   const minThumbColor = useMemo(() => toCssRgb(cubehelix(0, params)), [params]);
   const maxThumbColor = useMemo(() => toCssRgb(cubehelix(1, params)), [params]);
 
-  // Auto-switch back to freeform when the user directly edits start or
-  // rotations. The mode toggle still works for explicit transitions.
-  const switchToFreeformAnd = (patch: Partial<CubehelixParams>) => {
-    onChange({ ...params, ...patch });
-    if (hueAuthoring.mode !== "freeform") {
-      onHueAuthoringChange({ mode: "freeform" });
-    }
-  };
+  // The Starting Hue wheel and Hue Rotations slider only render in freeform
+  // mode, so these setters always run with mode already "freeform".
   const setStart = (v: number) => {
     if (!Number.isFinite(v)) return;
-    switchToFreeformAnd({ start: mod3(v) });
+    onChange({ ...params, start: mod3(v) });
   };
   const setRotations = (v: number) => {
-    switchToFreeformAnd({ rotations: v });
+    onChange({ ...params, rotations: v });
   };
 
-  const solverCtx = {
-    lightnessCurve: params.lightnessCurve,
-    lightnessAxisMin: params.lightnessAxisMin,
-    lightnessAxisMax: params.lightnessAxisMax,
-    reverse: params.reverse,
-  };
+  const solverCtx = useMemo(
+    () => ({
+      lightnessCurve: params.lightnessCurve,
+      lightnessAxisMin: params.lightnessAxisMin,
+      lightnessAxisMax: params.lightnessAxisMax,
+      reverse: params.reverse,
+    }),
+    [params.lightnessCurve, params.lightnessAxisMin, params.lightnessAxisMax, params.reverse],
+  );
 
   const enterWaypointMode = () => {
     const ts: [number, number] = [0.25, 0.75];
@@ -193,6 +197,23 @@ export function ParamControls({
     if (hueAuthoring.mode !== "waypoints") return;
     commitWaypointUpdate(hueAuthoring.waypoints, next);
   };
+
+  // Whether the current waypoints resolve to a (start, rotations) pair. Null
+  // means a degenerate config (e.g. a collapsed lightness axis makes the two
+  // waypoint u-values coincide); the UI surfaces this instead of silently
+  // leaving start/rotations stale.
+  const waypointSolved = useMemo(
+    () =>
+      hueAuthoring.mode === "waypoints"
+        ? solveHueWaypoints(
+            hueAuthoring.waypoints[0],
+            hueAuthoring.waypoints[1],
+            hueAuthoring.winding,
+            solverCtx,
+          )
+        : null,
+    [hueAuthoring, solverCtx],
+  );
 
   const [remembered, setRemembered] = useState<RememberedCurves>(() =>
     curvesFromParams(params.lightnessCurve),
@@ -266,8 +287,10 @@ export function ParamControls({
                     onChange={() => {
                       if (m === "waypoints" && hueAuthoring.mode !== "waypoints") {
                         enterWaypointMode();
+                        announce("Hue mode: Waypoints");
                       } else if (m === "freeform" && hueAuthoring.mode !== "freeform") {
                         onHueAuthoringChange({ mode: "freeform" });
+                        announce("Hue mode: Freeform");
                       }
                     }}
                   />
@@ -314,8 +337,8 @@ export function ParamControls({
                   min={-3}
                   max={3}
                   step={0.05}
-                  numberMin={-Infinity}
-                  numberMax={Infinity}
+                  numberMin={-ROTATIONS_NUMBER_LIMIT}
+                  numberMax={ROTATIONS_NUMBER_LIMIT}
                   help={
                     <HelpPopover label="About hue rotations">
                       <p>
@@ -378,14 +401,21 @@ export function ParamControls({
                     </button>
                   </div>
                 </div>
-                <div className="hue-computed-readout">
-                  <span>
-                    start = <code>{mod3(params.start).toFixed(3)}</code>
-                  </span>
-                  <span>
-                    rotations = <code>{params.rotations.toFixed(3)}</code>
-                  </span>
-                </div>
+                {waypointSolved === null ? (
+                  <p className="hue-waypoint-warning" role="status">
+                    These waypoints can&apos;t resolve with the current lightness axis — widen the
+                    axis or switch to Freeform.
+                  </p>
+                ) : (
+                  <div className="hue-computed-readout">
+                    <span>
+                      start = <code>{mod3(params.start).toFixed(3)}</code>
+                    </span>
+                    <span>
+                      rotations = <code>{params.rotations.toFixed(3)}</code>
+                    </span>
+                  </div>
+                )}
               </>
             )}
           </div>

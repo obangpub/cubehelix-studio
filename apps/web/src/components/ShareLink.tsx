@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 type Status = "idle" | "copied" | "failed";
 
@@ -6,6 +6,13 @@ const FEEDBACK_MS = 1500;
 
 export function ShareLink() {
   const [status, setStatus] = useState<Status>("idle");
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current !== null) clearTimeout(timerRef.current);
+    };
+  }, []);
 
   const copy = async () => {
     try {
@@ -14,7 +21,9 @@ export function ShareLink() {
     } catch {
       setStatus("failed");
     }
-    setTimeout(() => setStatus("idle"), FEEDBACK_MS);
+    // Reset any in-flight revert timer so rapid clicks don't race.
+    if (timerRef.current !== null) clearTimeout(timerRef.current);
+    timerRef.current = setTimeout(() => setStatus("idle"), FEEDBACK_MS);
   };
 
   const tooltip =

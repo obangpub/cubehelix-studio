@@ -132,6 +132,40 @@ export function StartingHueWheel({
     }
   };
 
+  // Keyboard: the wheel is periodic over [0, 3), so steps wrap via mod3.
+  const KEY_STEP = 0.05;
+  const KEY_STEP_LARGE = 0.5;
+  const onKeyDown = (e: React.KeyboardEvent<SVGSVGElement>) => {
+    let next: number;
+    switch (e.key) {
+      case "ArrowRight":
+      case "ArrowUp":
+        next = value + KEY_STEP;
+        break;
+      case "ArrowLeft":
+      case "ArrowDown":
+        next = value - KEY_STEP;
+        break;
+      case "PageUp":
+        next = value + KEY_STEP_LARGE;
+        break;
+      case "PageDown":
+        next = value - KEY_STEP_LARGE;
+        break;
+      case "Home":
+        next = 0;
+        break;
+      case "End":
+        // End lands just shy of a full turn so it stays distinct from Home.
+        next = 3 - KEY_STEP;
+        break;
+      default:
+        return;
+    }
+    e.preventDefault();
+    onChange(mod3(next));
+  };
+
   const pointerAngle = angleAt(mod3(value));
   const pInner = pointFromAngle(pointerAngle, POINTER_INNER);
   const pOuter = pointFromAngle(pointerAngle, POINTER_OUTER);
@@ -149,6 +183,7 @@ export function StartingHueWheel({
       className={compact ? "hue-wheel hue-wheel--compact" : "hue-wheel"}
       viewBox="-1.15 -1.15 2.3 2.3"
       role="slider"
+      tabIndex={0}
       aria-label={ariaLabel}
       aria-valuemin={0}
       aria-valuemax={3}
@@ -157,6 +192,7 @@ export function StartingHueWheel({
       onPointerMove={onPointerMove}
       onPointerUp={onPointerUp}
       onPointerCancel={onPointerUp}
+      onKeyDown={onKeyDown}
     >
       {segments.map((s, i) => (
         <path key={i} d={s.path} fill={s.color} />

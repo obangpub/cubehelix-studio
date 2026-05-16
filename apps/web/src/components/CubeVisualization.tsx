@@ -11,6 +11,7 @@ import {
   type PreviewMode,
   type RGB,
 } from "@cubehelix-studio/core";
+import { effectiveSampleCount } from "../lib/sample-count";
 
 interface CubeVisualizationProps {
   params: CubehelixParams;
@@ -447,9 +448,6 @@ const DEFAULT_CAMERA_POSITION: [number, number, number] = [1.3, 0.9, 1.7];
 const ORTHO_ZOOM = 280;
 const SNAP_DISTANCE = 2.5;
 
-const SAMPLES_PER_ROTATION = 96;
-const MIN_SAMPLES = 256;
-
 type SnapId =
   | "k"
   | "r"
@@ -694,6 +692,7 @@ function SnapPanel({ onSnap }: SnapPanelProps) {
               type="button"
               className="cube-snap-button"
               onClick={() => onSnap(s.id)}
+              aria-label={`Snap to ${s.label} corner`}
             >
               <span className="cube-snap-swatch" style={{ background: s.swatch }} aria-hidden />
               <span>{s.label}</span>
@@ -710,6 +709,7 @@ function SnapPanel({ onSnap }: SnapPanelProps) {
               type="button"
               className="cube-snap-button"
               onClick={() => onSnap(s.id)}
+              aria-label={`Snap to ${s.label} face`}
             >
               <span className="cube-snap-swatch" style={{ background: s.swatch }} aria-hidden />
               <span>{s.label}</span>
@@ -732,7 +732,7 @@ function SettingsPanel({ view, onChange }: SettingsPanelProps) {
     <div className="cube-panel" role="group" aria-label="Cube view settings">
       <div className="cube-panel-row">
         <span className="cube-panel-label">Projection</span>
-        <div className="cube-segmented">
+        <div className="cube-segmented" role="radiogroup" aria-label="Projection">
           {(["perspective", "orthographic"] as const).map((p) => (
             <label
               key={p}
@@ -948,13 +948,10 @@ export function CubeVisualization({
   onCubeThemeChange,
   previewMode = "normal",
 }: CubeVisualizationProps) {
-  const effectiveSamples = useMemo(() => {
-    if (samples != null) return samples;
-    const absR = Math.abs(params.rotations);
-    if (absR < 1) return MIN_SAMPLES;
-    const perRotation = SAMPLES_PER_ROTATION;
-    return Math.ceil(absR) * perRotation;
-  }, [samples, params.rotations]);
+  const effectiveSamples = useMemo(
+    () => effectiveSampleCount(params.rotations, samples),
+    [samples, params.rotations],
+  );
   const controlsRef = useRef<ComponentRef<typeof OrbitControls>>(null);
   const [view, setView] = useState<ViewSettings>(DEFAULT_VIEW);
   const [snap, setSnap] = useState<{ id: SnapId; signal: number } | null>(null);
@@ -989,9 +986,15 @@ export function CubeVisualization({
     controls.update();
   };
   const handleReset = () => resetViewRef.current();
+  // Tier 3 / ephemeral state: header Reset pulses resetSignal, and the cube
+  // clears its view toggles, snap, and open panel alongside the camera so the
+  // whole visualization returns to defaults together.
   useEffect(() => {
     if (resetSignal === undefined) return;
     resetViewRef.current();
+    setView(DEFAULT_VIEW);
+    setSnap(null);
+    setActivePanel(null);
   }, [resetSignal]);
   const handleSnap = (id: SnapId) => {
     setSnap((prev) => ({ id, signal: (prev?.signal ?? 0) + 1 }));

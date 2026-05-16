@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useId, useMemo, useRef, useState } from "react";
 import {
   DEFAULT_ROLES,
   serialize,
@@ -7,6 +7,7 @@ import {
   type PaletteRole,
   type RolePalette,
 } from "@cubehelix-studio/core";
+import { useAnnounce } from "../lib/announcer";
 
 interface ExportPanelProps {
   params: CubehelixParams;
@@ -41,6 +42,16 @@ const COPY_FEEDBACK_MS = 1500;
 export function ExportPanel({ params, swatchCount }: ExportPanelProps) {
   const [format, setFormat] = useState<ExportFormat>("css");
   const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "failed">("idle");
+  const announce = useAnnounce();
+  const baseId = useId();
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const copyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (copyTimerRef.current !== null) clearTimeout(copyTimerRef.current);
+    };
+  }, []);
 
   const palette: RolePalette = useMemo(
     () => ({ params, roles: rolesForCount(swatchCount) }),
@@ -49,6 +60,39 @@ export function ExportPanel({ params, swatchCount }: ExportPanelProps) {
 
   const output = useMemo(() => serialize(palette, format), [palette, format]);
 
+  const tabId = (value: ExportFormat) => `${baseId}-tab-${value}`;
+  const panelId = `${baseId}-panel`;
+
+  const selectFormat = (value: ExportFormat) => {
+    setFormat(value);
+    const label = FORMATS.find((f) => f.value === value)?.label ?? value;
+    announce(`Export format: ${label}`);
+  };
+
+  // Roving tab navigation: arrows move focus and selection together.
+  const onTabKeyDown = (e: React.KeyboardEvent, index: number) => {
+    let nextIndex: number;
+    switch (e.key) {
+      case "ArrowRight":
+        nextIndex = (index + 1) % FORMATS.length;
+        break;
+      case "ArrowLeft":
+        nextIndex = (index - 1 + FORMATS.length) % FORMATS.length;
+        break;
+      case "Home":
+        nextIndex = 0;
+        break;
+      case "End":
+        nextIndex = FORMATS.length - 1;
+        break;
+      default:
+        return;
+    }
+    e.preventDefault();
+    selectFormat(FORMATS[nextIndex]!.value);
+    tabRefs.current[nextIndex]?.focus();
+  };
+
   const copy = async () => {
     try {
       await navigator.clipboard.writeText(output);
@@ -56,7 +100,9 @@ export function ExportPanel({ params, swatchCount }: ExportPanelProps) {
     } catch {
       setCopyStatus("failed");
     }
-    setTimeout(() => setCopyStatus("idle"), COPY_FEEDBACK_MS);
+    // Reset any in-flight revert timer so rapid clicks don't race.
+    if (copyTimerRef.current !== null) clearTimeout(copyTimerRef.current);
+    copyTimerRef.current = setTimeout(() => setCopyStatus("idle"), COPY_FEEDBACK_MS);
   };
 
   const copyTooltip =
@@ -65,15 +111,22 @@ export function ExportPanel({ params, swatchCount }: ExportPanelProps) {
   return (
     <section className="export-panel" aria-label="Export palette">
       <header className="export-panel-header">
-        <div className="export-panel-tabs" role="tablist">
-          {FORMATS.map((f) => (
+        <div className="export-panel-tabs" role="tablist" aria-label="Export format">
+          {FORMATS.map((f, i) => (
             <button
               key={f.value}
+              ref={(el) => {
+                tabRefs.current[i] = el;
+              }}
               type="button"
               role="tab"
+              id={tabId(f.value)}
               aria-selected={format === f.value}
+              aria-controls={panelId}
+              tabIndex={format === f.value ? 0 : -1}
               className={`export-panel-tab ${format === f.value ? "is-active" : ""}`}
-              onClick={() => setFormat(f.value)}
+              onClick={() => selectFormat(f.value)}
+              onKeyDown={(e) => onTabKeyDown(e, i)}
             >
               {f.label}
             </button>
@@ -92,7 +145,13 @@ export function ExportPanel({ params, swatchCount }: ExportPanelProps) {
           </span>
         </button>
       </header>
-      <pre className="export-panel-output">
+      <pre
+        className="export-panel-output"
+        id={panelId}
+        role="tabpanel"
+        aria-labelledby={tabId(format)}
+        tabIndex={0}
+      >
         <code>{output}</code>
       </pre>
     </section>

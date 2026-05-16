@@ -11,6 +11,7 @@ import { PreviewControl } from "./components/PreviewControl";
 import { ShareLink } from "./components/ShareLink";
 import { SwatchRow } from "./components/SwatchRow";
 import { useUrlParams } from "./hooks/useUrlParams";
+import { AnnouncerProvider, useAnnounce } from "./lib/announcer";
 import { DEFAULT_APP_STATE, type HueAuthoringState } from "./lib/url-state";
 
 export type Theme = "light" | "dark";
@@ -42,9 +43,22 @@ function detectSystemTheme(): Theme {
 }
 
 export default function App() {
+  return (
+    <AnnouncerProvider>
+      <AppInner />
+    </AnnouncerProvider>
+  );
+}
+
+function AppInner() {
+  const announce = useAnnounce();
   const [state, setState] = useUrlParams();
   const { params, swatchCount, hueAuthoring } = state;
   const [resetSignal, setResetSignal] = useState(0);
+  // Bumped on preset load to remount ParamControls (clearing its Tier 3 state —
+  // userUnlinked, remembered curves) without disturbing the cube camera, which
+  // a full resetSignal pulse would.
+  const [presetEpoch, setPresetEpoch] = useState(0);
   const [previewMode, setPreviewMode] = useState<PreviewMode>("normal");
   const [appTheme, setAppThemeState] = useState<Theme>(
     () => readStoredTheme(APP_THEME_KEY) ?? detectSystemTheme(),
@@ -69,17 +83,24 @@ export default function App() {
   const setHueAuthoring = (next: HueAuthoringState) => {
     setState((prev) => ({ ...prev, hueAuthoring: next }));
   };
+  // Reset clears Tier 1 / document state (DEFAULT_APP_STATE) and pulses
+  // resetSignal so Tier 3 / ephemeral widget state re-seeds from the cleared
+  // palette. It deliberately leaves Tier 2 / workspace preferences alone
+  // (appTheme, cubeTheme, previewMode) — Reset starts a new palette, not a new
+  // workspace. See the AppState comment in lib/url-state.ts.
   const handleReset = () => {
     setState(DEFAULT_APP_STATE);
     setResetSignal((n) => n + 1);
   };
+  // App theme and cube-viz theme are independent: the header toggle changes
+  // only the app chrome, the cube toolbar's own toggle changes only the cube.
+  // Neither cascades into the other, so a deliberate cube-theme choice is
+  // never silently overwritten.
   const toggleAppTheme = () => {
     const next: Theme = appTheme === "light" ? "dark" : "light";
     setAppThemeState(next);
     writeStoredTheme(APP_THEME_KEY, next);
-    // Master toggle cascades into the cube viz so the whole app moves together.
-    setCubeThemeState(next);
-    writeStoredTheme(CUBE_THEME_KEY, next);
+    announce(next === "dark" ? "Dark theme" : "Light theme");
   };
   const setCubeTheme = (next: Theme) => {
     setCubeThemeState(next);
@@ -126,6 +147,7 @@ export default function App() {
         </section>
         <div className="layout-controls">
           <PresetGallery
+            params={params}
             onSelect={(nextParams) => {
               setParams(nextParams);
               // Presets ship start/rotations directly; drop any waypoint state
@@ -133,9 +155,13 @@ export default function App() {
               if (hueAuthoring.mode !== "freeform") {
                 setHueAuthoring({ mode: "freeform" });
               }
+              // Remount ParamControls so its Tier 3 state (saturation
+              // link state, remembered curves) re-seeds from the preset.
+              setPresetEpoch((n) => n + 1);
             }}
           />
           <ParamControls
+            key={`${resetSignal}-${presetEpoch}`}
             params={params}
             onChange={setParams}
             swatchCount={swatchCount}

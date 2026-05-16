@@ -46,13 +46,17 @@ The 3D cube view in the web app draws the full helix and highlights the in-range
 packages/core/      @cubehelix-studio/core (TypeScript)
 packages/python/    cubehelix-studio (PyPI)
 apps/web/           @cubehelix-studio/web (Vite + React)
+docs/               design notes and policies
 fixtures/           parity.json — shared test fixture
 scripts/            parity fixture generator
 ```
 
+Design notes live in [docs/](docs/), including the [UI state policy](docs/ui-state-policy.md)
+that governs how web app state is URL-synced, persisted, and reset.
+
 ## Development
 
-Requires Node `>=20` (a `.nvmrc` pins the recommended version) and Python `>=3.10`.
+Requires Node `>=22` (pinned in `.nvmrc`) and Python `>=3.10`.
 
 ```bash
 # JS side

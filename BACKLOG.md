@@ -199,7 +199,6 @@ These came up in the field-survey of other cubehelix implementations; documentin
 - Keep `DEFAULT_CUBEHELIX_PARAMS` such that defaults reproduce the existing visual output bit-for-bit on the parity fixture's existing entries. New fixture entries should be ADDED for new parameters, not modify existing ones.
 - URL state encoding: every new field must omit-on-default and round-trip via the existing `encodeAppState`/`decodeAppState`.
 - All changes must keep all three test suites green: `pnpm -F @cubehelix-studio/core test`, `pnpm -F web test`, and `(cd packages/python && uv run pytest)`. Plus `pnpm typecheck`, `pnpm lint`, `pnpm format:check`, and `pnpm build`.
-- Don't credit Claude in commit messages. One-line commit messages unless told otherwise. Don't use `--no-verify`.
 
 ---
 

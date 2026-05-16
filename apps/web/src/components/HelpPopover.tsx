@@ -1,10 +1,13 @@
-import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useId, useLayoutEffect, useRef, useState, type ReactNode } from "react";
 import { createPortal } from "react-dom";
 
 interface HelpPopoverProps {
   label: string;
   children: ReactNode;
 }
+
+const POPOVER_HALF_WIDTH = 140;
+const VIEWPORT_MARGIN = 8;
 
 // Renders the popover content via a portal into document.body so the
 // content lives outside the .layout-controls CSS-columns container. Without
@@ -15,6 +18,7 @@ export function HelpPopover({ label, children }: HelpPopoverProps) {
   const [open, setOpen] = useState(false);
   const triggerRef = useRef<HTMLButtonElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
+  const contentId = useId();
   const [coords, setCoords] = useState<{ top: number; left: number } | null>(null);
 
   useLayoutEffect(() => {
@@ -23,12 +27,31 @@ export function HelpPopover({ label, children }: HelpPopoverProps) {
       const trigger = triggerRef.current;
       if (!trigger) return;
       const rect = trigger.getBoundingClientRect();
-      setCoords({ top: rect.bottom + 8, left: rect.left + rect.width / 2 });
+      // Keep the (center-anchored) content within the viewport horizontally.
+      const halfWidth = Math.min(POPOVER_HALF_WIDTH, (window.innerWidth - 32) / 2);
+      const rawLeft = rect.left + rect.width / 2;
+      const left = Math.max(
+        halfWidth + VIEWPORT_MARGIN,
+        Math.min(rawLeft, window.innerWidth - halfWidth - VIEWPORT_MARGIN),
+      );
+      // Prefer below the trigger; flip above when the content would overflow
+      // the viewport bottom and there is room above. Content height is only
+      // known after the first mount, hence the rAF re-run below.
+      const contentH = contentRef.current?.offsetHeight ?? 0;
+      const below = rect.bottom + VIEWPORT_MARGIN;
+      const flip =
+        contentH > 0 &&
+        below + contentH > window.innerHeight - VIEWPORT_MARGIN &&
+        rect.top - VIEWPORT_MARGIN - contentH >= VIEWPORT_MARGIN;
+      const top = flip ? rect.top - VIEWPORT_MARGIN - contentH : below;
+      setCoords({ top, left });
     };
     update();
+    const raf = requestAnimationFrame(update);
     window.addEventListener("scroll", update, true);
     window.addEventListener("resize", update);
     return () => {
+      cancelAnimationFrame(raf);
       window.removeEventListener("scroll", update, true);
       window.removeEventListener("resize", update);
     };
@@ -62,6 +85,7 @@ export function HelpPopover({ label, children }: HelpPopoverProps) {
         aria-label={label}
         title={label}
         aria-expanded={open}
+        aria-describedby={open ? contentId : undefined}
         onClick={() => setOpen((prev) => !prev)}
       >
         ?
@@ -71,6 +95,7 @@ export function HelpPopover({ label, children }: HelpPopoverProps) {
         createPortal(
           <div
             ref={contentRef}
+            id={contentId}
             className="info-popover-content"
             role="tooltip"
             style={{

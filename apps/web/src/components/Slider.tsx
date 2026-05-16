@@ -88,6 +88,7 @@ export function Slider({
         max={sliderMax}
         step={sliderStep}
         onChange={(e) => commitFromSlider(Number(e.target.value))}
+        aria-label={label}
       />
     </div>
   );
