@@ -93,26 +93,27 @@ export function BezierEditor({ p1, p2, onChange }: BezierEditorProps) {
   };
 
   // Keyboard / direct-entry path: each component is a number input below the
-  // canvas, applying the same x-ordering constraint (p1.x <= p2.x) the drag
-  // path enforces.
+  // canvas. The curve must stay monotonic in x (p1.x <= p2.x). A typed x-value
+  // is honored as entered; the opposite handle's x is moved to preserve the
+  // ordering, so an explicit entry is never silently rejected.
   const commitComponent = (handle: 1 | 2, axis: 0 | 1, raw: number) => {
     if (!Number.isFinite(raw)) return;
     const v = clamp01(raw);
     if (handle === 1) {
-      const x = axis === 0 ? Math.min(v, p2[0]) : p1[0];
+      const x = axis === 0 ? v : p1[0];
       const y = axis === 1 ? v : p1[1];
-      onChange([x, y], [p2[0], p2[1]]);
+      onChange([x, y], [Math.max(p2[0], x), p2[1]]);
     } else {
-      const x = axis === 0 ? Math.max(v, p1[0]) : p2[0];
+      const x = axis === 0 ? v : p2[0];
       const y = axis === 1 ? v : p2[1];
-      onChange([p1[0], p1[1]], [x, y]);
+      onChange([Math.min(p1[0], x), p1[1]], [x, y]);
     }
   };
 
   const componentFields = [
-    { label: "P1 x", handle: 1, axis: 0, value: p1[0], min: 0, max: p2[0] },
+    { label: "P1 x", handle: 1, axis: 0, value: p1[0], min: 0, max: 1 },
     { label: "P1 y", handle: 1, axis: 1, value: p1[1], min: 0, max: 1 },
-    { label: "P2 x", handle: 2, axis: 0, value: p2[0], min: p1[0], max: 1 },
+    { label: "P2 x", handle: 2, axis: 0, value: p2[0], min: 0, max: 1 },
     { label: "P2 y", handle: 2, axis: 1, value: p2[1], min: 0, max: 1 },
   ] as const;
 

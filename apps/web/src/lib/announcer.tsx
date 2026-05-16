@@ -1,4 +1,12 @@
-import { createContext, useCallback, useContext, useState, type ReactNode } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  type ReactNode,
+} from "react";
 
 // A single app-level polite live region. Components call `useAnnounce()` to
 // push short status messages (preset loaded, theme changed, preview lens
@@ -12,12 +20,26 @@ export function useAnnounce(): (message: string) => void {
 
 export function AnnouncerProvider({ children }: { children: ReactNode }) {
   const [message, setMessage] = useState("");
+  const frameRef = useRef<number | null>(null);
 
   const announce = useCallback((next: string) => {
     // Clear first so re-announcing the same string still triggers the live
     // region; the empty render and the real render land in separate commits.
+    // Cancel any frame still pending from an earlier call so back-to-back
+    // announcements coalesce to the latest message instead of one blanking
+    // the other before assistive tech reads it.
+    if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
     setMessage("");
-    requestAnimationFrame(() => setMessage(next));
+    frameRef.current = requestAnimationFrame(() => {
+      frameRef.current = null;
+      setMessage(next);
+    });
+  }, []);
+
+  useEffect(() => {
+    return () => {
+      if (frameRef.current !== null) cancelAnimationFrame(frameRef.current);
+    };
   }, []);
 
   return (

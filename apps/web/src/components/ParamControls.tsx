@@ -146,12 +146,15 @@ export function ParamControls({
     onChange({ ...params, rotations: v });
   };
 
-  const solverCtx = {
-    lightnessCurve: params.lightnessCurve,
-    lightnessAxisMin: params.lightnessAxisMin,
-    lightnessAxisMax: params.lightnessAxisMax,
-    reverse: params.reverse,
-  };
+  const solverCtx = useMemo(
+    () => ({
+      lightnessCurve: params.lightnessCurve,
+      lightnessAxisMin: params.lightnessAxisMin,
+      lightnessAxisMax: params.lightnessAxisMax,
+      reverse: params.reverse,
+    }),
+    [params.lightnessCurve, params.lightnessAxisMin, params.lightnessAxisMax, params.reverse],
+  );
 
   const enterWaypointMode = () => {
     const ts: [number, number] = [0.25, 0.75];
@@ -199,15 +202,18 @@ export function ParamControls({
   // means a degenerate config (e.g. a collapsed lightness axis makes the two
   // waypoint u-values coincide); the UI surfaces this instead of silently
   // leaving start/rotations stale.
-  const waypointSolved =
-    hueAuthoring.mode === "waypoints"
-      ? solveHueWaypoints(
-          hueAuthoring.waypoints[0],
-          hueAuthoring.waypoints[1],
-          hueAuthoring.winding,
-          solverCtx,
-        )
-      : null;
+  const waypointSolved = useMemo(
+    () =>
+      hueAuthoring.mode === "waypoints"
+        ? solveHueWaypoints(
+            hueAuthoring.waypoints[0],
+            hueAuthoring.waypoints[1],
+            hueAuthoring.winding,
+            solverCtx,
+          )
+        : null,
+    [hueAuthoring, solverCtx],
+  );
 
   const [remembered, setRemembered] = useState<RememberedCurves>(() =>
     curvesFromParams(params.lightnessCurve),
