@@ -1,6 +1,6 @@
 {
   "name": "@cubehelix-studio/core",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Grayscale-safe color palettes from cubehelix. Generation, sampling, and WCAG contrast utilities. Zero runtime dependencies.",
   "keywords": [
     "cubehelix",
