@@ -82,4 +82,21 @@ describe("useCopyToClipboard", () => {
     });
     expect(result.current.status).toBe("idle");
   });
+
+  test("clears the pending revert timer on unmount", async () => {
+    const { result, unmount } = renderHook(() => useCopyToClipboard());
+    await act(async () => {
+      await result.current.copy("hello");
+    });
+    expect(vi.getTimerCount()).toBe(1); // the revert timer is armed
+
+    unmount();
+    expect(vi.getTimerCount()).toBe(0); // the cleanup effect cleared it
+
+    // Without the cleanup the timer would still fire here and call setState on
+    // an unmounted hook; advancing past the deadline must stay quiet.
+    expect(() => {
+      vi.advanceTimersByTime(1500);
+    }).not.toThrow();
+  });
 });

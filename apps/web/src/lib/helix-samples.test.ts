@@ -60,7 +60,7 @@ describe("buildSamples", () => {
     expect(buildSamples(gray, 48).every((s) => s.inGamut)).toBe(true);
   });
 
-  test("a high-saturation palette leaves gamut, and crossings land on a cube face", () => {
+  test("a high-saturation palette leaves gamut, and bisected crossings land on a cube face", () => {
     const vivid: CubehelixParams = {
       ...DEFAULT_CUBEHELIX_PARAMS,
       saturationMin: 4,
@@ -69,15 +69,20 @@ describe("buildSamples", () => {
     const samples = buildSamples(vivid, 48);
     expect(samples.some((s) => !s.inGamut)).toBe(true);
     expect(samples.some((s) => s.inGamut)).toBe(true);
-    // At every in/out transition the builder inserts a bisected crossing
-    // sample, whose raw color should sit on a cube face (a channel at 0 or 1).
-    for (let i = 1; i < samples.length; i++) {
-      if (samples[i]!.inGamut === samples[i - 1]!.inGamut) continue;
-      const onFace = [samples[i - 1]!, samples[i]!].some((s) =>
-        [s.raw.r, s.raw.g, s.raw.b].some((c) => Math.abs(c) < 0.03 || Math.abs(c - 1) < 0.03),
-      );
+    // A bisected crossing sample is off the n = 48 grid and straddles a gamut
+    // transition (its two neighbours differ). Assert the crossing sample
+    // itself — not merely an adjacent base sample — lands on a cube face, so a
+    // broken bisection cannot pass by luck of a nearby base sample.
+    let crossings = 0;
+    for (let i = 1; i < samples.length - 1; i++) {
+      const onGrid = Math.abs(samples[i]!.u * 48 - Math.round(samples[i]!.u * 48)) < 1e-9;
+      if (onGrid || samples[i - 1]!.inGamut === samples[i + 1]!.inGamut) continue;
+      crossings++;
+      const { r, g, b } = samples[i]!.raw;
+      const onFace = [r, g, b].some((c) => Math.abs(c) < 0.03 || Math.abs(c - 1) < 0.03);
       expect(onFace).toBe(true);
     }
+    expect(crossings).toBeGreaterThan(0);
   });
 
   test("clamped color always stays within the unit cube", () => {
@@ -92,5 +97,62 @@ describe("buildSamples", () => {
         expect(c).toBeLessThanOrEqual(1);
       }
     }
+  });
+
+  test("catches a sub-sample gamut excursion between two same-state base samples", () => {
+    // At saturation 1.25 with gamma 0.8 the helix's blue channel pokes just
+    // past 1 over a narrow u window (~0.77-0.81) that falls entirely between
+    // the in-gamut base samples at u = 9/12 and 10/12. The simple adjacent-pair
+    // crossing check would miss it; buildSamples must probe the interval
+    // midpoint to catch the dip.
+    const params: CubehelixParams = {
+      ...DEFAULT_CUBEHELIX_PARAMS,
+      saturationMin: 1.25,
+      saturationMax: 1.25,
+      rotations: -1.5,
+      lightnessCurve: { kind: "power", gamma: 0.8 },
+    };
+    const samples = buildSamples(params, 12);
+
+    // The excursion midpoint is the one sample whose gamut state differs from
+    // BOTH neighbours — the out-of-gamut probe flanked by its two bisected
+    // boundary samples. A simple crossing never produces that pattern.
+    const midIdx = samples.findIndex(
+      (s, i) =>
+        i > 0 &&
+        i < samples.length - 1 &&
+        s.inGamut !== samples[i - 1]!.inGamut &&
+        s.inGamut !== samples[i + 1]!.inGamut,
+    );
+    expect(midIdx).toBeGreaterThan(0);
+
+    const enter = samples[midIdx - 1]!;
+    const mid = samples[midIdx]!;
+    const exit = samples[midIdx + 1]!;
+    // The two base samples on either side share gamut state; only the helix
+    // between them left the cube.
+    expect(enter.inGamut).toBe(exit.inGamut);
+    expect(mid.inGamut).toBe(!enter.inGamut);
+    // Both boundary samples are bisected crossings, so each lands on a face.
+    for (const boundary of [enter, exit]) {
+      const onFace = [boundary.raw.r, boundary.raw.g, boundary.raw.b].some(
+        (c) => Math.abs(c) < 0.03 || Math.abs(c - 1) < 0.03,
+      );
+      expect(onFace).toBe(true);
+    }
+  });
+
+  test("ignores the reverse flag — raw geometry samples the helix directly", () => {
+    // buildSamples strips `reverse` before sampling cube-space geometry;
+    // keeping it would double-reverse and paint mismatched hues against the
+    // swatches. The samples must be identical whether or not `reverse` is set.
+    const base: CubehelixParams = {
+      ...DEFAULT_CUBEHELIX_PARAMS,
+      saturationMin: 2,
+      saturationMax: 2,
+    };
+    const forward = buildSamples({ ...base, reverse: false }, 32);
+    const reversed = buildSamples({ ...base, reverse: true }, 32);
+    expect(reversed).toEqual(forward);
   });
 });
