@@ -11,7 +11,7 @@ import {
   type HueWaypoint,
   type LightnessCurve,
 } from "@cubehelix-studio/core";
-import { clamp } from "./math";
+import { clamp, mod } from "./math";
 
 export type HueAuthoringState =
   | { mode: "freeform" }
@@ -352,7 +352,7 @@ function parseWaypointsParam(raw: string | null): [HueWaypoint, HueWaypoint] | n
     if (!Number.isFinite(t) || !Number.isFinite(h)) return null;
     result.push({
       t: clamp(t, 0, 1),
-      hue: ((h % 1) + 1) % 1,
+      hue: mod(h, 1),
     });
   }
   return [result[0]!, result[1]!];
