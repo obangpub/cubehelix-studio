@@ -1,10 +1,5 @@
 import { useCallback, useEffect, useId, useRef } from "react";
-import {
-  chromaEnvelope,
-  evaluateLightnessCurve,
-  invertLightnessCurve,
-  type CubehelixParams,
-} from "@cubehelix-studio/core";
+import { helixGeometry, type CubehelixParams } from "@cubehelix-studio/core";
 
 const FIELD_WIDTH = 88;
 const FIELD_HEIGHT = 132;
@@ -258,11 +253,13 @@ function drawField(
   const data = image.data;
 
   const [tStart, tEnd] = side === "dark" ? DARK_T_RANGE : LIGHT_T_RANGE;
-  const { start, rotations, lightnessCurve, lightnessAxisMin, lightnessAxisMax } = params;
-  const uMin = invertLightnessCurve(lightnessCurve, lightnessAxisMin);
-  const uMax = invertLightnessCurve(lightnessCurve, lightnessAxisMax);
+  // The field is drawn in fixed palette orientation: the left box edits the
+  // dark end and the right box the light end, independent of the `reverse`
+  // toggle. Geometry comes from core with `reverse` neutralized so the t
+  // ranges above keep mapping to those fixed ends.
+  const geometryParams: CubehelixParams = params.reverse ? { ...params, reverse: false } : params;
 
-  const tEff = new Float64Array(w);
+  const columnT = new Float64Array(w);
   const fraction = new Float64Array(w);
   const envelope = new Float64Array(w);
   const dr = new Float64Array(w);
@@ -271,24 +268,20 @@ function drawField(
 
   for (let x = 0; x < w; x++) {
     const t = tStart + (tEnd - tStart) * (x / (w - 1));
-    tEff[x] = t;
-    const u = uMin + (uMax - uMin) * t;
-    const f = evaluateLightnessCurve(lightnessCurve, u);
-    fraction[x] = f;
-    envelope[x] = chromaEnvelope(f, params);
-    const angle = 2 * Math.PI * (start / 3 + rotations * u + 1);
-    const cosA = Math.cos(angle);
-    const sinA = Math.sin(angle);
-    dr[x] = -0.14861 * cosA + 1.78277 * sinA;
-    dg[x] = -0.29227 * cosA - 0.90649 * sinA;
-    db[x] = 1.97294 * cosA;
+    columnT[x] = t;
+    const geom = helixGeometry(t, geometryParams);
+    fraction[x] = geom.fraction;
+    envelope[x] = geom.envelope;
+    dr[x] = geom.dr;
+    dg[x] = geom.dg;
+    db[x] = geom.db;
   }
 
   for (let y = 0; y < h; y++) {
     const positionFromBottom = (h - 1 - y) / (h - 1);
     const rowSat = max * Math.pow(positionFromBottom, scaleExponent);
     for (let x = 0; x < w; x++) {
-      const t = tEff[x]!;
+      const t = columnT[x]!;
       const f = fraction[x]!;
       const env = envelope[x]!;
       const drx = dr[x]!;
