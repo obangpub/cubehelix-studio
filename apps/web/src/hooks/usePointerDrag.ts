@@ -20,6 +20,11 @@ export interface PointerDragOptions<T extends Element> {
  * race); the ref survives all of that, so a drag never gets stuck. The hook
  * still calls `setPointerCapture` so move events keep routing to the element
  * when the cursor leaves its bounding box.
+ *
+ * The returned handlers are recreated each render and intentionally not
+ * memoized — spread them onto a JSX element (`<el {...drag} />`) so the latest
+ * `onDrag`/`onStart`/`onEnd` closures are always used. Do not pass them to
+ * `addEventListener` or a memoized child, where a stable identity is expected.
  */
 export function usePointerDrag<T extends Element>(options: PointerDragOptions<T>) {
   const { onDrag, onStart, onEnd, preventDefault, stopPropagation } = options;

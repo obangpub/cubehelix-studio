@@ -24,6 +24,11 @@ export interface KeyboardStepperOptions {
  * map: arrows step by `step`, Page keys by `largeStep`, Home/End jump to fixed
  * targets. Mapped keys are prevented; keys outside the map pass through
  * untouched.
+ *
+ * The returned handler is recreated each render and intentionally not
+ * memoized — assign it as a JSX `onKeyDown` prop so it always closes over the
+ * current `value`/`onChange`. Do not pass it to `addEventListener` or a
+ * memoized child, where a stable identity is expected.
  */
 export function useKeyboardStepper(options: KeyboardStepperOptions) {
   const { value, step, largeStep, homeValue, endValue, bound, onChange } = options;
