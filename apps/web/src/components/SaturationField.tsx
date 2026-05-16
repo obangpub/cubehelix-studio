@@ -1,5 +1,9 @@
 import { useCallback, useEffect, useId, useRef } from "react";
 import { helixGeometry, type CubehelixParams } from "@cubehelix-studio/core";
+import { useKeyboardStepper } from "../hooks/useKeyboardStepper";
+import { usePointerDrag } from "../hooks/usePointerDrag";
+import { clamp, clamp01 } from "../lib/math";
+import { positionToValue, valueToPosition } from "../lib/scale";
 
 const FIELD_WIDTH = 88;
 const FIELD_HEIGHT = 132;
@@ -122,70 +126,33 @@ function SaturationFieldBox({
     drawField(canvas, side, params, otherValue, linked, max, scaleExponent);
   }, [params, side, otherValue, linked, max, scaleExponent]);
 
-  const positionToValue = (p: number): number => {
-    const clamped = Math.max(0, Math.min(1, p));
-    const v = max * Math.pow(clamped, scaleExponent);
-    if (step > 0) {
-      const decimals = Math.max(0, Math.ceil(-Math.log10(step)));
-      return Number(v.toFixed(decimals));
-    }
-    return v;
-  };
-  const valueToPosition = (v: number): number => {
-    const clamped = Math.max(0, Math.min(max, v));
-    return Math.pow(clamped / max, 1 / scaleExponent);
-  };
+  // Saturation runs from 0 at the bottom of the track to `max` at the top.
+  const scale = { min: 0, max, exponent: scaleExponent, step };
 
   const updateFromPointer = (clientY: number) => {
     const rect = trackRef.current?.getBoundingClientRect();
     if (!rect) return;
     const yFromTop = clientY - rect.top;
     const positionFromBottom = 1 - yFromTop / rect.height;
-    onChange(positionToValue(positionFromBottom));
+    onChange(positionToValue(positionFromBottom, scale));
   };
 
-  const onPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    e.preventDefault();
-    e.currentTarget.setPointerCapture(e.pointerId);
-    updateFromPointer(e.clientY);
-  };
-  const onPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (e.buttons === 0) return;
-    updateFromPointer(e.clientY);
-  };
+  const drag = usePointerDrag<HTMLDivElement>({
+    onDrag: (e) => updateFromPointer(e.clientY),
+    preventDefault: true,
+  });
 
-  const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-    const big = step * 10;
-    let next: number;
-    switch (e.key) {
-      case "ArrowUp":
-      case "ArrowRight":
-        next = Math.min(max, ownValue + step);
-        break;
-      case "ArrowDown":
-      case "ArrowLeft":
-        next = Math.max(0, ownValue - step);
-        break;
-      case "PageUp":
-        next = Math.min(max, ownValue + big);
-        break;
-      case "PageDown":
-        next = Math.max(0, ownValue - big);
-        break;
-      case "Home":
-        next = 0;
-        break;
-      case "End":
-        next = max;
-        break;
-      default:
-        return;
-    }
-    e.preventDefault();
-    onChange(next);
-  };
+  const onKeyDown = useKeyboardStepper({
+    value: ownValue,
+    step,
+    largeStep: step * 10,
+    homeValue: 0,
+    endValue: max,
+    bound: (v) => clamp(v, 0, max),
+    onChange,
+  });
 
-  const thumbBottomPercent = valueToPosition(ownValue) * 100;
+  const thumbBottomPercent = valueToPosition(ownValue, scale) * 100;
   const label = side === "dark" ? "Dark" : "Light";
 
   return (
@@ -194,8 +161,7 @@ function SaturationFieldBox({
       <div
         ref={trackRef}
         className="saturation-field-track"
-        onPointerDown={onPointerDown}
-        onPointerMove={onPointerMove}
+        {...drag}
         onKeyDown={onKeyDown}
         role="slider"
         tabIndex={0}
@@ -253,10 +219,10 @@ function drawField(
   const data = image.data;
 
   const [tStart, tEnd] = side === "dark" ? DARK_T_RANGE : LIGHT_T_RANGE;
-  // The field is drawn in fixed palette orientation: the left box edits the
-  // dark end and the right box the light end, independent of the `reverse`
-  // toggle. Geometry comes from core with `reverse` neutralized so the t
-  // ranges above keep mapping to those fixed ends.
+  // `reverse` only flips the order of the final output gradient; it is not a
+  // property of the helix these controls edit. So this field always renders in
+  // fixed orientation — the left box edits the dark end, the right box the
+  // light end — and asks core for geometry with `reverse` neutralized.
   const geometryParams: CubehelixParams = params.reverse ? { ...params, reverse: false } : params;
 
   const columnT = new Float64Array(w);
@@ -279,7 +245,7 @@ function drawField(
 
   for (let y = 0; y < h; y++) {
     const positionFromBottom = (h - 1 - y) / (h - 1);
-    const rowSat = max * Math.pow(positionFromBottom, scaleExponent);
+    const rowSat = positionToValue(positionFromBottom, { min: 0, max, exponent: scaleExponent });
     for (let x = 0; x < w; x++) {
       const t = columnT[x]!;
       const f = fraction[x]!;
@@ -307,12 +273,6 @@ function drawField(
     }
   }
   ctx.putImageData(image, 0, 0);
-}
-
-function clamp01(v: number): number {
-  if (v < 0) return 0;
-  if (v > 1) return 1;
-  return v;
 }
 
 function LinkedIcon() {
@@ -352,12 +312,15 @@ function UnlinkedIcon() {
         stroke="currentColor"
         strokeWidth="1.4"
       />
+      {/* Shackle swung open on its left hinge so the unlocked state is
+          unmistakable, not a faint outline change against the linked icon. */}
       <path
         fill="none"
         stroke="currentColor"
         strokeWidth="1.4"
         strokeLinecap="round"
-        d="M5.5 7V4.5a2.5 2.5 0 0 1 5 0"
+        transform="rotate(-22 5.5 7)"
+        d="M5.5 7V4A3 3 0 0 1 10.5 5"
       />
     </svg>
   );

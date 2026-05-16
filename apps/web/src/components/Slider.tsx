@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { positionToValue, valueToPosition } from "../lib/scale";
 
 interface SliderProps {
   label: string;
@@ -34,32 +35,20 @@ export function Slider({
   const effectiveNumberMin = numberMin ?? min;
   const effectiveNumberMax = numberMax ?? max;
   const isScaled = scaleExponent !== 1 && max > min;
-  const span = max - min;
-
-  const valueToPosition = (v: number): number => {
-    const clamped = Math.min(max, Math.max(min, v));
-    const linear = (clamped - min) / span;
-    return Math.pow(linear, 1 / scaleExponent);
-  };
-  const positionToValue = (p: number): number => {
-    const clamped = Math.min(1, Math.max(0, p));
-    return min + span * Math.pow(clamped, scaleExponent);
-  };
+  const scale = { min, max, exponent: scaleExponent, step };
 
   const commitFromSlider = (raw: number) => {
     if (!Number.isFinite(raw)) return;
-    let v = isScaled ? positionToValue(raw) : raw;
-    if (isScaled && step > 0) {
-      const decimals = Math.max(0, Math.ceil(-Math.log10(step)));
-      v = Number(v.toFixed(decimals));
-    }
+    const v = isScaled ? positionToValue(raw, scale) : raw;
     onChange(Math.min(max, Math.max(min, v)));
   };
   const commitFromNumber = (raw: number) => {
     if (!Number.isFinite(raw)) return;
     onChange(Math.min(effectiveNumberMax, Math.max(effectiveNumberMin, raw)));
   };
-  const sliderValue = isScaled ? valueToPosition(value) : Math.min(max, Math.max(min, value));
+  const sliderValue = isScaled
+    ? valueToPosition(value, scale)
+    : Math.min(max, Math.max(min, value));
   const sliderMin = isScaled ? 0 : min;
   const sliderMax = isScaled ? 1 : max;
   const sliderStep = isScaled ? POSITION_STEP : step;

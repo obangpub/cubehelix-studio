@@ -1,4 +1,6 @@
 import { useId, useMemo, useRef, useState } from "react";
+import { usePointerDrag } from "../hooks/usePointerDrag";
+import { clamp01 } from "../lib/math";
 
 type Pair = readonly [number, number];
 
@@ -11,10 +13,6 @@ interface BezierEditorProps {
 const VIEW_PADDING = 0.08;
 const HANDLE_RADIUS = 0.04;
 const CURVE_SAMPLES = 48;
-
-function clamp01(x: number): number {
-  return x < 0 ? 0 : x > 1 ? 1 : x;
-}
 
 function cubicAt(s: number, p1: Pair, p2: Pair): { x: number; y: number } {
   const omS = 1 - s;
@@ -64,33 +62,20 @@ export function BezierEditor({ p1, p2, onChange }: BezierEditorProps) {
     }
   };
 
-  const onPointerDown = (handle: 1 | 2) => (e: React.PointerEvent<SVGCircleElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-    e.currentTarget.setPointerCapture(e.pointerId);
-    setActive(handle);
-    updateHandle(
-      handle,
-      e.clientX,
-      e.clientY,
-      handle === 1 ? { min: 0, max: p2[0] } : { min: p1[0], max: 1 },
-    );
-  };
-  const onPointerMove = (handle: 1 | 2) => (e: React.PointerEvent<SVGCircleElement>) => {
-    if (!e.currentTarget.hasPointerCapture(e.pointerId)) return;
-    updateHandle(
-      handle,
-      e.clientX,
-      e.clientY,
-      handle === 1 ? { min: 0, max: p2[0] } : { min: p1[0], max: 1 },
-    );
-  };
-  const onPointerUp = (e: React.PointerEvent<SVGCircleElement>) => {
-    if (e.currentTarget.hasPointerCapture(e.pointerId)) {
-      e.currentTarget.releasePointerCapture(e.pointerId);
-    }
-    setActive(null);
-  };
+  const dragHandle1 = usePointerDrag<SVGCircleElement>({
+    onDrag: (e) => updateHandle(1, e.clientX, e.clientY, { min: 0, max: p2[0] }),
+    onStart: () => setActive(1),
+    onEnd: () => setActive(null),
+    preventDefault: true,
+    stopPropagation: true,
+  });
+  const dragHandle2 = usePointerDrag<SVGCircleElement>({
+    onDrag: (e) => updateHandle(2, e.clientX, e.clientY, { min: p1[0], max: 1 }),
+    onStart: () => setActive(2),
+    onEnd: () => setActive(null),
+    preventDefault: true,
+    stopPropagation: true,
+  });
 
   // Keyboard / direct-entry path: each component is a number input below the
   // canvas. The curve must stay monotonic in x (p1.x <= p2.x). A typed x-value
@@ -159,10 +144,7 @@ export function BezierEditor({ p1, p2, onChange }: BezierEditorProps) {
           stroke={active === 1 ? "var(--fg)" : "transparent"}
           strokeWidth={0.008}
           cursor="grab"
-          onPointerDown={onPointerDown(1)}
-          onPointerMove={onPointerMove(1)}
-          onPointerUp={onPointerUp}
-          onPointerCancel={onPointerUp}
+          {...dragHandle1}
         />
         <circle
           cx={p2[0]}
@@ -172,10 +154,7 @@ export function BezierEditor({ p1, p2, onChange }: BezierEditorProps) {
           stroke={active === 2 ? "var(--fg)" : "transparent"}
           strokeWidth={0.008}
           cursor="grab"
-          onPointerDown={onPointerDown(2)}
-          onPointerMove={onPointerMove(2)}
-          onPointerUp={onPointerUp}
-          onPointerCancel={onPointerUp}
+          {...dragHandle2}
         />
       </svg>
       <div className="bezier-editor-inputs">

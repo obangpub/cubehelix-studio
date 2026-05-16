@@ -1,4 +1,4 @@
-import { useEffect, useId, useMemo, useRef, useState } from "react";
+import { useId, useMemo, useRef, useState } from "react";
 import {
   DEFAULT_ROLES,
   serialize,
@@ -7,7 +7,10 @@ import {
   type PaletteRole,
   type RolePalette,
 } from "@cubehelix-studio/core";
+import { useCopyToClipboard } from "../hooks/useCopyToClipboard";
 import { useAnnounce } from "../lib/announcer";
+import { CopyFeedback } from "./CopyFeedback";
+import { CheckIcon, ClipboardIcon } from "./icons";
 
 interface ExportPanelProps {
   params: CubehelixParams;
@@ -37,21 +40,12 @@ const FORMATS: FormatOption[] = [
   { value: "python", label: "Python (matplotlib)", language: "python" },
 ];
 
-const COPY_FEEDBACK_MS = 1500;
-
 export function ExportPanel({ params, swatchCount }: ExportPanelProps) {
   const [format, setFormat] = useState<ExportFormat>("css");
-  const [copyStatus, setCopyStatus] = useState<"idle" | "copied" | "failed">("idle");
+  const { status: copyStatus, copy } = useCopyToClipboard();
   const announce = useAnnounce();
   const baseId = useId();
   const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
-  const copyTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    return () => {
-      if (copyTimerRef.current !== null) clearTimeout(copyTimerRef.current);
-    };
-  }, []);
 
   const palette: RolePalette = useMemo(
     () => ({ params, roles: rolesForCount(swatchCount) }),
@@ -93,18 +87,6 @@ export function ExportPanel({ params, swatchCount }: ExportPanelProps) {
     tabRefs.current[nextIndex]?.focus();
   };
 
-  const copy = async () => {
-    try {
-      await navigator.clipboard.writeText(output);
-      setCopyStatus("copied");
-    } catch {
-      setCopyStatus("failed");
-    }
-    // Reset any in-flight revert timer so rapid clicks don't race.
-    if (copyTimerRef.current !== null) clearTimeout(copyTimerRef.current);
-    copyTimerRef.current = setTimeout(() => setCopyStatus("idle"), COPY_FEEDBACK_MS);
-  };
-
   const copyTooltip =
     copyStatus === "copied" ? "Copied" : copyStatus === "failed" ? "Copy failed" : "Copy";
 
@@ -135,7 +117,7 @@ export function ExportPanel({ params, swatchCount }: ExportPanelProps) {
         <button
           type="button"
           className="header-icon-button"
-          onClick={copy}
+          onClick={() => copy(output)}
           aria-label={copyTooltip}
           title={copyTooltip}
         >
@@ -143,6 +125,7 @@ export function ExportPanel({ params, swatchCount }: ExportPanelProps) {
           <span className="visually-hidden" aria-live="polite">
             {copyTooltip}
           </span>
+          <CopyFeedback status={copyStatus} />
         </button>
       </header>
       <pre
@@ -155,46 +138,5 @@ export function ExportPanel({ params, swatchCount }: ExportPanelProps) {
         <code>{output}</code>
       </pre>
     </section>
-  );
-}
-
-function ClipboardIcon() {
-  return (
-    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-      <rect
-        x="8"
-        y="3"
-        width="8"
-        height="3"
-        rx="1"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M8 5H6a2 2 0 0 0-2 2v12a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2h-2"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-    </svg>
-  );
-}
-
-function CheckIcon() {
-  return (
-    <svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
-      <path
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="2.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M5 12l5 5L20 7"
-      />
-    </svg>
   );
 }

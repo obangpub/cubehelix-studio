@@ -22,6 +22,7 @@ import {
   type HueAuthoringState,
 } from "../lib/url-state";
 import { useAnnounce } from "../lib/announcer";
+import { mod } from "../lib/math";
 import { BezierEditor } from "./BezierEditor";
 import { HelpPopover } from "./HelpPopover";
 import { HueWaypointEditor } from "./HueWaypointEditor";
@@ -40,10 +41,6 @@ const SATURATION_SLIDER_MAX = 4.5;
 // Cap it well past any practical palette so a typed or pasted extreme value
 // can't drive the cube viz into an unbounded geometry rebuild.
 const ROTATIONS_NUMBER_LIMIT = 50;
-
-function mod3(v: number): number {
-  return ((v % 3) + 3) % 3;
-}
 
 interface ParamControlsProps {
   params: CubehelixParams;
@@ -140,7 +137,7 @@ export function ParamControls({
   // mode, so these setters always run with mode already "freeform".
   const setStart = (v: number) => {
     if (!Number.isFinite(v)) return;
-    onChange({ ...params, start: mod3(v) });
+    onChange({ ...params, start: mod(v, 3) });
   };
   const setRotations = (v: number) => {
     onChange({ ...params, rotations: v });
@@ -322,7 +319,7 @@ export function ParamControls({
                       id="hue-control-number"
                       className="slider-value"
                       type="number"
-                      value={Number(mod3(params.start).toFixed(3))}
+                      value={Number(mod(params.start, 3).toFixed(3))}
                       step={0.05}
                       onChange={(e) => setStart(e.currentTarget.valueAsNumber)}
                       aria-label="Starting Hue value"
@@ -409,7 +406,7 @@ export function ParamControls({
                 ) : (
                   <div className="hue-computed-readout">
                     <span>
-                      start = <code>{mod3(params.start).toFixed(3)}</code>
+                      start = <code>{mod(params.start, 3).toFixed(3)}</code>
                     </span>
                     <span>
                       rotations = <code>{params.rotations.toFixed(3)}</code>

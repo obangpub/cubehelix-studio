@@ -1,15 +1,12 @@
 import { useId } from "react";
 import type { HueWaypoint } from "@cubehelix-studio/core";
+import { mod } from "../lib/math";
 import { Slider } from "./Slider";
 import { StartingHueWheel } from "./StartingHueWheel";
 
 // Minimum separation in palette-t space between the two waypoints. Keeps
 // u₁ ≈ u₂ from collapsing the solver to a degenerate case.
 export const WAYPOINT_T_MIN_SEPARATION = 0.05;
-
-function mod1(v: number): number {
-  return ((v % 1) + 1) % 1;
-}
 
 interface HueWaypointEditorProps {
   index: 1 | 2;
@@ -52,7 +49,7 @@ export function HueWaypointEditor({ index, waypoint, otherT, onChange }: HueWayp
             onChange={(e) => {
               const v = e.target.valueAsNumber;
               if (!Number.isFinite(v)) return;
-              onChange({ ...waypoint, hue: mod1(v) });
+              onChange({ ...waypoint, hue: mod(v, 1) });
             }}
             aria-label={`${label} hue value`}
           />
@@ -61,7 +58,7 @@ export function HueWaypointEditor({ index, waypoint, otherT, onChange }: HueWayp
           value={waypoint.hue * 3}
           ariaLabel={`${label} hue`}
           compact
-          onChange={(startVal) => onChange({ ...waypoint, hue: mod1(startVal / 3) })}
+          onChange={(startVal) => onChange({ ...waypoint, hue: mod(startVal / 3, 1) })}
         />
       </div>
     </div>
