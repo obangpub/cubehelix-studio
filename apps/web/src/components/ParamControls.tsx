@@ -31,10 +31,10 @@ import { SaturationField } from "./SaturationField";
 import { Slider } from "./Slider";
 import { StartingHueWheel } from "./StartingHueWheel";
 
-// Saturation slider tops out well past full-gamut so users can intentionally
-// crank past the in-gamut range. The cubic slider scale (scaleExponent=3 on
-// the Slider) puts the most-used 0..2 range across the lower ~76% of travel,
-// leaving the upper portion for the rare 2..4.5 territory.
+// Saturation tops out well past full-gamut so users can intentionally crank
+// past the in-gamut range. The quadratic scale (scaleExponent=2 on the
+// saturation field) puts the most-used 0..2 range across the lower ~67% of
+// travel, leaving the upper portion for the rare 2..4.5 territory.
 const SATURATION_SLIDER_MAX = 4.5;
 
 // The Hue Rotations slider sweeps -3..3, but the number input may exceed that.
@@ -557,7 +557,7 @@ export function ParamControls({
                 saturationMax={params.saturationMax}
                 linked={linked}
                 max={SATURATION_SLIDER_MAX}
-                scaleExponent={3}
+                scaleExponent={2}
                 step={0.01}
                 onChange={setSaturationBoth}
                 onLinkedChange={setLinked}
