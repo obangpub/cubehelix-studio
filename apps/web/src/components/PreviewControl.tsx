@@ -21,12 +21,9 @@ export function PreviewControl({ value, onChange }: PreviewControlProps) {
   return (
     <div className="preview-control" role="radiogroup" aria-label="Preview palette as">
       <span className="preview-control-label">Preview as</span>
-      <div className="preview-control-options">
+      <div className="segmented segmented--compact">
         {PREVIEW_MODES.map((mode) => (
-          <label
-            key={mode}
-            className={`preview-control-option ${value === mode ? "is-active" : ""}`}
-          >
+          <label key={mode} className={`segmented-option ${value === mode ? "is-active" : ""}`}>
             <input
               type="radio"
               name={groupName}

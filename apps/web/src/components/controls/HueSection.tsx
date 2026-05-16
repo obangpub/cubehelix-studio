@@ -58,11 +58,11 @@ export function HueSection({
           </span>
         </summary>
         <div className="control-section-body">
-          <div className="hue-mode-toggle" role="radiogroup" aria-label="Hue authoring mode">
+          <div className="segmented" role="radiogroup" aria-label="Hue authoring mode">
             {(["freeform", "waypoints"] as const).map((m) => (
               <label
                 key={m}
-                className={`curve-kind-option ${hueAuthoring.mode === m ? "is-active" : ""}`}
+                className={`segmented-option ${hueAuthoring.mode === m ? "is-active" : ""}`}
               >
                 <input
                   type="radio"
