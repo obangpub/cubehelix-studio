@@ -15,12 +15,10 @@ jobs:
         id: metadata
         uses: dependabot/fetch-metadata@21025c705c08248db411dc16f3619e6b5f9ea21a # v2
 
-      - name: Approve PR
-        run: gh pr review --approve "$PR_URL"
-        env:
-          PR_URL: ${{ github.event.pull_request.html_url }}
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
+      # No "Approve PR" step: the Actions GITHUB_TOKEN is not permitted to
+      # approve pull requests, so `gh pr review --approve` always fails. Auto
+      # merge does not require an approval unless branch protection mandates a
+      # review — in which case a separate PAT would be needed.
       - name: Enable auto-merge (squash)
         run: gh pr merge --auto --squash "$PR_URL"
         env:
