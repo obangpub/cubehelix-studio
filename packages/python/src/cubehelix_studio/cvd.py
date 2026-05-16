@@ -12,19 +12,37 @@ PREVIEW_MODES: tuple[PreviewMode, ...] = get_args(PreviewMode)
 # Simulation of Color Vision Deficiency". Severity 1.0 matrices applied in
 # linear-sRGB space.
 _PROTANOPIA_MATRIX: tuple[float, ...] = (
-    0.152286, 1.052583, -0.204868,
-    0.114503, 0.786281, 0.099216,
-    -0.003882, -0.048116, 1.051998,
+    0.152286,
+    1.052583,
+    -0.204868,
+    0.114503,
+    0.786281,
+    0.099216,
+    -0.003882,
+    -0.048116,
+    1.051998,
 )
 _DEUTERANOPIA_MATRIX: tuple[float, ...] = (
-    0.367322, 0.860646, -0.227968,
-    0.280085, 0.672501, 0.047413,
-    -0.011820, 0.042940, 0.968881,
+    0.367322,
+    0.860646,
+    -0.227968,
+    0.280085,
+    0.672501,
+    0.047413,
+    -0.011820,
+    0.042940,
+    0.968881,
 )
 _TRITANOPIA_MATRIX: tuple[float, ...] = (
-    1.255528, -0.076749, -0.178779,
-    -0.078411, 0.930809, 0.147602,
-    0.004733, 0.691367, 0.303900,
+    1.255528,
+    -0.076749,
+    -0.178779,
+    -0.078411,
+    0.930809,
+    0.147602,
+    0.004733,
+    0.691367,
+    0.303900,
 )
 
 # BT.709 luma coefficients for sRGB.
@@ -70,9 +88,7 @@ def _apply_grayscale(rgb: tuple[float, float, float]) -> tuple[float, float, flo
     return (out, out, out)
 
 
-def apply_preview(
-    rgb: tuple[float, float, float], mode: PreviewMode
-) -> tuple[float, float, float]:
+def apply_preview(rgb: tuple[float, float, float], mode: PreviewMode) -> tuple[float, float, float]:
     """Return ``rgb`` after applying the named preview transform."""
     if mode == "normal":
         return rgb
