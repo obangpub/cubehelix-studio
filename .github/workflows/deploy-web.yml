@@ -47,10 +47,11 @@ jobs:
 
       # Cloudflare Pages serves a deploy on the project's production branch
       # (main) at the production domain; any other branch (staging) becomes a
-      # branch deploy that a subdomain can be pinned to.
+      # branch deploy that a subdomain can be pinned to. wrangler runs via
+      # `pnpm dlx` at a pinned version: it is a deploy-only tool, kept out of
+      # the workspace install that every other job and contributor pays for.
       - name: Deploy to Cloudflare Pages
-        uses: cloudflare/wrangler-action@ebbaa1584979971c8614a24965b4405ff95890e0 # v4.0.0
-        with:
-          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
-          command: pages deploy apps/web/dist --project-name=cubehelix-studio --branch=${{ github.ref_name }}
+        run: pnpm dlx wrangler@4.92.0 pages deploy apps/web/dist --project-name=cubehelix-studio --branch="${{ github.ref_name }}"
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
