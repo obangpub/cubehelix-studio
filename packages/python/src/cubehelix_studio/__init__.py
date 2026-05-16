@@ -1,7 +1,6 @@
 """Grayscale-safe color palettes from cubehelix."""
 
 from .contrast import contrast_ratio, pick_text_color
-from .cvd import PREVIEW_MODES, PreviewMode, apply_preview
 from .cubehelix import (
     DEFAULT_CHROMA_FLOOR,
     DEFAULT_CHROMA_PEAK,
@@ -18,6 +17,7 @@ from .cubehelix import (
     invert_lightness_curve,
     was_clamped,
 )
+from .cvd import PREVIEW_MODES, PreviewMode, apply_preview
 from .format import to_hex, to_rgb_255
 from .mpl import to_matplotlib_colormap
 from .presets import PRESETS, PaletteMode, Preset, get_preset_by_id

@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import math
 from dataclasses import dataclass, field
-from typing import Union
 
 DEFAULT_CHROMA_PEAK = 0.5
 DEFAULT_CHROMA_WIDTH = 1.0
@@ -37,7 +36,7 @@ class BezierCurve:
     kind: str = "bezier"
 
 
-LightnessCurve = Union[PowerCurve, SigmoidCurve, BezierCurve]
+LightnessCurve = PowerCurve | SigmoidCurve | BezierCurve
 
 
 def _logistic(x: float) -> float:
@@ -108,7 +107,7 @@ def evaluate_lightness_curve(curve: LightnessCurve, t: float) -> float:
     if t >= 1.0:
         return 1.0
     if isinstance(curve, PowerCurve):
-        return t**curve.gamma
+        return float(t**curve.gamma)
     if isinstance(curve, SigmoidCurve):
         return _evaluate_sigmoid(t, curve.steepness, curve.midpoint)
     if isinstance(curve, BezierCurve):
@@ -153,7 +152,7 @@ def chroma_envelope(fraction: float, peak: float, width: float, floor: float) ->
     shape = (fraction**a) * ((1.0 - fraction) ** b)
     normalized = shape / shape_at_peak
     envelope = (1.0 - floor) * normalized + floor
-    return envelope * _PEAK_AMPLITUDE
+    return float(envelope * _PEAK_AMPLITUDE)
 
 
 @dataclass(frozen=True)
