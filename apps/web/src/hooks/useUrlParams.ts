@@ -1,30 +1,26 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { decodeAppState, encodeAppState, type AppState } from "../lib/url-state";
 
 type SetAppState = (next: AppState | ((prev: AppState) => AppState)) => void;
 
 export function useUrlParams(): readonly [AppState, SetAppState] {
   const [state, setState] = useState<AppState>(() => decodeAppState(window.location.search));
-  // Set when a popstate handler drives the next setState. Back/forward
-  // navigation lands the user on an existing history entry; the encode effect
-  // must not rewrite that entry's URL, which canonical normalization would.
-  const skipNextEncodeRef = useRef(false);
 
   useEffect(() => {
-    if (skipNextEncodeRef.current) {
-      skipNextEncodeRef.current = false;
-      return;
-    }
     const qs = encodeAppState(state);
+    // Write only when `state` genuinely differs from what the URL already
+    // represents. Comparing canonical encodings — `qs` against a re-encode of
+    // the current URL — leaves a back/forward navigation alone (it decodes
+    // state straight from the URL we are on, so the two encodings match) and
+    // also avoids rewriting a non-canonical incoming link. Only a real edit
+    // changes the encoding, and only that rewrites the entry.
+    if (qs === encodeAppState(decodeAppState(window.location.search))) return;
     const newUrl = window.location.pathname + qs + window.location.hash;
-    if (newUrl !== window.location.pathname + window.location.search + window.location.hash) {
-      window.history.replaceState(null, "", newUrl);
-    }
+    window.history.replaceState(null, "", newUrl);
   }, [state]);
 
   useEffect(() => {
     const onPopState = () => {
-      skipNextEncodeRef.current = true;
       setState(decodeAppState(window.location.search));
     };
     window.addEventListener("popstate", onPopState);
