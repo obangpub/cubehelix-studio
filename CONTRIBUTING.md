@@ -52,6 +52,21 @@ uv run ruff format --check
 uv run mypy src/
 ```
 
+## Measuring performance
+
+Profile against a production build, not the dev server. Dev-mode React adds
+per-element instrumentation — owner-stack tracking via `console.createTask` and
+the `jsxDEV` runtime — that inflates scripting time and can manufacture
+bottlenecks that do not exist in production.
+
+```bash
+pnpm --filter @cubehelix-studio/web build
+pnpm --filter @cubehelix-studio/web exec vite preview
+```
+
+Reproduce the slowness on the previewed build, with DevTools closed, before
+diagnosing or optimizing.
+
 ## The parity contract
 
 Both libraries must produce identical RGB output for identical inputs. [`fixtures/parity.json`](fixtures/parity.json) is the source of truth:
