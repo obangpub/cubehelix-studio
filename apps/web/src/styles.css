@@ -839,54 +839,6 @@ header p {
   margin-left: auto;
 }
 
-.winding-stepper {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.winding-stepper-controls {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.25rem;
-  margin-left: auto;
-  border: 1px solid var(--border-strong);
-  border-radius: 6px;
-  background: var(--surface);
-}
-
-.winding-step-button {
-  font: inherit;
-  font-size: 0.95rem;
-  line-height: 1;
-  width: 1.75rem;
-  height: 1.75rem;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  background: transparent;
-  color: var(--fg);
-  border: none;
-  cursor: pointer;
-}
-
-.winding-step-button:hover {
-  background: var(--bg);
-}
-
-.winding-step-button:focus-visible {
-  outline: 2px solid var(--fg);
-  outline-offset: -1px;
-}
-
-.winding-value {
-  font-family: ui-monospace, "SF Mono", Menlo, monospace;
-  font-size: 0.85rem;
-  min-width: 2.5rem;
-  text-align: center;
-  padding: 0 0.25rem;
-}
-
 .hue-computed-readout {
   display: flex;
   gap: 1rem;

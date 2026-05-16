@@ -27,8 +27,12 @@ export function ParamControls({
   hueAuthoring,
   onHueAuthoringChange,
 }: ParamControlsProps) {
-  const { applyParamsPatch, enterWaypointMode, setWaypoint, setWinding, waypointSolved } =
-    useHueAuthoring(params, onChange, hueAuthoring, onHueAuthoringChange);
+  const { applyParamsPatch, enterWaypointMode, setWaypoint, waypointSolved } = useHueAuthoring(
+    params,
+    onChange,
+    hueAuthoring,
+    onHueAuthoringChange,
+  );
   const { setCurve, switchKind } = useRememberedCurves(params.lightnessCurve, applyParamsPatch);
 
   return (
@@ -40,7 +44,6 @@ export function ParamControls({
         onHueAuthoringChange={onHueAuthoringChange}
         enterWaypointMode={enterWaypointMode}
         setWaypoint={setWaypoint}
-        setWinding={setWinding}
         waypointSolved={waypointSolved}
       />
       <LightnessSection

@@ -1,5 +1,5 @@
 import { useId } from "react";
-import type { CubehelixParams, HueWaypoint } from "@cubehelix-studio/core";
+import { MAX_ROTATIONS, type CubehelixParams, type HueWaypoint } from "@cubehelix-studio/core";
 import { useAnnounce } from "../../lib/announcer";
 import { mod } from "../../lib/math";
 import type { HueAuthoringState } from "../../lib/url-state";
@@ -9,11 +9,6 @@ import { Slider } from "../Slider";
 import { StartingHueWheel } from "../StartingHueWheel";
 import type { WaypointSolution } from "./useHueAuthoring";
 
-// The Hue Rotations slider sweeps -3..3, but the number input may exceed that.
-// Cap it well past any practical palette so a typed or pasted extreme value
-// can't drive the cube viz into an unbounded geometry rebuild.
-const ROTATIONS_NUMBER_LIMIT = 50;
-
 interface HueSectionProps {
   params: CubehelixParams;
   onChange: (params: CubehelixParams) => void;
@@ -21,7 +16,6 @@ interface HueSectionProps {
   onHueAuthoringChange: (next: HueAuthoringState) => void;
   enterWaypointMode: () => void;
   setWaypoint: (idx: 0 | 1, next: HueWaypoint) => void;
-  setWinding: (next: number) => void;
   waypointSolved: WaypointSolution;
 }
 
@@ -32,7 +26,6 @@ export function HueSection({
   onHueAuthoringChange,
   enterWaypointMode,
   setWaypoint,
-  setWinding,
   waypointSolved,
 }: HueSectionProps) {
   const announce = useAnnounce();
@@ -122,18 +115,17 @@ export function HueSection({
                 min={-3}
                 max={3}
                 step={0.05}
-                numberMin={-ROTATIONS_NUMBER_LIMIT}
-                numberMax={ROTATIONS_NUMBER_LIMIT}
+                numberMin={-MAX_ROTATIONS}
+                numberMax={MAX_ROTATIONS}
                 help={
                   <HelpPopover label="About hue rotations">
                     <p>
-                      How many times the hue cycles between the dark and light anchors of the full
-                      lightness range, not just the visible window. Negative values turn the other
-                      way.
+                      How many full turns the hue makes between pure black and pure white. Negative
+                      values turn the other way.
                     </p>
                     <p>
-                      The visible palette traverses a sub-arc of that full helix; clipping the{" "}
-                      <em>Lightness Axis</em> exposes fewer turns than this number suggests.
+                      The palette you see covers only part of that sweep, so narrowing the{" "}
+                      <em>Lightness Axis</em> shows fewer turns than this number.
                     </p>
                   </HelpPopover>
                 }
@@ -154,42 +146,10 @@ export function HueSection({
                 otherT={hueAuthoring.waypoints[0].t}
                 onChange={(next) => setWaypoint(1, next)}
               />
-              <div className="winding-stepper">
-                <span className="slider-label">Winding</span>
-                <HelpPopover label="About winding">
-                  <p>
-                    The waypoint hues lie on the hue circle, which means there are infinitely many
-                    helices that pass through both. Each integer of <em>winding</em> picks a
-                    different one — winding 0 takes the shortest path between the two hues; higher
-                    values spin through additional full hue cycles.
-                  </p>
-                </HelpPopover>
-                <div className="winding-stepper-controls">
-                  <button
-                    type="button"
-                    className="winding-step-button"
-                    onClick={() => setWinding(hueAuthoring.winding - 1)}
-                    aria-label="Decrease winding"
-                  >
-                    −
-                  </button>
-                  <span className="winding-value">
-                    {hueAuthoring.winding > 0 ? `+${hueAuthoring.winding}` : hueAuthoring.winding}
-                  </span>
-                  <button
-                    type="button"
-                    className="winding-step-button"
-                    onClick={() => setWinding(hueAuthoring.winding + 1)}
-                    aria-label="Increase winding"
-                  >
-                    +
-                  </button>
-                </div>
-              </div>
               {waypointSolved === null ? (
                 <p className="hue-waypoint-warning" role="status">
-                  These waypoints can&apos;t resolve with the current lightness axis — widen the
-                  axis or switch to Freeform.
+                  No helix can pass through both of these hues within the current lightness axis.
+                  Widen the axis, or switch to Freeform.
                 </p>
               ) : (
                 <div className="hue-computed-readout">

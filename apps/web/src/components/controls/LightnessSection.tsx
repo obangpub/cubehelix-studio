@@ -45,17 +45,18 @@ export function LightnessSection({
               <span className="slider-label">Lightness Curve</span>
               <HelpPopover label="About the lightness curve">
                 <p>
-                  Lightness rises from black to white along the helix. This control reshapes how
-                  that rise is paced, which stretches or compresses where chroma peaks.
+                  Lightness rises from black to white along the helix. This control changes the
+                  pacing of that rise — which stretches or compresses where the most colorful
+                  swatches land.
                 </p>
                 <p>
-                  <em>Power</em> uses a single gamma exponent. <em>Sigmoid</em> stretches the
-                  midtones and compresses the extremes. <em>Bezier</em> exposes two control handles
-                  for an arbitrary monotonic curve.
+                  <em>Power</em> bends the pacing with one dial. <em>Sigmoid</em> lingers in the
+                  midtones and rushes the ends. <em>Bezier</em> gives you two handles to shape the
+                  pacing yourself.
                 </p>
                 <p>
-                  The hues on the helix do not change; only the rate at which the visible palette
-                  moves through them.
+                  The colors themselves don&apos;t change — only how fast the palette moves through
+                  them.
                 </p>
               </HelpPopover>
             </div>

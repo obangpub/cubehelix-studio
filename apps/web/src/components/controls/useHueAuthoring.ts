@@ -65,6 +65,9 @@ export function useHueAuthoring(
       { t: ts[0], hue: h1! },
       { t: ts[1], hue: h2! },
     ];
+    // Seed winding once so entering waypoint mode reproduces the current
+    // freeform palette exactly; it then stays fixed for the session — there is
+    // no winding control, so the solver always takes this same turn count.
     const winding = findWindingForRotations(
       waypoints[0],
       waypoints[1],
@@ -74,9 +77,10 @@ export function useHueAuthoring(
     onHueAuthoringChange({ mode: "waypoints", waypoints, winding });
   };
 
-  // When in waypoint mode, any change to the waypoints, winding, or solver
-  // context inputs (lightness curve / axis / reverse) re-runs the solver and
-  // writes start/rotations back into params.
+  // When in waypoint mode, any change to the waypoints or solver context inputs
+  // (lightness curve / axis / reverse) re-runs the solver and writes
+  // start/rotations back into params. Winding is the value seeded on mode entry
+  // and is carried through unchanged.
   const commitWaypointUpdate = (waypoints: [HueWaypoint, HueWaypoint], winding: number) => {
     const solved = solveHueWaypoints(waypoints[0], waypoints[1], winding, solverCtx);
     onHueAuthoringChange({ mode: "waypoints", waypoints, winding });
@@ -93,11 +97,6 @@ export function useHueAuthoring(
     ];
     waypoints[idx] = next;
     commitWaypointUpdate(waypoints, hueAuthoring.winding);
-  };
-
-  const setWinding = (next: number) => {
-    if (hueAuthoring.mode !== "waypoints") return;
-    commitWaypointUpdate(hueAuthoring.waypoints, next);
   };
 
   // Whether the current waypoints resolve to a (start, rotations) pair. Null
@@ -118,5 +117,5 @@ export function useHueAuthoring(
     [hueAuthoring, solverCtx],
   );
 
-  return { applyParamsPatch, enterWaypointMode, setWaypoint, setWinding, waypointSolved };
+  return { applyParamsPatch, enterWaypointMode, setWaypoint, waypointSolved };
 }

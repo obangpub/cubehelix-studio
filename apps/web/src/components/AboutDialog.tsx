@@ -40,8 +40,9 @@ export function AboutDialog() {
           <h2>About Cubehelix Studio</h2>
           <p>
             Cubehelix Studio is an interactive playground for designing cubehelix color palettes —
-            sequential color schemes whose luminance increases monotonically, so they remain
-            interpretable in grayscale, under colorblindness, and in print.
+            color schemes that get steadily brighter from one end to the other. Because the
+            brightness never doubles back, the palette stays readable in grayscale, under
+            colorblindness, and in print.
           </p>
 
           <h3>The cubehelix scheme</h3>

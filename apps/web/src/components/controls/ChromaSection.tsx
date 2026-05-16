@@ -43,7 +43,7 @@ export function ChromaSection({ params, applyParamsPatch }: ChromaSectionProps) 
     <section className="controls">
       <details className="control-section" open>
         <summary className="control-section-header">
-          <span className="control-section-title">Chroma</span>
+          <span className="control-section-title">Saturation</span>
           <span className="control-section-chevron" aria-hidden>
             ▾
           </span>
@@ -64,25 +64,25 @@ export function ChromaSection({ params, applyParamsPatch }: ChromaSectionProps) 
             />
           </div>
           <Slider
-            label="Peak Position"
+            label="Peak"
             technicalName="chromaPeak"
             value={params.chromaPeak}
             min={CHROMA_PEAK_BOUNDS.min}
             max={CHROMA_PEAK_BOUNDS.max}
             step={0.01}
             help={
-              <HelpPopover label="About peak position">
+              <HelpPopover label="About the saturation peak">
                 <p>
-                  The lightness at which chroma is most saturated. Default 0.5 puts the most vivid
-                  colors in the midtones. Lower values shift the chroma peak into the shadows;
-                  higher values shift it into the highlights.
+                  Where the palette is most colorful. At the default 0.5 the most vivid colors sit
+                  in the midtones; lower values push the peak toward the shadows, higher toward the
+                  highlights.
                 </p>
               </HelpPopover>
             }
             onChange={update("chromaPeak")}
           />
           <Slider
-            label="Chroma Width"
+            label="Width"
             technicalName="chromaWidth"
             value={params.chromaWidth}
             min={CHROMA_WIDTH_BOUNDS.min}
@@ -90,29 +90,29 @@ export function ChromaSection({ params, applyParamsPatch }: ChromaSectionProps) 
             step={0.01}
             scaleExponent={2}
             help={
-              <HelpPopover label="About chroma width">
+              <HelpPopover label="About the saturation width">
                 <p>
-                  How sharply chroma falls off away from the peak. Small values give a narrow band
-                  of high saturation around the peak with muted endpoints; large values spread
-                  saturation broadly across the palette.
+                  How fast the color fades as you move away from the peak. Small values give a
+                  narrow band of high saturation around the peak with muted endpoints; large values
+                  spread saturation broadly across the palette.
                 </p>
               </HelpPopover>
             }
             onChange={update("chromaWidth")}
           />
           <Slider
-            label="Chroma Floor"
+            label="Floor"
             technicalName="chromaFloor"
             value={params.chromaFloor}
             min={CHROMA_FLOOR_BOUNDS.min}
             max={CHROMA_FLOOR_BOUNDS.max}
             step={0.01}
             help={
-              <HelpPopover label="About chroma floor">
+              <HelpPopover label="About the saturation floor">
                 <p>
-                  Lifts the chroma envelope at the dark and light endpoints. Default 0 makes the
-                  palette anchor at pure black and pure white. Raise this to keep some color in the
-                  shadows and highlights instead of running all the way to the cube corners.
+                  Keeps some color in the darkest and lightest swatches. At the default 0 the
+                  palette runs all the way to pure black and pure white; raise it so the endpoints
+                  stay tinted.
                 </p>
               </HelpPopover>
             }
