@@ -1,5 +1,5 @@
 import { describe, expect, test } from "vitest";
-import { DEFAULT_CUBEHELIX_PARAMS, type CubehelixParams } from "@cubehelix-studio/core";
+import { DEFAULT_CUBEHELIX_PARAMS, huesAtT, type CubehelixParams } from "@cubehelix-studio/core";
 import {
   DEFAULT_APP_STATE,
   DEFAULT_SWATCH_COUNT,
@@ -544,20 +544,10 @@ describe("encodeAppState / decodeAppState", () => {
       },
     };
     const decoded = decodeAppState(encodeAppState(original));
-    // The decoded params should produce the requested hues at the requested t's.
-    const { start, rotations, lightnessAxisMin, lightnessAxisMax, lightnessCurve, reverse } =
-      decoded.params;
-    function angleAtT(t: number): number {
-      // Inline the same math as the solver to verify what we got back.
-      const uMin = lightnessAxisMin; // power gamma=1 default → u == fraction
-      const uMax = lightnessAxisMax;
-      const tEff = reverse ? 1 - t : t;
-      const u = uMin + (uMax - uMin) * tEff;
-      const a = start / 3 + rotations * u + 1;
-      return a - Math.floor(a);
-    }
-    void lightnessCurve;
-    expect(angleAtT(0.25)).toBeCloseTo(0.2, 4);
-    expect(angleAtT(0.75)).toBeCloseTo(0.65, 4);
+    // Verify against core's own huesAtT — the function the UI uses — rather
+    // than re-deriving the solver math here, so the check tracks core.
+    const hues = huesAtT(decoded.params, [0.25, 0.75]);
+    expect(hues[0]!).toBeCloseTo(0.2, 4);
+    expect(hues[1]!).toBeCloseTo(0.65, 4);
   });
 });
