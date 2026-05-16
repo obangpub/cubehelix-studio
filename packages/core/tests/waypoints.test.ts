@@ -5,6 +5,7 @@ import type { CubehelixParams } from "../src/types";
 import {
   findWindingForRotations,
   huesAtT,
+  MAX_ROTATIONS,
   solveHueWaypoints,
   type HueWaypoint,
   type SolverContext,
@@ -56,6 +57,19 @@ describe("solveHueWaypoints", () => {
       expect(angleInTurnsAtT(params, w1.t)).toBeCloseTo(w1.hue, 10);
       expect(angleInTurnsAtT(params, w2.t)).toBeCloseTo(w2.hue, 10);
     }
+  });
+
+  test("returns null when winding forces rotations past MAX_ROTATIONS", () => {
+    const w1: HueWaypoint = { t: 0.2, hue: 0.3 };
+    const w2: HueWaypoint = { t: 0.8, hue: 0.5 };
+    const ctx = defaultCtx();
+    // du = 0.6 here, so each winding step adds ~1.67 rotations; a winding of
+    // 100 demands ~167 rotations — unreadable as a palette, and rejected.
+    expect(solveHueWaypoints(w1, w2, 100, ctx)).toBeNull();
+    // A winding that stays within the cap still solves.
+    const solved = solveHueWaypoints(w1, w2, 5, ctx);
+    expect(solved).not.toBeNull();
+    expect(Math.abs(solved!.rotations)).toBeLessThanOrEqual(MAX_ROTATIONS);
   });
 
   test("returns null when waypoint t's collapse to identical u", () => {

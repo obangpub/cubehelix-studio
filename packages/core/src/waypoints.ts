@@ -19,6 +19,11 @@ export interface SolverContext {
   reverse: boolean;
 }
 
+// Largest rotation count the solver treats as a usable palette. Beyond this the
+// helix is wound too tightly to render or read, so a config demanding more is
+// reported as unsolvable — matching the freeform rotations input ceiling.
+export const MAX_ROTATIONS = 50;
+
 // Closed-form solution. Given two waypoints in visible-palette space, plus an
 // integer `winding`, return the (start, rotations) pair that places those hues
 // at those positions. Returns null when the waypoints are degenerate (same t
@@ -41,6 +46,11 @@ export function solveHueWaypoints(
   // shortest path between the two angles.
   const reducedDiff = w2.hue - w1.hue - Math.round(w2.hue - w1.hue);
   const rotations = (reducedDiff + winding) / du;
+  // A solution wound past MAX_ROTATIONS is not a usable palette, and the
+  // freeform rotations input caps typed values at the same bound — so the
+  // waypoint solver should not back-solve past it either. Report it unsolvable
+  // so callers fall back to the last-good palette and show the widen-axis hint.
+  if (Math.abs(rotations) > MAX_ROTATIONS) return null;
   // Solve start: start/3 + rotations · u1 + 1 ≡ hue1 (mod 1)
   const startTurnsRaw = w1.hue - rotations * u1 - 1;
   const startTurns = startTurnsRaw - Math.floor(startTurnsRaw);

@@ -37,4 +37,4 @@ export { getPresetById, PRESETS } from "./presets";
 export type { PreviewMode } from "./cvd";
 export { applyPreview, PREVIEW_MODES } from "./cvd";
 export type { HueWaypoint, SolverContext } from "./waypoints";
-export { findWindingForRotations, huesAtT, solveHueWaypoints } from "./waypoints";
+export { findWindingForRotations, huesAtT, MAX_ROTATIONS, solveHueWaypoints } from "./waypoints";
