@@ -8,6 +8,10 @@ import {
 } from "@cubehelix-studio/core";
 import type { HueAuthoringState } from "../../lib/url-state";
 
+/** The (start, rotations) pair the waypoint solver resolves to, or null when
+ *  the waypoints are degenerate. */
+export type WaypointSolution = ReturnType<typeof solveHueWaypoints>;
+
 /**
  * Owns the hue-authoring orchestration: applying parameter patches while
  * keeping waypoint mode solved, and the waypoint editors' read/write API.

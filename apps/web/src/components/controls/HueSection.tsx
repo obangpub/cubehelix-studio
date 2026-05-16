@@ -7,6 +7,7 @@ import { HelpPopover } from "../HelpPopover";
 import { HueWaypointEditor } from "../HueWaypointEditor";
 import { Slider } from "../Slider";
 import { StartingHueWheel } from "../StartingHueWheel";
+import type { WaypointSolution } from "./useHueAuthoring";
 
 // The Hue Rotations slider sweeps -3..3, but the number input may exceed that.
 // Cap it well past any practical palette so a typed or pasted extreme value
@@ -21,7 +22,7 @@ interface HueSectionProps {
   enterWaypointMode: () => void;
   setWaypoint: (idx: 0 | 1, next: HueWaypoint) => void;
   setWinding: (next: number) => void;
-  waypointSolved: { start: number; rotations: number } | null;
+  waypointSolved: WaypointSolution;
 }
 
 export function HueSection({
