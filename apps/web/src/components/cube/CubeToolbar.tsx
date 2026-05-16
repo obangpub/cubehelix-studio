@@ -76,11 +76,11 @@ export function SettingsPanel({ view, onChange }: SettingsPanelProps) {
     <div className="cube-panel" role="group" aria-label="Cube view settings">
       <div className="cube-panel-row">
         <span className="cube-panel-label">Projection</span>
-        <div className="cube-segmented" role="radiogroup" aria-label="Projection">
+        <div className="segmented" role="radiogroup" aria-label="Projection">
           {(["perspective", "orthographic"] as const).map((p) => (
             <label
               key={p}
-              className={`cube-segmented-option ${view.projection === p ? "is-active" : ""}`}
+              className={`segmented-option ${view.projection === p ? "is-active" : ""}`}
             >
               <input
                 type="radio"

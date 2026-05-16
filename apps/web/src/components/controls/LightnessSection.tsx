@@ -59,15 +59,11 @@ export function LightnessSection({
                 </p>
               </HelpPopover>
             </div>
-            <div
-              className="curve-kind-selector"
-              role="radiogroup"
-              aria-label="Lightness curve type"
-            >
+            <div className="segmented" role="radiogroup" aria-label="Lightness curve type">
               {(["power", "sigmoid", "bezier"] as const).map((k) => (
                 <label
                   key={k}
-                  className={`curve-kind-option ${curve.kind === k ? "is-active" : ""}`}
+                  className={`segmented-option ${curve.kind === k ? "is-active" : ""}`}
                 >
                   <input
                     type="radio"

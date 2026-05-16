@@ -298,27 +298,40 @@ body {
   gap: 0.375rem 1rem;
 }
 
-.cube-segmented {
+/* Segmented control: a joined row of radio "pills" with one active segment.
+   Shared by the cube projection, lightness-curve kind, hue mode, and CVD
+   preview pickers. */
+.segmented {
   display: inline-flex;
+  flex-wrap: wrap;
   border: 1px solid var(--border-strong);
   border-radius: 6px;
   overflow: hidden;
   align-self: flex-start;
 }
 
-.cube-segmented-option {
+.segmented-option {
   display: inline-flex;
   align-items: center;
   padding: 0.25rem 0.625rem;
   cursor: pointer;
+  font-size: 0.875rem;
+  color: var(--muted);
   background: var(--surface);
+  user-select: none;
 }
 
-.cube-segmented-option + .cube-segmented-option {
+/* The CVD preview picker has more, longer labels; a slightly smaller font
+   keeps the segments on one row. */
+.segmented--compact .segmented-option {
+  font-size: 0.8rem;
+}
+
+.segmented-option + .segmented-option {
   border-left: 1px solid var(--border-strong);
 }
 
-.cube-segmented-option input {
+.segmented-option input {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -330,7 +343,7 @@ body {
   border: 0;
 }
 
-.cube-segmented-option.is-active {
+.segmented-option.is-active {
   background: var(--fg);
   color: var(--bg);
 }
@@ -792,14 +805,6 @@ header p {
   border-radius: 50%;
 }
 
-.hue-mode-toggle {
-  display: inline-flex;
-  border: 1px solid var(--border-strong);
-  border-radius: 6px;
-  overflow: hidden;
-  align-self: flex-start;
-}
-
 .hue-waypoint-editor {
   display: flex;
   flex-direction: column;
@@ -909,43 +914,6 @@ header p {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
-}
-
-.curve-kind-selector {
-  display: inline-flex;
-  border: 1px solid var(--border-strong);
-  border-radius: 6px;
-  overflow: hidden;
-  align-self: flex-start;
-}
-
-.curve-kind-option {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.25rem 0.625rem;
-  cursor: pointer;
-  font-size: 0.875rem;
-  color: var(--muted);
-  background: var(--surface);
-  border-right: 1px solid var(--border-strong);
-  user-select: none;
-}
-
-.curve-kind-option:last-child {
-  border-right: none;
-}
-
-.curve-kind-option.is-active {
-  background: var(--fg);
-  color: var(--bg);
-}
-
-.curve-kind-option input[type="radio"] {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  opacity: 0;
-  pointer-events: none;
 }
 
 .bezier-editor {
@@ -1127,44 +1095,6 @@ header p {
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--muted);
-}
-
-.preview-control-options {
-  display: flex;
-  flex-wrap: wrap;
-  border: 1px solid var(--border-strong);
-  border-radius: 6px;
-  overflow: hidden;
-  align-self: flex-start;
-}
-
-.preview-control-option {
-  display: inline-flex;
-  align-items: center;
-  padding: 0.25rem 0.625rem;
-  cursor: pointer;
-  font-size: 0.8rem;
-  color: var(--muted);
-  background: var(--surface);
-  border-right: 1px solid var(--border-strong);
-  user-select: none;
-}
-
-.preview-control-option:last-child {
-  border-right: none;
-}
-
-.preview-control-option.is-active {
-  background: var(--fg);
-  color: var(--bg);
-}
-
-.preview-control-option input[type="radio"] {
-  position: absolute;
-  width: 1px;
-  height: 1px;
-  opacity: 0;
-  pointer-events: none;
 }
 
 .swatch-row {
