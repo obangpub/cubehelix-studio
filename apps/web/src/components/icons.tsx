@@ -49,6 +49,20 @@ export function CheckIcon({ size = 18 }: IconProps) {
   );
 }
 
+export function CloseIcon({ size = 16 }: IconProps) {
+  return (
+    <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true">
+      <path
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="2.5"
+        strokeLinecap="round"
+        d="M6 6l12 12M18 6L6 18"
+      />
+    </svg>
+  );
+}
+
 export function LinkIcon({ size = 18 }: IconProps) {
   return (
     <svg viewBox="0 0 24 24" width={size} height={size} aria-hidden="true">

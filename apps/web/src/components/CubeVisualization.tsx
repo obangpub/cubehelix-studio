@@ -13,7 +13,6 @@ import { useCubeView } from "./cube/useCubeView";
 
 interface CubeVisualizationProps {
   params: CubehelixParams;
-  samples?: number;
   resetSignal?: number;
   cubeTheme: "light" | "dark";
   onCubeThemeChange: (next: "light" | "dark") => void;
@@ -29,15 +28,14 @@ const GHOST_COLOR_LIGHT = 0x222222;
  *  pieces, and the snap / settings panels. View state lives in useCubeView. */
 export function CubeVisualization({
   params,
-  samples,
   resetSignal,
   cubeTheme,
   onCubeThemeChange,
   previewMode = "normal",
 }: CubeVisualizationProps) {
   const effectiveSamples = useMemo(
-    () => effectiveSampleCount(params.rotations, samples),
-    [samples, params.rotations],
+    () => effectiveSampleCount(params.rotations),
+    [params.rotations],
   );
   const controlsRef = useRef<ComponentRef<typeof OrbitControls>>(null);
   const {

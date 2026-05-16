@@ -88,6 +88,32 @@ function parseNumOr(raw: string | null, fallback: number): number {
   return Number.isFinite(num) ? num : fallback;
 }
 
+/**
+ * Read a numeric query param, clamped to `bounds`. Returns `null` when the key
+ * is absent or unparseable, so callers can apply it only when present.
+ */
+function readClampedNum(
+  search: URLSearchParams,
+  key: string,
+  bounds: { min: number; max: number },
+): number | null {
+  const raw = search.get(key);
+  if (raw === null) return null;
+  const num = Number(raw);
+  if (!Number.isFinite(num)) return null;
+  return clamp(num, bounds.min, bounds.max);
+}
+
+/** Swap an inverted lightness axis so min ≤ max, keeping the window monotonic. */
+function normalizeLightnessAxis(params: CubehelixParams): void {
+  if (params.lightnessAxisMin > params.lightnessAxisMax) {
+    [params.lightnessAxisMin, params.lightnessAxisMax] = [
+      params.lightnessAxisMax,
+      params.lightnessAxisMin,
+    ];
+  }
+}
+
 function readPairXY(
   search: URLSearchParams,
   xKey: string,
@@ -235,40 +261,22 @@ function readParamsFromSearch(search: URLSearchParams): CubehelixParams {
   }
   // Saturation: legacy `?saturation=` sets both ends; explicit
   // `saturationMin` / `saturationMax` keys override.
-  const rawSat = search.get("saturation");
-  if (rawSat !== null) {
-    const num = Number(rawSat);
-    if (Number.isFinite(num)) {
-      const v = clamp(num, SATURATION_BOUNDS.min, SATURATION_BOUNDS.max);
-      result.saturationMin = v;
-      result.saturationMax = v;
-    }
+  const sat = readClampedNum(search, "saturation", SATURATION_BOUNDS);
+  if (sat !== null) {
+    result.saturationMin = sat;
+    result.saturationMax = sat;
   }
-  const rawSatMin = search.get("saturationMin");
-  if (rawSatMin !== null) {
-    const num = Number(rawSatMin);
-    if (Number.isFinite(num)) {
-      result.saturationMin = clamp(num, SATURATION_BOUNDS.min, SATURATION_BOUNDS.max);
-    }
-  }
-  const rawSatMax = search.get("saturationMax");
-  if (rawSatMax !== null) {
-    const num = Number(rawSatMax);
-    if (Number.isFinite(num)) {
-      result.saturationMax = clamp(num, SATURATION_BOUNDS.min, SATURATION_BOUNDS.max);
-    }
-  }
+  const satMin = readClampedNum(search, "saturationMin", SATURATION_BOUNDS);
+  if (satMin !== null) result.saturationMin = satMin;
+  const satMax = readClampedNum(search, "saturationMax", SATURATION_BOUNDS);
+  if (satMax !== null) result.saturationMax = satMax;
+
   result.lightnessCurve = readCurveFromSearch(search);
   const rawReverse = search.get("reverse");
   if (rawReverse !== null) {
     result.reverse = rawReverse === "1" || rawReverse === "true";
   }
-  if (result.lightnessAxisMin > result.lightnessAxisMax) {
-    const lo = result.lightnessAxisMax;
-    const hi = result.lightnessAxisMin;
-    result.lightnessAxisMin = lo;
-    result.lightnessAxisMax = hi;
-  }
+  normalizeLightnessAxis(result);
   return result;
 }
 

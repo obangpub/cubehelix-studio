@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { CloseIcon } from "./icons";
 
 export function AboutDialog() {
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -34,7 +35,7 @@ export function AboutDialog() {
             onClick={() => setOpen(false)}
             aria-label="Close"
           >
-            ×
+            <CloseIcon />
           </button>
           <h2>About Cubehelix Studio</h2>
           <p>
