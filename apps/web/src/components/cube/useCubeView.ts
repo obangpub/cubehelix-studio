@@ -54,13 +54,14 @@ export function useCubeView(controlsRef: ControlsRef, resetSignal: number | unde
     controls.update();
   }, [controlsRef]);
 
-  // Tier 3 / ephemeral state: header Reset pulses resetSignal, and the cube
-  // clears its view toggles, snap, and open panel alongside the camera so the
-  // whole visualization returns to defaults together.
+  // Header Reset pulses resetSignal; the cube returns its camera, view toggles,
+  // snap, and open panel to defaults. `showCanvas` is the exception — whether
+  // the 3D view is shown is the user's workspace choice, not part of the
+  // palette, so Reset leaves it wherever the user set it.
   useEffect(() => {
     if (resetSignal === undefined) return;
     resetView();
-    setView(initialView());
+    setView((prev) => ({ ...DEFAULT_VIEW, showCanvas: prev.showCanvas }));
     setSnap(null);
     setActivePanel(null);
   }, [resetSignal, resetView]);
