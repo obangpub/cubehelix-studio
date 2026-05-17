@@ -187,13 +187,12 @@ export function CubeToolbar({
       <div className="cube-toolbar-group">
         <button
           type="button"
-          className={`cube-icon-button ${view.showCanvas ? "is-active" : ""}`}
+          className={`cube-icon-button cube-toggle-button ${view.showCanvas ? "is-active" : ""}`}
           onClick={onCanvasToggle}
           aria-pressed={view.showCanvas}
-          aria-label={view.showCanvas ? "Hide cube visualizer" : "Show cube visualizer"}
-          title={view.showCanvas ? "Hide cube visualizer" : "Show cube visualizer"}
         >
           <PowerIcon />
+          <span>3D cube</span>
         </button>
       </div>
       <div className="cube-toolbar-group">

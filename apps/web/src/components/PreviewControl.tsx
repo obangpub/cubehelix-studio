@@ -10,6 +10,16 @@ const LABELS: Record<PreviewMode, string> = {
   tritanopia: "Tritanopia",
 };
 
+// Abbreviated labels so all five options fit one row on a phone. The full
+// names above remain each option's accessible name and spoken announcement.
+const SHORT_LABELS: Record<PreviewMode, string> = {
+  normal: "Norm",
+  grayscale: "Grays",
+  protanopia: "Protan",
+  deuteranopia: "Deutan",
+  tritanopia: "Tritan",
+};
+
 interface PreviewControlProps {
   value: PreviewMode;
   onChange: (next: PreviewMode) => void;
@@ -29,12 +39,13 @@ export function PreviewControl({ value, onChange }: PreviewControlProps) {
               name={groupName}
               value={mode}
               checked={value === mode}
+              aria-label={LABELS[mode]}
               onChange={() => {
                 onChange(mode);
                 announce(`Preview: ${LABELS[mode]}`);
               }}
             />
-            <span>{LABELS[mode]}</span>
+            <span>{SHORT_LABELS[mode]}</span>
           </label>
         ))}
       </div>

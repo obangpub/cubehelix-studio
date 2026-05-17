@@ -196,6 +196,17 @@ body {
   border-color: var(--fg);
 }
 
+/* The cube on/off toggle carries a visible label, so it is auto-width with
+   room for the icon and text rather than a fixed icon square. */
+.cube-toggle-button {
+  width: auto;
+  gap: 0.375rem;
+  padding: 0 0.5rem;
+  font: inherit;
+  font-size: 0.8rem;
+  white-space: nowrap;
+}
+
 .cube-panel {
   display: flex;
   flex-direction: column;
@@ -359,10 +370,20 @@ body {
 
 header {
   display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
+  flex-direction: column;
   gap: 1rem;
   margin-bottom: 2rem;
+}
+
+/* Stack the title block above the action buttons on phones. In a row they
+   share width, and the buttons do not shrink — so they squeeze the title
+   until it wraps. The row layout returns once there is room. */
+@media (min-width: 600px) {
+  header {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: space-between;
+  }
 }
 
 .header-titles {
