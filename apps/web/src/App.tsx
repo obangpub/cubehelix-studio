@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { CubehelixParams, PreviewMode } from "@cubehelix-studio/core";
 import { AboutDialog } from "./components/AboutDialog";
+import { useHueAuthoring } from "./components/controls/useHueAuthoring";
 import { CubeVisualization } from "./components/CubeVisualization";
 import { ExportPanel } from "./components/ExportPanel";
 import { GradientStrip } from "./components/GradientStrip";
@@ -83,6 +84,15 @@ function AppInner() {
   const setHueAuthoring = (next: HueAuthoringState) => {
     setState((prev) => ({ ...prev, hueAuthoring: next }));
   };
+  // Hue-authoring orchestration lives here, not inside ParamControls, so the
+  // Export panel's Reverse toggle routes through the same applyParamsPatch —
+  // which re-solves the hue waypoints when a change touches the solver context.
+  const { applyParamsPatch, enterWaypointMode, setWaypoint, waypointSolved } = useHueAuthoring(
+    params,
+    setParams,
+    hueAuthoring,
+    setHueAuthoring,
+  );
   // Reset clears Tier 1 / document state (DEFAULT_APP_STATE) and pulses
   // resetSignal so Tier 3 / ephemeral widget state re-seeds from the cleared
   // palette. It deliberately leaves Tier 2 / workspace preferences alone
@@ -165,14 +175,21 @@ function AppInner() {
             key={`${resetSignal}-${presetEpoch}`}
             params={params}
             onChange={setParams}
-            swatchCount={swatchCount}
-            onSwatchCountChange={setSwatchCount}
             hueAuthoring={hueAuthoring}
             onHueAuthoringChange={setHueAuthoring}
+            applyParamsPatch={applyParamsPatch}
+            enterWaypointMode={enterWaypointMode}
+            setWaypoint={setWaypoint}
+            waypointSolved={waypointSolved}
           />
         </div>
       </div>
-      <ExportPanel params={params} swatchCount={swatchCount} />
+      <ExportPanel
+        params={params}
+        swatchCount={swatchCount}
+        onSwatchCountChange={setSwatchCount}
+        onReverseChange={(reverse) => applyParamsPatch({ reverse })}
+      />
     </main>
   );
 }

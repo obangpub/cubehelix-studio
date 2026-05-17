@@ -9,12 +9,16 @@ import {
 } from "@cubehelix-studio/core";
 import { useCopyToClipboard } from "../hooks/useCopyToClipboard";
 import { useAnnounce } from "../lib/announcer";
+import { SWATCH_COUNT_BOUNDS } from "../lib/url-state";
 import { CopyFeedback } from "./CopyFeedback";
 import { CheckIcon, ClipboardIcon } from "./icons";
+import { Slider } from "./Slider";
 
 interface ExportPanelProps {
   params: CubehelixParams;
   swatchCount: number;
+  onSwatchCountChange: (count: number) => void;
+  onReverseChange: (reverse: boolean) => void;
 }
 
 function rolesForCount(count: number): PaletteRole[] {
@@ -39,7 +43,12 @@ const FORMATS: FormatOption[] = [
   { value: "python", label: "Python (matplotlib)" },
 ];
 
-export function ExportPanel({ params, swatchCount }: ExportPanelProps) {
+export function ExportPanel({
+  params,
+  swatchCount,
+  onSwatchCountChange,
+  onReverseChange,
+}: ExportPanelProps) {
   const [format, setFormat] = useState<ExportFormat>("css");
   const { status: copyStatus, copy } = useCopyToClipboard();
   const announce = useAnnounce();
@@ -91,6 +100,25 @@ export function ExportPanel({ params, swatchCount }: ExportPanelProps) {
 
   return (
     <section className="export-panel" aria-label="Export palette">
+      <div className="export-panel-config">
+        <Slider
+          label="Swatches"
+          technicalName="swatchCount"
+          value={swatchCount}
+          min={SWATCH_COUNT_BOUNDS.min}
+          max={SWATCH_COUNT_BOUNDS.max}
+          step={1}
+          onChange={(value) => onSwatchCountChange(Math.round(value))}
+        />
+        <label className="toggle">
+          <input
+            type="checkbox"
+            checked={params.reverse}
+            onChange={(e) => onReverseChange(e.currentTarget.checked)}
+          />
+          <span className="slider-label">Reverse</span>
+        </label>
+      </div>
       <header className="export-panel-header">
         <div className="export-panel-tabs" role="tablist" aria-label="Export format">
           {FORMATS.map((f, i) => (

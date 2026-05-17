@@ -1212,10 +1212,19 @@ header p {
 
 .export-panel {
   margin-top: 2rem;
+  max-width: 720px;
   background: var(--surface);
   border: 1px solid var(--border);
   border-radius: 8px;
   overflow: hidden;
+}
+
+.export-panel-config {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+  padding: 0.75rem 0.85rem;
+  border-bottom: 1px solid var(--border);
 }
 
 .export-panel-header {

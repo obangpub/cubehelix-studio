@@ -1,38 +1,36 @@
-import type { CubehelixParams } from "@cubehelix-studio/core";
+import type { CubehelixParams, HueWaypoint } from "@cubehelix-studio/core";
 import type { HueAuthoringState } from "../lib/url-state";
 import { ChromaSection } from "./controls/ChromaSection";
 import { HueSection } from "./controls/HueSection";
 import { LightnessSection } from "./controls/LightnessSection";
-import { OutputSection } from "./controls/OutputSection";
-import { useHueAuthoring } from "./controls/useHueAuthoring";
+import type { WaypointSolution } from "./controls/useHueAuthoring";
 import { useRememberedCurves } from "./controls/useRememberedCurves";
 
 interface ParamControlsProps {
   params: CubehelixParams;
   onChange: (params: CubehelixParams) => void;
-  swatchCount: number;
-  onSwatchCountChange: (count: number) => void;
   hueAuthoring: HueAuthoringState;
   onHueAuthoringChange: (next: HueAuthoringState) => void;
+  applyParamsPatch: (patch: Partial<CubehelixParams>) => void;
+  enterWaypointMode: () => void;
+  setWaypoint: (idx: 0 | 1, next: HueWaypoint) => void;
+  waypointSolved: WaypointSolution;
 }
 
-/** The Hue / Lightness / Chroma / Output control sections. Waypoint solving
- *  and lightness-curve memory live in the two hooks; each section owns its
- *  own rendering. */
+/** The Hue, Lightness, and Saturation control sections. Hue-authoring
+ *  orchestration is lifted to App so the Export panel's Reverse toggle can
+ *  share it; the lightness-curve memory hook stays here, where the preset
+ *  remount re-seeds it. Each section owns its own rendering. */
 export function ParamControls({
   params,
   onChange,
-  swatchCount,
-  onSwatchCountChange,
   hueAuthoring,
   onHueAuthoringChange,
+  applyParamsPatch,
+  enterWaypointMode,
+  setWaypoint,
+  waypointSolved,
 }: ParamControlsProps) {
-  const { applyParamsPatch, enterWaypointMode, setWaypoint, waypointSolved } = useHueAuthoring(
-    params,
-    onChange,
-    hueAuthoring,
-    onHueAuthoringChange,
-  );
   const { setCurve, switchKind } = useRememberedCurves(params.lightnessCurve, applyParamsPatch);
 
   return (
@@ -53,12 +51,6 @@ export function ParamControls({
         switchKind={switchKind}
       />
       <ChromaSection params={params} applyParamsPatch={applyParamsPatch} />
-      <OutputSection
-        params={params}
-        applyParamsPatch={applyParamsPatch}
-        swatchCount={swatchCount}
-        onSwatchCountChange={onSwatchCountChange}
-      />
     </>
   );
 }
