@@ -75,9 +75,6 @@ body {
 
   .layout-aside {
     grid-area: aside;
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
   }
 }
 
@@ -166,11 +163,13 @@ body {
   min-width: 0;
 }
 
-/* On a phone the aside dissolves, so the cube and Export panel stack in the
-   single column with the preview and controls. The min-width:900px block
-   turns it into the right-hand column. */
+/* The aside stacks the cube above the Export panel. On a phone it is one
+   block within the single column; the min-width:900px block makes it the
+   right-hand column. */
 .layout-aside {
-  display: contents;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
 }
 
 .cube-area {
