@@ -332,9 +332,17 @@ body {
   user-select: none;
 }
 
-/* The CVD preview picker has more, longer labels; a slightly smaller font
-   keeps the segments on one row. */
+/* The CVD preview picker stretches to fill its column: equal-width segments,
+   a smaller font, and tighter padding keep the five labels on one row. */
+.segmented--compact {
+  display: flex;
+  align-self: stretch;
+}
+
 .segmented--compact .segmented-option {
+  flex: 1;
+  justify-content: center;
+  padding-inline: 0.4rem;
   font-size: 0.8rem;
 }
 
