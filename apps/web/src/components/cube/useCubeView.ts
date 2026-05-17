@@ -12,13 +12,21 @@ import {
 
 type ControlsRef = RefObject<ComponentRef<typeof OrbitControls> | null>;
 
+// Start with the 3D cube hidden on phone-width viewports — it is the heaviest
+// part of the page, and the labeled "3D cube" toggle lets a mobile user opt in.
+// Desktop keeps it on. Re-evaluated on Reset so the choice stays consistent.
+function initialView(): ViewSettings {
+  const narrow = typeof window !== "undefined" && window.matchMedia("(max-width: 899px)").matches;
+  return narrow ? { ...DEFAULT_VIEW, showCanvas: false } : DEFAULT_VIEW;
+}
+
 /**
  * Owns the cube's Tier 3 / ephemeral view state — toggle settings, the active
  * snap, the open panel — and the camera-reset logic. The header Reset pulse
  * (`resetSignal`) returns the whole visualization to defaults.
  */
 export function useCubeView(controlsRef: ControlsRef, resetSignal: number | undefined) {
-  const [view, setView] = useState<ViewSettings>(DEFAULT_VIEW);
+  const [view, setView] = useState<ViewSettings>(initialView);
   const [snap, setSnap] = useState<{ id: SnapId; signal: number } | null>(null);
   const [activePanel, setActivePanel] = useState<PanelId | null>(null);
 
@@ -52,7 +60,7 @@ export function useCubeView(controlsRef: ControlsRef, resetSignal: number | unde
   useEffect(() => {
     if (resetSignal === undefined) return;
     resetView();
-    setView(DEFAULT_VIEW);
+    setView(initialView());
     setSnap(null);
     setActivePanel(null);
   }, [resetSignal, resetView]);

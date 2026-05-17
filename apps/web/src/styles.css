@@ -58,6 +58,23 @@ body {
 @media (min-width: 900px) {
   .layout {
     grid-template-columns: 400px minmax(0, 1fr);
+    grid-template-areas:
+      "preview controls"
+      "cube    controls";
+    align-items: start;
+  }
+
+  .layout-preview {
+    grid-area: preview;
+    position: static;
+  }
+
+  .layout-cube {
+    grid-area: cube;
+  }
+
+  .layout-controls {
+    grid-area: controls;
   }
 }
 
@@ -128,10 +145,21 @@ body {
   letter-spacing: 0.02em;
 }
 
-.visualization {
+.layout-preview {
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  min-width: 0;
+  /* On a phone the preview pins to the top of the viewport so the palette
+     stays visible while the controls below it scroll. The desktop rule resets
+     this — there the preview and controls columns are both visible at once. */
+  position: sticky;
+  top: 0;
+  z-index: 5;
+  background: var(--bg);
+}
+
+.layout-cube {
   min-width: 0;
 }
 
@@ -365,15 +393,6 @@ body {
 .segmented-option.is-active {
   background: var(--fg);
   color: var(--bg);
-}
-
-.gamma-bar {
-  display: block;
-  width: 100%;
-  height: 20px;
-  border: 1px solid var(--border);
-  border-radius: 4px;
-  background: var(--surface);
 }
 
 header {

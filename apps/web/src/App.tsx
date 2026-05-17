@@ -3,7 +3,6 @@ import type { CubehelixParams, PreviewMode } from "@cubehelix-studio/core";
 import { AboutDialog } from "./components/AboutDialog";
 import { CubeVisualization } from "./components/CubeVisualization";
 import { ExportPanel } from "./components/ExportPanel";
-import { GammaBar } from "./components/GammaBar";
 import { GradientStrip } from "./components/GradientStrip";
 import { MoonIcon, SunIcon } from "./components/icons";
 import { ParamControls } from "./components/ParamControls";
@@ -133,7 +132,12 @@ function AppInner() {
         </div>
       </header>
       <div className="layout">
-        <section className="visualization" aria-label="Palette preview">
+        <section className="layout-preview" aria-label="Palette preview">
+          <PreviewControl value={previewMode} onChange={setPreviewMode} />
+          <GradientStrip params={params} previewMode={previewMode} />
+          <SwatchRow params={params} count={swatchCount} previewMode={previewMode} />
+        </section>
+        <div className="layout-cube">
           <CubeVisualization
             params={params}
             resetSignal={resetSignal}
@@ -141,11 +145,7 @@ function AppInner() {
             onCubeThemeChange={setCubeTheme}
             previewMode={previewMode}
           />
-          <PreviewControl value={previewMode} onChange={setPreviewMode} />
-          <GradientStrip params={params} previewMode={previewMode} />
-          <GammaBar params={params} />
-          <SwatchRow params={params} count={swatchCount} previewMode={previewMode} />
-        </section>
+        </div>
         <div className="layout-controls">
           <PresetGallery
             params={params}
