@@ -99,71 +99,81 @@ export function ExportPanel({
     copyStatus === "copied" ? "Copied" : copyStatus === "failed" ? "Copy failed" : "Copy";
 
   return (
-    <section className="export-panel" aria-label="Export palette">
-      <div className="export-panel-config">
-        <Slider
-          label="Swatches"
-          technicalName="swatchCount"
-          value={swatchCount}
-          min={SWATCH_COUNT_BOUNDS.min}
-          max={SWATCH_COUNT_BOUNDS.max}
-          step={1}
-          onChange={(value) => onSwatchCountChange(Math.round(value))}
-        />
-        <label className="toggle">
-          <input
-            type="checkbox"
-            checked={params.reverse}
-            onChange={(e) => onReverseChange(e.currentTarget.checked)}
-          />
-          <span className="slider-label">Reverse</span>
-        </label>
-      </div>
-      <header className="export-panel-header">
-        <div className="export-panel-tabs" role="tablist" aria-label="Export format">
-          {FORMATS.map((f, i) => (
-            <button
-              key={f.value}
-              ref={(el) => {
-                tabRefs.current[i] = el;
-              }}
-              type="button"
-              role="tab"
-              id={tabId(f.value)}
-              aria-selected={format === f.value}
-              aria-controls={panelId}
-              tabIndex={format === f.value ? 0 : -1}
-              className={`export-panel-tab ${format === f.value ? "is-active" : ""}`}
-              onClick={() => selectFormat(f.value)}
-              onKeyDown={(e) => onTabKeyDown(e, i)}
-            >
-              {f.label}
-            </button>
-          ))}
-        </div>
-        <button
-          type="button"
-          className="header-icon-button"
-          onClick={() => copy(output)}
-          aria-label={copyTooltip}
-          title={copyTooltip}
-        >
-          {copyStatus === "copied" ? <CheckIcon /> : <ClipboardIcon />}
-          <span className="visually-hidden" aria-live="polite">
-            {copyTooltip}
+    <section className="controls">
+      <details className="control-section">
+        <summary className="control-section-header">
+          <span className="control-section-title">Export</span>
+          <span className="control-section-chevron" aria-hidden>
+            ▾
           </span>
-          <CopyFeedback status={copyStatus} />
-        </button>
-      </header>
-      <pre
-        className="export-panel-output"
-        id={panelId}
-        role="tabpanel"
-        aria-labelledby={tabId(format)}
-        tabIndex={0}
-      >
-        <code>{output}</code>
-      </pre>
+        </summary>
+        <div className="control-section-body">
+          <div className="export-panel-config">
+            <Slider
+              label="Swatches"
+              technicalName="swatchCount"
+              value={swatchCount}
+              min={SWATCH_COUNT_BOUNDS.min}
+              max={SWATCH_COUNT_BOUNDS.max}
+              step={1}
+              onChange={(value) => onSwatchCountChange(Math.round(value))}
+            />
+            <label className="toggle">
+              <input
+                type="checkbox"
+                checked={params.reverse}
+                onChange={(e) => onReverseChange(e.currentTarget.checked)}
+              />
+              <span className="slider-label">Reverse</span>
+            </label>
+          </div>
+          <div className="export-panel-tabbar">
+            <div className="export-panel-tabs" role="tablist" aria-label="Export format">
+              {FORMATS.map((f, i) => (
+                <button
+                  key={f.value}
+                  ref={(el) => {
+                    tabRefs.current[i] = el;
+                  }}
+                  type="button"
+                  role="tab"
+                  id={tabId(f.value)}
+                  aria-selected={format === f.value}
+                  aria-controls={panelId}
+                  tabIndex={format === f.value ? 0 : -1}
+                  className={`export-panel-tab ${format === f.value ? "is-active" : ""}`}
+                  onClick={() => selectFormat(f.value)}
+                  onKeyDown={(e) => onTabKeyDown(e, i)}
+                >
+                  {f.label}
+                </button>
+              ))}
+            </div>
+            <button
+              type="button"
+              className="header-icon-button"
+              onClick={() => copy(output)}
+              aria-label={copyTooltip}
+              title={copyTooltip}
+            >
+              {copyStatus === "copied" ? <CheckIcon /> : <ClipboardIcon />}
+              <span className="visually-hidden" aria-live="polite">
+                {copyTooltip}
+              </span>
+              <CopyFeedback status={copyStatus} />
+            </button>
+          </div>
+          <pre
+            className="export-panel-output"
+            id={panelId}
+            role="tabpanel"
+            aria-labelledby={tabId(format)}
+            tabIndex={0}
+          >
+            <code>{output}</code>
+          </pre>
+        </div>
+      </details>
     </section>
   );
 }

@@ -147,15 +147,6 @@ function AppInner() {
           <GradientStrip params={params} previewMode={previewMode} />
           <SwatchRow params={params} count={swatchCount} previewMode={previewMode} />
         </section>
-        <div className="layout-cube">
-          <CubeVisualization
-            params={params}
-            resetSignal={resetSignal}
-            cubeTheme={cubeTheme}
-            onCubeThemeChange={setCubeTheme}
-            previewMode={previewMode}
-          />
-        </div>
         <div className="layout-controls">
           <PresetGallery
             params={params}
@@ -183,13 +174,24 @@ function AppInner() {
             waypointSolved={waypointSolved}
           />
         </div>
+        <div className="layout-aside">
+          <div className="layout-cube">
+            <CubeVisualization
+              params={params}
+              resetSignal={resetSignal}
+              cubeTheme={cubeTheme}
+              onCubeThemeChange={setCubeTheme}
+              previewMode={previewMode}
+            />
+          </div>
+          <ExportPanel
+            params={params}
+            swatchCount={swatchCount}
+            onSwatchCountChange={setSwatchCount}
+            onReverseChange={(reverse) => applyParamsPatch({ reverse })}
+          />
+        </div>
       </div>
-      <ExportPanel
-        params={params}
-        swatchCount={swatchCount}
-        onSwatchCountChange={setSwatchCount}
-        onReverseChange={(reverse) => applyParamsPatch({ reverse })}
-      />
     </main>
   );
 }

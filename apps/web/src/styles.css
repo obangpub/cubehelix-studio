@@ -57,10 +57,10 @@ body {
 
 @media (min-width: 900px) {
   .layout {
-    grid-template-columns: 400px minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) 380px;
     grid-template-areas:
-      "preview controls"
-      "cube    controls";
+      "preview preview"
+      "controls aside";
     align-items: start;
   }
 
@@ -69,12 +69,15 @@ body {
     position: static;
   }
 
-  .layout-cube {
-    grid-area: cube;
-  }
-
   .layout-controls {
     grid-area: controls;
+  }
+
+  .layout-aside {
+    grid-area: aside;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
   }
 }
 
@@ -161,6 +164,13 @@ body {
 
 .layout-cube {
   min-width: 0;
+}
+
+/* On a phone the aside dissolves, so the cube and Export panel stack in the
+   single column with the preview and controls. The min-width:900px block
+   turns it into the right-hand column. */
+.layout-aside {
+  display: contents;
 }
 
 .cube-area {
@@ -1209,31 +1219,18 @@ header p {
   outline-offset: 2px;
 }
 
-.export-panel {
-  margin-top: 2rem;
-  max-width: 720px;
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  overflow: hidden;
-}
-
 .export-panel-config {
   display: flex;
   flex-direction: column;
   gap: 0.6rem;
-  padding: 0.75rem 0.85rem;
-  border-bottom: 1px solid var(--border);
 }
 
-.export-panel-header {
+.export-panel-tabbar {
   display: flex;
-  align-items: stretch;
+  flex-wrap: wrap;
+  align-items: center;
   justify-content: space-between;
   gap: 0.5rem;
-  border-bottom: 1px solid var(--border);
-  background: var(--bg);
-  padding: 0.4rem 0.4rem 0.4rem 0.6rem;
 }
 
 .export-panel-tabs {
@@ -1273,7 +1270,10 @@ header p {
 
 .export-panel-output {
   margin: 0;
-  padding: 1rem 1.25rem;
+  padding: 0.75rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 4px;
   font-family: ui-monospace, "SF Mono", Menlo, monospace;
   font-size: 0.8125rem;
   line-height: 1.6;

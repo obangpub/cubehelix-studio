@@ -32,7 +32,7 @@ export function LightnessSection({
 
   return (
     <section className="controls">
-      <details className="control-section">
+      <details className="control-section" open>
         <summary className="control-section-header">
           <span className="control-section-title">Lightness</span>
           <span className="control-section-chevron" aria-hidden>
