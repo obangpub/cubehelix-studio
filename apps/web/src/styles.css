@@ -260,7 +260,6 @@ body {
 .cube-panel-label {
   font-weight: 600;
   color: var(--muted);
-  text-transform: uppercase;
   font-size: 0.6875rem;
   letter-spacing: 0.05em;
 }
@@ -666,7 +665,7 @@ header p {
   font-size: 0.75rem;
   color: var(--muted);
   text-align: center;
-  text-transform: uppercase;
+  text-transform: lowercase;
   letter-spacing: 0.05em;
 }
 
@@ -866,7 +865,7 @@ header p {
 .hue-waypoint-header {
   font-size: 0.75rem;
   color: var(--muted);
-  text-transform: uppercase;
+  text-transform: lowercase;
   letter-spacing: 0.05em;
   font-weight: 600;
 }
@@ -1092,7 +1091,7 @@ header p {
 
 .preview-control-label {
   font-size: 0.75rem;
-  text-transform: uppercase;
+  text-transform: lowercase;
   letter-spacing: 0.05em;
   color: var(--muted);
 }
@@ -1316,4 +1315,18 @@ header p {
   border-radius: 4px;
   max-height: 50vh;
   overflow: auto;
+}
+
+/* UI labels render lowercase. Applied with text-transform so the source text
+   keeps normal casing — screen-reader names and spoken announcements stay
+   properly cased. The export-format tabs and the "3D cube" toggle are left
+   out: they carry acronyms and the "3D" initialism. */
+.control-section-title,
+.slider-label,
+.saturation-block-label,
+.segmented-option,
+.header-button,
+.preset-tile-name,
+.cube-panel {
+  text-transform: lowercase;
 }
