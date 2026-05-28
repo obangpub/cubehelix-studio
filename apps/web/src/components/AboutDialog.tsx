@@ -71,11 +71,32 @@ export function AboutDialog() {
               github.com/obangpub/cubehelix-studio
             </a>
           </p>
+          <p>
+            Cubehelix Studio is created by Joseph J. Thiebes and published under his O! Press
+            imprint.
+          </p>
+
+          <h3>Support</h3>
+          <p>
+            Cubehelix Studio is free and open-source. If it has been useful to you, you can{" "}
+            <a href="https://ko-fi.com/josephthiebes" target="_blank" rel="noreferrer">
+              buy me a coffee on Ko-fi
+            </a>
+            .
+          </p>
 
           <h3>License</h3>
           <p>
-            This codebase is MIT-licensed. The MIT license covers the code in this project; it does
-            not extend to the cubehelix algorithm itself, which is described in the paper above.
+            This codebase is{" "}
+            <a
+              href="https://github.com/obangpub/cubehelix-studio/blob/main/LICENSE"
+              target="_blank"
+              rel="noreferrer"
+            >
+              MIT-licensed
+            </a>
+            . The MIT license covers the code in this project; it does not extend to the cubehelix
+            algorithm itself, which is described in the paper above.
           </p>
         </div>
       </dialog>
