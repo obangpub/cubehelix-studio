@@ -179,6 +179,68 @@ Keep the `mode = "sequential"` path 100% backward compatible (use existing `rota
 
 ---
 
+## Web app — smaller features
+
+Independent of the diverging-cubehelix stages above; each can ship on its own.
+
+### Cube face labels — corner-color letters + icon instead of color names
+
+The **Faces** snap buttons in [CubeToolbar.tsx](apps/web/src/components/cube/CubeToolbar.tsx)
+currently label the six cube faces with color names — `+r`→Red, `-r`→Cyan,
+`+g`→Green, `-g`→Magenta, `+b`→Blue, `-b`→Yellow ([view.ts](apps/web/src/components/cube/view.ts)).
+Naming a face by a single color reads poorly; a face spans a gradient, not one color.
+
+Replace each face label with the four letters of that face's four corner
+colors, paired with a small glyph. The cube's eight corner colors are
+K (black), R, G, B, C, M, Y, W (white); every face is bounded by four of them.
+
+| Face id | Plane | Corner letters |
+| ------- | ----- | -------------- |
+| `+r`    | R = 1 | R Y W M        |
+| `-r`    | R = 0 | K G C B        |
+| `+g`    | G = 1 | G Y W C        |
+| `-g`    | G = 0 | K R M B        |
+| `+b`    | B = 1 | B M W C        |
+| `-b`    | B = 0 | K R Y G        |
+
+The four letters are listed in a consistent winding around the face so they
+line up with the glyph's four dot positions. The black corner (K) lies on the
+three low (=0) faces; the white corner (W) lies on the three high (=1) faces.
+
+Glyph — a small 2x2 square of four dots, one per corner vertex of that face,
+each dot tinted with that corner's RGB color and placed to match the letter
+order. Every face carries either a white dot (the three =1 faces) or a black
+dot (the three =0 faces); give the dots a thin outline or neutral backing so
+the black and white ones stay visible against the button.
+
+The corner snaps (Black, Red, Green, Blue, …, White) genuinely sit at
+single-color corners and can keep their color names.
+
+### Solid cube view — gradient-painted faces
+
+Add an optional cube render mode that draws the cube as a solid body with the
+RGB gradient painted across each of its six faces, rather than (or alongside)
+the wireframe + helix tube. An interesting alternate way to see the color space.
+Make it a toggle in the cube settings panel ([CubeToolbar.tsx](apps/web/src/components/cube/CubeToolbar.tsx)
+settings) that users can turn on or off; default off so the helix stays the
+primary read.
+
+### About dialog — attribution, imprint, support, license link
+
+[AboutDialog.tsx](apps/web/src/components/AboutDialog.tsx) currently credits
+Dave Green and links the source repo, but says nothing about who built the
+Studio. Add:
+
+- Author attribution — name Joseph J. Thiebes as the author.
+- Imprint — note that Cubehelix Studio is presented under the O! Press imprint.
+- A "Buy me a coffee" support link pointing to Ko-fi at
+  `https://ko-fi.com/josephthiebes` (0% fee, casual coffee framing). Also enable
+  GitHub Sponsors on the repo so a Sponsor button appears there.
+- A link to the MIT license (e.g. the repo's [LICENSE](LICENSE) file or the
+  canonical MIT text) rather than only describing it in prose.
+
+---
+
 ## Deferred / out of scope
 
 These came up in the field-survey of other cubehelix implementations; documenting the decision so future contributors don't relitigate.
@@ -208,5 +270,8 @@ What remains:
 
 1. **Stage 3** (diverging cubehelix). Largest restructuring. Two-cube cube-viz layout is the headline visualization. The existing CVD module should also apply to the diverging palettes once this ships.
 2. **Stage 2e** (diverging cubehelix presets). Slots into the existing preset gallery once Stage 3 lands — just adds entries with `mode: "diverging"`.
+
+The **Web app — smaller features** items are independent of the stages above and
+can be picked up at any point.
 
 Each stage should be a single logical commit (or commit pair: math/types + UI). Validate parity after each.
