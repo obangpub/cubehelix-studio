@@ -3,12 +3,13 @@ import type { CubehelixParams, PreviewMode } from "@cubehelix-studio/core";
 import { AboutDialog } from "./components/AboutDialog";
 import { useHueAuthoring } from "./components/controls/useHueAuthoring";
 import { CubeVisualization } from "./components/CubeVisualization";
-import { ExportPanel } from "./components/ExportPanel";
+import { ExportModal } from "./components/ExportModal";
 import { GradientStrip } from "./components/GradientStrip";
 import { MoonIcon, SunIcon } from "./components/icons";
 import { ParamControls } from "./components/ParamControls";
 import { PresetGallery } from "./components/PresetGallery";
 import { PreviewControl } from "./components/PreviewControl";
+import { PreviewSidePanel } from "./components/PreviewSidePanel";
 import { ShareLink } from "./components/ShareLink";
 import { SwatchRow } from "./components/SwatchRow";
 import { useUrlParams } from "./hooks/useUrlParams";
@@ -61,6 +62,7 @@ function AppInner() {
   // a full resetSignal pulse would.
   const [presetEpoch, setPresetEpoch] = useState(0);
   const [previewMode, setPreviewMode] = useState<PreviewMode>("normal");
+  const [exportOpen, setExportOpen] = useState(false);
   const [appTheme, setAppThemeState] = useState<Theme>(
     () => readStoredTheme(APP_THEME_KEY) ?? detectSystemTheme(),
   );
@@ -85,7 +87,7 @@ function AppInner() {
     setState((prev) => ({ ...prev, hueAuthoring: next }));
   };
   // Hue-authoring orchestration lives here, not inside ParamControls, so the
-  // Export panel's Reverse toggle routes through the same applyParamsPatch —
+  // preview side panel's Reverse toggle routes through the same applyParamsPatch —
   // which re-solves the hue waypoints when a change touches the solver context.
   const { applyParamsPatch, enterWaypointMode, setWaypoint, waypointSolved } = useHueAuthoring(
     params,
@@ -147,6 +149,13 @@ function AppInner() {
           <GradientStrip params={params} previewMode={previewMode} />
           <SwatchRow params={params} count={swatchCount} previewMode={previewMode} />
         </section>
+        <PreviewSidePanel
+          swatchCount={swatchCount}
+          onSwatchCountChange={setSwatchCount}
+          reverse={params.reverse}
+          onReverseChange={(reverse) => applyParamsPatch({ reverse })}
+          onExportClick={() => setExportOpen(true)}
+        />
         <div className="layout-controls">
           <PresetGallery
             params={params}
@@ -184,14 +193,14 @@ function AppInner() {
               previewMode={previewMode}
             />
           </div>
-          <ExportPanel
-            params={params}
-            swatchCount={swatchCount}
-            onSwatchCountChange={setSwatchCount}
-            onReverseChange={(reverse) => applyParamsPatch({ reverse })}
-          />
         </div>
       </div>
+      <ExportModal
+        params={params}
+        swatchCount={swatchCount}
+        open={exportOpen}
+        onClose={() => setExportOpen(false)}
+      />
     </main>
   );
 }
