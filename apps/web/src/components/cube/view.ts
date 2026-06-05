@@ -31,8 +31,10 @@ export type SnapId =
  * carry a `swatch`. Faces are identified by their four corner colors and
  * carry a four-letter `label` whose letters line up with the `corners`
  * dot-glyph positions in row-major order (top-left, top-right, bottom-left,
- * bottom-right). The `description` is the screen-reader-friendly form used
- * for aria-labels.
+ * bottom-right) as the face appears once the camera has snapped to it —
+ * i.e. as projected onto the screen from `dir` with `up` as the camera's up
+ * vector. The `description` is the screen-reader-friendly form used for
+ * aria-labels.
  */
 export interface Snap {
   id: SnapId;
@@ -128,60 +130,61 @@ export const SNAPS: Snap[] = [
     up: [0, 1, 0],
     swatch: W,
   },
-  // Faces, labeled by their four corner letters in row-major order.
+  // Faces, labeled by their four corner letters in row-major order as the
+  // face appears once the camera has snapped to it.
   {
     id: "+r",
-    label: "RYWM",
-    description: "Red, Yellow, White, Magenta",
+    label: "WYMR",
+    description: "White, Yellow, Magenta, Red",
     group: "face",
     dir: [1, 0, 0],
     up: [0, 1, 0],
-    corners: [R, Y, W, M],
+    corners: [W, Y, M, R],
   },
   {
     id: "-r",
-    label: "KGCB",
-    description: "Black, Green, Cyan, Blue",
+    label: "GCKB",
+    description: "Green, Cyan, Black, Blue",
     group: "face",
     dir: [-1, 0, 0],
     up: [0, 1, 0],
-    corners: [K, G, C, B],
+    corners: [G, C, K, B],
   },
   {
     id: "+g",
-    label: "GYWC",
-    description: "Green, Yellow, White, Cyan",
+    label: "WCYG",
+    description: "White, Cyan, Yellow, Green",
     group: "face",
     dir: [0, 1, 0],
     up: [0, 0, 1],
-    corners: [G, Y, W, C],
+    corners: [W, C, Y, G],
   },
   {
     id: "-g",
-    label: "KRMB",
-    description: "Black, Red, Magenta, Blue",
+    label: "BMKR",
+    description: "Blue, Magenta, Black, Red",
     group: "face",
     dir: [0, -1, 0],
     up: [0, 0, 1],
-    corners: [K, R, M, B],
+    corners: [B, M, K, R],
   },
   {
     id: "+b",
-    label: "BMWC",
-    description: "Blue, Magenta, White, Cyan",
+    label: "CWBM",
+    description: "Cyan, White, Blue, Magenta",
     group: "face",
     dir: [0, 0, 1],
     up: [0, 1, 0],
-    corners: [B, M, W, C],
+    corners: [C, W, B, M],
   },
   {
     id: "-b",
-    label: "KRYG",
-    description: "Black, Red, Yellow, Green",
+    label: "YGRK",
+    description: "Yellow, Green, Red, Black",
     group: "face",
     dir: [0, 0, -1],
     up: [0, 1, 0],
-    corners: [K, R, Y, G],
+    corners: [Y, G, R, K],
   },
 ];
 
