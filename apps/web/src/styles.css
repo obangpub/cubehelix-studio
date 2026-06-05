@@ -385,6 +385,37 @@ body {
   border: 1px solid var(--border);
 }
 
+/* 2x2 grid of corner-color dots for the face snap buttons. Border and gap
+   both painted in --border so each dot is fully surrounded by a thin neutral
+   outline — keeps the black and white dots visible regardless of theme. */
+.cube-face-glyph {
+  flex: 0 0 auto;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  gap: 1px;
+  width: 0.875rem;
+  height: 0.875rem;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  box-sizing: border-box;
+}
+
+.cube-face-dot {
+  display: block;
+}
+
+/* Face labels are letter codes, not words — keep them uppercase and
+   monospace so they read as identifiers and override the .cube-panel
+   lowercase rule. */
+.cube-face-label {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
 .cube-visibility-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(11rem, 1fr));

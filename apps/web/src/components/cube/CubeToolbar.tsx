@@ -35,7 +35,7 @@ export function SnapPanel({ onSnap }: SnapPanelProps) {
               type="button"
               className="cube-snap-button"
               onClick={() => onSnap(s.id)}
-              aria-label={`Snap to ${s.label} corner`}
+              aria-label={`Snap to ${s.description} corner`}
             >
               <span className="cube-snap-swatch" style={{ background: s.swatch }} aria-hidden />
               <span>{s.label}</span>
@@ -52,10 +52,14 @@ export function SnapPanel({ onSnap }: SnapPanelProps) {
               type="button"
               className="cube-snap-button"
               onClick={() => onSnap(s.id)}
-              aria-label={`Snap to ${s.label} face`}
+              aria-label={`Snap to face with ${s.description} corners`}
             >
-              <span className="cube-snap-swatch" style={{ background: s.swatch }} aria-hidden />
-              <span>{s.label}</span>
+              <span className="cube-face-glyph" aria-hidden>
+                {s.corners!.map((c, i) => (
+                  <span key={i} className="cube-face-dot" style={{ background: c }} />
+                ))}
+              </span>
+              <span className="cube-face-label">{s.label}</span>
             </button>
           ))}
         </div>
