@@ -34,7 +34,7 @@ Playground = "https://obang.pub/cubehelix-studio/"
 
 [dependency-groups]
 dev = [
-  "pytest==9.1.0",
+  "pytest==9.1.1",
   "ruff==0.15.18",
   "mypy==2.1.0",
 ]
