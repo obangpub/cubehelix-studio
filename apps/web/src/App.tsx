@@ -9,7 +9,7 @@ import { MoonIcon, SunIcon } from "./components/icons";
 import { ParamControls } from "./components/ParamControls";
 import { PresetGallery } from "./components/PresetGallery";
 import { PreviewControl } from "./components/PreviewControl";
-import { PreviewSidePanel } from "./components/PreviewSidePanel";
+import { PreviewToolbar } from "./components/PreviewToolbar";
 import { ShareLink } from "./components/ShareLink";
 import { SwatchRow } from "./components/SwatchRow";
 import { useUrlParams } from "./hooks/useUrlParams";
@@ -89,12 +89,8 @@ function AppInner() {
   // Hue-authoring orchestration lives here, not inside ParamControls, so the
   // preview side panel's Reverse toggle routes through the same applyParamsPatch —
   // which re-solves the hue waypoints when a change touches the solver context.
-  const { applyParamsPatch, enterWaypointMode, setWaypoint, waypointSolved } = useHueAuthoring(
-    params,
-    setParams,
-    hueAuthoring,
-    setHueAuthoring,
-  );
+  const { applyParamsPatch, enterWaypointMode, setWaypoint, setWinding, waypointSolved } =
+    useHueAuthoring(params, setParams, hueAuthoring, setHueAuthoring);
   // Reset clears Tier 1 / document state (DEFAULT_APP_STATE) and pulses
   // resetSignal so Tier 3 / ephemeral widget state re-seeds from the cleared
   // palette. It deliberately leaves Tier 2 / workspace preferences alone
@@ -148,14 +144,28 @@ function AppInner() {
           <PreviewControl value={previewMode} onChange={setPreviewMode} />
           <GradientStrip params={params} previewMode={previewMode} />
           <SwatchRow params={params} count={swatchCount} previewMode={previewMode} />
+          <PreviewToolbar
+            swatchCount={swatchCount}
+            onSwatchCountChange={setSwatchCount}
+            reverse={params.reverse}
+            onReverseChange={(reverse) => applyParamsPatch({ reverse })}
+            onExportClick={() => setExportOpen(true)}
+          />
         </section>
-        <PreviewSidePanel
-          swatchCount={swatchCount}
-          onSwatchCountChange={setSwatchCount}
-          reverse={params.reverse}
-          onReverseChange={(reverse) => applyParamsPatch({ reverse })}
-          onExportClick={() => setExportOpen(true)}
-        />
+        {/* Source order places the cube directly below the preview in the
+            single-column (narrow) view. The two-column layout positions both
+            by named grid areas, so this order does not affect desktop. */}
+        <div className="layout-aside">
+          <div className="layout-cube">
+            <CubeVisualization
+              params={params}
+              resetSignal={resetSignal}
+              cubeTheme={cubeTheme}
+              onCubeThemeChange={setCubeTheme}
+              previewMode={previewMode}
+            />
+          </div>
+        </div>
         <div className="layout-controls">
           <PresetGallery
             params={params}
@@ -180,19 +190,9 @@ function AppInner() {
             applyParamsPatch={applyParamsPatch}
             enterWaypointMode={enterWaypointMode}
             setWaypoint={setWaypoint}
+            setWinding={setWinding}
             waypointSolved={waypointSolved}
           />
-        </div>
-        <div className="layout-aside">
-          <div className="layout-cube">
-            <CubeVisualization
-              params={params}
-              resetSignal={resetSignal}
-              cubeTheme={cubeTheme}
-              onCubeThemeChange={setCubeTheme}
-              previewMode={previewMode}
-            />
-          </div>
         </div>
       </div>
       <ExportModal

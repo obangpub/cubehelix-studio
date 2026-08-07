@@ -16,7 +16,7 @@ type ControlsRef = RefObject<ComponentRef<typeof OrbitControls> | null>;
 // part of the page, and the labeled "3D cube" toggle lets a mobile user opt in.
 // Desktop keeps it on. Re-evaluated on Reset so the choice stays consistent.
 function initialView(): ViewSettings {
-  const narrow = typeof window !== "undefined" && window.matchMedia("(max-width: 899px)").matches;
+  const narrow = typeof window !== "undefined" && window.matchMedia("(max-width: 767px)").matches;
   return narrow ? { ...DEFAULT_VIEW, showCanvas: false } : DEFAULT_VIEW;
 }
 

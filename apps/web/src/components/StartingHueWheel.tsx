@@ -1,12 +1,14 @@
 import { useMemo, useRef } from "react";
-import {
-  cubehelix,
-  DEFAULT_LIGHTNESS_CURVE,
-  toCssRgb,
-  type CubehelixParams,
-} from "@cubehelix-studio/core";
 import { useKeyboardStepper } from "../hooks/useKeyboardStepper";
 import { usePointerDrag } from "../hooks/usePointerDrag";
+import {
+  angleAt,
+  hueColorAt,
+  hueRingSegments,
+  INNER_RADIUS,
+  OUTER_RADIUS,
+  pointFromAngle,
+} from "../lib/hue-wheel";
 import { mod } from "../lib/math";
 
 interface StartingHueWheelProps {
@@ -16,58 +18,8 @@ interface StartingHueWheelProps {
   compact?: boolean;
 }
 
-const SEGMENT_COUNT = 60;
-const OUTER_RADIUS = 1;
-const INNER_RADIUS = 0.6;
 const POINTER_INNER = INNER_RADIUS - 0.04;
 const POINTER_OUTER = OUTER_RADIUS + 0.04;
-
-// Pin sampling so each segment shows the abstract hue for that start.
-// Rotations=0 makes the angle equal to 2π·(start/3 + 1) regardless of
-// helix position; sampling at t=0.5 with the default identity curve puts
-// the lightness fraction at 0.5, where the chroma envelope peaks. Together,
-// the pointer color is the mathematically pure starting hue at maximum
-// visible chroma — it does not depend on the user's rotation count.
-const REFERENCE_T = 0.5;
-
-// Maximum saturation that keeps every hue in [0, 1] at fraction=0.5 with
-// the default chroma envelope. The binding constraint is along the B
-// direction at angle 0 or π (|B_dir| = 1.97294, peak amplitude 0.125):
-//   s_max = 0.5 / (0.125 · 1.97294) ≈ 2.027
-// 2.0 leaves a tiny floating-point buffer.
-const WHEEL_SATURATION = 2.0;
-
-function wheelParams(start: number): CubehelixParams {
-  return {
-    start,
-    rotations: 0,
-    saturationMin: WHEEL_SATURATION,
-    saturationMax: WHEEL_SATURATION,
-    lightnessCurve: DEFAULT_LIGHTNESS_CURVE,
-    lightnessAxisMin: 0,
-    lightnessAxisMax: 1,
-    chromaPeak: 0.5,
-    chromaWidth: 1,
-    chromaFloor: 0,
-    reverse: false,
-  };
-}
-
-function angleAt(start: number): number {
-  return (start / 3) * 2 * Math.PI;
-}
-
-function pointFromAngle(angle: number, radius: number): { x: number; y: number } {
-  return { x: Math.sin(angle) * radius, y: -Math.cos(angle) * radius };
-}
-
-function arcSegmentPath(angleStart: number, angleEnd: number): string {
-  const o0 = pointFromAngle(angleStart, OUTER_RADIUS);
-  const o1 = pointFromAngle(angleEnd, OUTER_RADIUS);
-  const i0 = pointFromAngle(angleStart, INNER_RADIUS);
-  const i1 = pointFromAngle(angleEnd, INNER_RADIUS);
-  return `M ${o0.x} ${o0.y} A ${OUTER_RADIUS} ${OUTER_RADIUS} 0 0 1 ${o1.x} ${o1.y} L ${i1.x} ${i1.y} A ${INNER_RADIUS} ${INNER_RADIUS} 0 0 0 ${i0.x} ${i0.y} Z`;
-}
 
 export function StartingHueWheel({
   value,
@@ -75,17 +27,7 @@ export function StartingHueWheel({
   ariaLabel = "Starting Hue",
   compact = false,
 }: StartingHueWheelProps) {
-  const segments = useMemo(() => {
-    const out: { path: string; color: string }[] = [];
-    for (let i = 0; i < SEGMENT_COUNT; i++) {
-      const segStart = ((i + 0.5) / SEGMENT_COUNT) * 3;
-      const color = toCssRgb(cubehelix(REFERENCE_T, wheelParams(segStart)));
-      const a0 = (i / SEGMENT_COUNT) * 2 * Math.PI;
-      const a1 = ((i + 1) / SEGMENT_COUNT) * 2 * Math.PI;
-      out.push({ path: arcSegmentPath(a0, a1), color });
-    }
-    return out;
-  }, []);
+  const segments = useMemo(() => hueRingSegments(), []);
 
   const svgRef = useRef<SVGSVGElement>(null);
 
@@ -127,10 +69,7 @@ export function StartingHueWheel({
   // Fill the wheel's inner disc with the pure hue at the current value so the
   // selected color is visible at a glance, not just inferred from the pointer
   // position.
-  const selectedColor = useMemo(
-    () => toCssRgb(cubehelix(REFERENCE_T, wheelParams(mod(value, 3)))),
-    [value],
-  );
+  const selectedColor = useMemo(() => hueColorAt(mod(value, 3)), [value]);
 
   return (
     <svg
@@ -149,7 +88,17 @@ export function StartingHueWheel({
       {segments.map((s, i) => (
         <path key={i} d={s.path} fill={s.color} />
       ))}
-      <circle cx={0} cy={0} r={INNER_RADIUS} fill={selectedColor} />
+      {/* A ring in the panel background color separates the wheel from the
+          central color so adjacent hues don't induce edge-flicker or
+          simultaneous-contrast shifts — a palette cleanser for the eye. */}
+      <circle
+        cx={0}
+        cy={0}
+        r={INNER_RADIUS}
+        fill={selectedColor}
+        stroke="var(--surface)"
+        strokeWidth={0.04}
+      />
       <line
         x1={pInner.x}
         y1={pInner.y}

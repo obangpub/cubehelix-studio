@@ -14,6 +14,7 @@ interface ParamControlsProps {
   applyParamsPatch: (patch: Partial<CubehelixParams>) => void;
   enterWaypointMode: () => void;
   setWaypoint: (idx: 0 | 1, next: HueWaypoint) => void;
+  setWinding: (next: number) => void;
   waypointSolved: WaypointSolution;
 }
 
@@ -29,6 +30,7 @@ export function ParamControls({
   applyParamsPatch,
   enterWaypointMode,
   setWaypoint,
+  setWinding,
   waypointSolved,
 }: ParamControlsProps) {
   const { setCurve, switchKind } = useRememberedCurves(params.lightnessCurve, applyParamsPatch);
@@ -42,6 +44,7 @@ export function ParamControls({
         onHueAuthoringChange={onHueAuthoringChange}
         enterWaypointMode={enterWaypointMode}
         setWaypoint={setWaypoint}
+        setWinding={setWinding}
         waypointSolved={waypointSolved}
       />
       <LightnessSection

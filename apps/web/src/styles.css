@@ -44,7 +44,7 @@ body {
 }
 
 .app {
-  max-width: 1280px;
+  max-width: 1140px;
   margin: 0 auto;
   padding: 2rem 1.5rem;
 }
@@ -52,24 +52,20 @@ body {
 .layout {
   display: grid;
   gap: 2rem;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(0, 1fr);
 }
 
-@media (min-width: 900px) {
+@media (min-width: 768px) {
   .layout {
-    grid-template-columns: minmax(0, 1fr) 380px;
+    grid-template-columns: minmax(0, 1fr) clamp(300px, 30%, 380px);
     grid-template-areas:
-      "preview side"
+      "preview aside"
       "controls aside";
     align-items: start;
   }
 
   .layout-preview {
     grid-area: preview;
-  }
-
-  .preview-side-panel {
-    grid-area: side;
   }
 
   .layout-controls {
@@ -82,6 +78,10 @@ body {
 }
 
 .layout-controls {
+  /* min-width:0 lets this grid item shrink below the multi-column min-content
+     (one column = 280px). Without it the column-width floor props the whole
+     single-column grid open to 280px and the page overflows on narrow screens. */
+  min-width: 0;
   column-width: 280px;
   column-gap: 1rem;
   column-fill: balance;
@@ -161,7 +161,7 @@ body {
    .layout (its parent), which is page-tall, so the pin survives the whole
    scroll. Desktop doesn't need this; the preview and side panel are both
    visible alongside the controls. */
-@media (max-width: 899.98px) {
+@media (max-width: 767.98px) {
   .layout-preview {
     position: sticky;
     top: 0;
@@ -170,19 +170,103 @@ body {
   }
 }
 
-.preview-side-panel {
+/* A compact control strip folded into the bottom of the preview panel: the
+   swatch-count stepper, the reverse toggle, and the Export trigger sit on one
+   wrapping row rather than in their own column. */
+.preview-toolbar {
   display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-  padding: 0.75rem;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  background: var(--surface);
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem 1.25rem;
   min-width: 0;
 }
 
-.preview-side-panel-export {
-  margin-top: auto;
+.swatch-stepper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.swatch-stepper-label {
+  font-weight: 500;
+  font-size: 0.875rem;
+}
+
+.stepper {
+  display: flex;
+  align-items: stretch;
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  overflow: hidden;
+  background: var(--surface);
+}
+
+.stepper-input {
+  width: 2.5rem;
+  border: 0;
+  background: transparent;
+  color: var(--fg);
+  font: inherit;
+  font-size: 0.875rem;
+  text-align: center;
+  padding: 0.2rem 0;
+  -moz-appearance: textfield;
+  appearance: textfield;
+}
+
+.stepper-input::-webkit-outer-spin-button,
+.stepper-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.stepper-input:focus {
+  outline: 2px solid var(--fg);
+  outline-offset: -2px;
+}
+
+.stepper-buttons {
+  display: flex;
+  flex-direction: column;
+  border-left: 1px solid var(--border-strong);
+}
+
+.stepper-button {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  width: 1.5rem;
+  padding: 0;
+  border: 0;
+  background: var(--bg);
+  color: var(--fg);
+  font-size: 0.55rem;
+  line-height: 1;
+  cursor: pointer;
+  transition: background 120ms ease;
+}
+
+.stepper-button + .stepper-button {
+  border-top: 1px solid var(--border-strong);
+}
+
+.stepper-button:hover:not(:disabled) {
+  background: var(--border);
+}
+
+.stepper-button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.stepper-button:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: -2px;
+}
+
+.preview-toolbar-export {
+  margin-left: auto;
   padding: 0.45rem 0.75rem;
   border: 1px solid var(--border);
   border-radius: 6px;
@@ -196,11 +280,11 @@ body {
     background 120ms ease;
 }
 
-.preview-side-panel-export:hover {
+.preview-toolbar-export:hover {
   border-color: var(--fg);
 }
 
-.preview-side-panel-export:focus-visible {
+.preview-toolbar-export:focus-visible {
   outline: 2px solid var(--fg);
   outline-offset: 2px;
 }
@@ -210,12 +294,13 @@ body {
 }
 
 /* The aside stacks the cube above the Export panel. On a phone it is one
-   block within the single column; the min-width:900px block makes it the
+   block within the single column; the min-width:768px block makes it the
    right-hand column. */
 .layout-aside {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  min-width: 0;
 }
 
 .cube-area {
@@ -636,6 +721,17 @@ header p {
   border-radius: 7px;
 }
 
+.control-section-title-group {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.control-section-help {
+  display: inline-flex;
+  font-weight: 400;
+}
+
 .control-section-header::-webkit-details-marker {
   display: none;
 }
@@ -938,14 +1034,17 @@ header p {
   border-radius: 50%;
 }
 
-.hue-waypoint-editor {
-  display: flex;
-  flex-direction: column;
-  gap: 0.5rem;
-  padding: 0.5rem 0.75rem;
-  background: var(--bg);
-  border: 1px solid var(--border);
-  border-radius: 6px;
+.hue-wave-plot {
+  display: block;
+  width: 100%;
+  height: auto;
+  touch-action: none;
+}
+
+/* No (start, rotations) solution passes through both pinned hues, so the plot
+   shows the last good palette; dim it to signal it is stale. */
+.hue-wave-plot.is-unsolved {
+  opacity: 0.4;
 }
 
 .hue-waypoint-header {
@@ -956,19 +1055,23 @@ header p {
   font-weight: 600;
 }
 
-.hue-waypoint-hue {
+.hue-waypoint-fields {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
+  gap: 0.4rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
 }
 
-.hue-waypoint-hue-header {
+.hue-waypoint-field {
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
-.hue-waypoint-hue-header .slider-value {
+.hue-waypoint-field .slider-value {
   margin-left: auto;
 }
 
@@ -993,6 +1096,54 @@ header p {
 .hue-computed-readout code {
   font-family: ui-monospace, "SF Mono", Menlo, monospace;
   color: var(--fg);
+}
+
+.winding-stepper {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.winding-stepper-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  margin-left: auto;
+  border: 1px solid var(--border-strong);
+  border-radius: 6px;
+  background: var(--surface);
+}
+
+.winding-step-button {
+  font: inherit;
+  font-size: 0.95rem;
+  line-height: 1;
+  width: 1.75rem;
+  height: 1.75rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  color: var(--fg);
+  border: none;
+  cursor: pointer;
+}
+
+.winding-step-button:hover {
+  background: var(--bg);
+}
+
+.winding-step-button:focus-visible {
+  outline: 2px solid var(--fg);
+  outline-offset: -1px;
+}
+
+.winding-value {
+  font-family: ui-monospace, "SF Mono", Menlo, monospace;
+  font-size: 0.85rem;
+  min-width: 2.5rem;
+  text-align: center;
+  padding: 0 0.25rem;
 }
 
 .curve-control {
@@ -1172,14 +1323,6 @@ header p {
 .preview-control {
   display: flex;
   flex-direction: column;
-  gap: 0.35rem;
-}
-
-.preview-control-label {
-  font-size: 0.75rem;
-  text-transform: lowercase;
-  letter-spacing: 0.05em;
-  color: var(--muted);
 }
 
 .swatch-row {
@@ -1450,6 +1593,6 @@ header p {
 .header-button,
 .preset-tile-name,
 .cube-panel,
-.preview-side-panel-export {
+.preview-toolbar-export {
   text-transform: lowercase;
 }

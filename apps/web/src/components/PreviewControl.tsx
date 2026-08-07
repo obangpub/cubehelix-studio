@@ -30,7 +30,6 @@ export function PreviewControl({ value, onChange }: PreviewControlProps) {
   const announce = useAnnounce();
   return (
     <div className="preview-control" role="radiogroup" aria-label="Preview palette as">
-      <span className="preview-control-label">Preview as</span>
       <div className="segmented segmented--compact">
         {PREVIEW_MODES.map((mode) => (
           <label key={mode} className={`segmented-option ${value === mode ? "is-active" : ""}`}>
